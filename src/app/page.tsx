@@ -1,39 +1,39 @@
 "use client";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import Dollars from "@/components/gifts";
 import { useUser } from "@clerk/nextjs";
 import { db } from "@/lib/instantdb";
 import { Cursors } from "@instantdb/react";
 import { useEffect } from "react";
 import Image from "next/image";
+import GiveClickButton from "@/components/give-click-button";
 
 export default function HomePage() {
     const { user } = useUser();
     const room = db.room("chat", "main");
-    const { data } = db.useQuery({ dollars: {} });
-    const dollars: { userId: string; createdAt: number }[] = data?.dollars ?? [];
-    const dollarsGiven = user ? dollars.filter((d) => d.userId === user.id).length : 0;
+    const { data } = db.useQuery({ clicks: {} });
+    const clicks: { userId: string; createdAt: number }[] = data?.clicks ?? [];
+    const clicksGiven = user ? clicks.filter((d) => d.userId === user.id).length : 0;
 
     // Get publishPresence from usePresence
     const { publishPresence } = room.usePresence();
 
-    useEffect(() => {
-        if (user) {
-            publishPresence({
-                name: user.fullName || user.username || user.primaryEmailAddress?.emailAddress || "Anonymous",
-                status: "online",
-                profileImageUrl: user.imageUrl,
-                dollarsGiven,
-            });
-        }
-    }, [user, dollarsGiven, publishPresence]);
+    // useEffect(() => {
+    //     if (user) {
+    //         publishPresence({
+    //             name: user.fullName || user.username || user.primaryEmailAddress?.emailAddress || "Anonymous",
+    //             status: "online",
+    //             profileImageUrl: user.imageUrl,
+    //             clicksGiven,
+    //         });
+    //     }
+    // }, [user, clicksGiven, publishPresence]);
 
     type Presence = {
         name: string;
         status: string;
         profileImageUrl?: string;
-        dollarsGiven?: number;
+        clicksGiven?: number;
     };
 
     // Helper to generate a random color based on user id (so it's stable per user)
@@ -51,11 +51,11 @@ export default function HomePage() {
         // Use random color for others, tomato for self
         const dotColor = presence?.profileImageUrl ? getRandomColor(presence.profileImageUrl) : color;
 
-        // Calculate opacity based on dollars given (0.2 to 0.8 range)
+        // Calculate opacity based on clicks given (0.2 to 0.8 range)
         const baseOpacity = 0.2;
         const maxOpacity = 0.8;
-        const dollarsGiven = presence?.dollarsGiven || 0;
-        const opacity = Math.min(baseOpacity + dollarsGiven * 0.1, maxOpacity);
+        const clicksGiven = presence?.clicksGiven || 0;
+        const opacity = Math.min(baseOpacity + clicksGiven * 0.1, maxOpacity);
 
         return (
             <div style={{ position: "relative", width: 48, height: 48, pointerEvents: "none", opacity }}>
@@ -95,8 +95,8 @@ export default function HomePage() {
                         }}
                     />
                 )}
-                {/* Dollars given (top left, closer to cursor) */}
-                {typeof presence?.dollarsGiven === "number" && (
+                {/* Clicks given (top left, closer to cursor) */}
+                {typeof presence?.clicksGiven === "number" && (
                     <div
                         style={{
                             position: "absolute",
@@ -116,31 +116,10 @@ export default function HomePage() {
                             transform: "rotate(-1deg)",
                         }}
                     >
-                        <DollarIcon size={9} className="mr-0.5" />
-                        {presence.dollarsGiven}
+                        {presence.clicksGiven}
                     </div>
                 )}
             </div>
-        );
-    }
-
-    // DollarIcon component for proportional SVG rendering
-    function DollarIcon({ size = 10, className = "" }: { size?: number; className?: string }) {
-        return (
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 500 500"
-                width={size}
-                height={size}
-                className={className}
-                style={{ display: "inline", verticalAlign: "middle" }}
-            >
-                <path
-                    d="m 145,312 c -2,69 31,100 104,102 78,1 113,-34 109,-101 -6,-58 -62,-73 -106,-79 -48,-17 -99,-25 -99,-95 0,-48 32,-79 99,-78 60,0 97,25 96,84"
-                    style={{ fill: "none", stroke: "#000", strokeWidth: 40 }}
-                />
-                <path d="m 250,15 0,470" style={{ stroke: "#000", strokeWidth: 30 }} />
-            </svg>
         );
     }
 
@@ -150,7 +129,11 @@ export default function HomePage() {
                 <Header />
                 <main className="flex-1 flex flex-col items-center justify-center w-full relative">
                     <div className="relative bg-background rounded-lg shadow-lg w-full max-w-7xl mx-auto px-2 sm:px-4 md:px-8 z-30">
-                        <Dollars />
+                        <div className="flex flex-col items-center justify-center h-full py-12">
+                            <h1 className="text-4xl font-bold mb-4">Click the Button!</h1>
+                            <p className="text-lg text-muted-foreground mb-8">The more you click, the higher you climb the leaderboard.</p>
+                            <GiveClickButton />
+                        </div>
                     </div>
                 </main>
                 <Footer />

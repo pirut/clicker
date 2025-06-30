@@ -11,22 +11,26 @@ const _schema = i.schema({
         $users: i.entity({
             email: i.string().unique().indexed().optional(),
         }),
+        clicks: i.entity({
+            createdAt: i.number(),
+            userId: i.string(),
+        }),
         displayNames: i.entity({
             displayName: i.string(),
             userId: i.string().unique(),
         }),
         dollars: i.entity({
             createdAt: i.number(),
-            userId: i.string(),
             used: i.boolean().optional(),
             usedFor: i.string().optional(),
+            userId: i.string(),
         }),
     },
     links: {},
     rooms: {
         chat: {
             presence: i.entity({
-                dollarsGiven: i.number(),
+                clicksGiven: i.number(),
                 name: i.string(),
                 profileImageUrl: i.string(),
                 status: i.string(),
@@ -36,8 +40,7 @@ const _schema = i.schema({
 });
 
 // This helps Typescript display nicer intellisense
-type _AppSchema = typeof _schema;
-type AppSchema = _AppSchema;
+type AppSchema = typeof _schema;
 const schema: AppSchema = _schema;
 
 export type { AppSchema };

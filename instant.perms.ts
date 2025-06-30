@@ -3,21 +3,14 @@
 import type { InstantRules } from "@instantdb/react";
 
 const rules = {
-    $default: {
-        allow: {
-            view: "true",
-            create: "auth.id != null",
-            update: "auth.id != null",
-            delete: "false",
-        },
+  $default: {
+    allow: {
+      view: "true",
+      create: "auth.id != null",
+      delete: "false",
+      update: "auth.id != null",
     },
-    dollars: {
-        allow: {
-            create: "auth.id != null && hasCompletedPayment",
-            update: "false",
-        },
-        bind: ["hasCompletedPayment", "ruleParams.hasCompletedPayment == true"],
-    },
+  },
 } satisfies InstantRules;
 
 export default rules;

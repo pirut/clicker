@@ -9,11 +9,10 @@ import { Label } from "@/components/ui/label";
 import { setDisplayName } from "@/app/actions/user";
 import { ShareButton } from "@/components/share-button";
 import { Header } from "@/components/header";
-import Dollars from "@/components/gifts";
 
 export default function ThankYouPage() {
     const { user } = useUser();
-    const { data } = db.useQuery({ dollars: {}, displayNames: {} });
+    const { data } = db.useQuery({ clicks: {}, displayNames: {} });
     const [newDisplayName, setNewDisplayName] = useState("");
     const [submitted, setSubmitted] = useState(false);
 
@@ -41,9 +40,9 @@ export default function ThankYouPage() {
             <Header />
             <div className="min-h-screen flex flex-col items-center justify-center p-8">
                 <h1 className="text-3xl font-bold mb-4">Thank you for your support!</h1>
-                <p className="mb-8 text-lg">Your dollar has been received. You rock!</p>
+                <p className="mb-8 text-lg">Your click has been recorded. You rock!</p>
                 <div className="flex flex-col items-center w-full max-w-xs mb-6">
-                    <ShareButton tooltip="Share your dollars!" buttonClassName="" />
+                    <ShareButton tooltip="Share your clicks!" buttonClassName="" />
                 </div>
                 {shouldPrompt && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
@@ -81,7 +80,6 @@ export default function ThankYouPage() {
                         </Card>
                     </div>
                 )}
-                <Dollars />
             </div>
         </>
     );

@@ -22,9 +22,9 @@ export function ShareButton({ url: propUrl, text: propText, tooltip = "Share thi
     const [isShareSupported, setIsShareSupported] = useState(false);
     const { user, isLoaded, isSignedIn } = useUser();
 
-    // Fetch only the current user's dollars from InstantDB
-    const { data, isLoading, error } = db.useQuery({ dollars: user?.id ? { $: { where: { userId: user.id } } } : {} });
-    const userDollars = data?.dollars?.length ?? 0;
+    // Fetch only the current user's clicks from InstantDB
+    const { data, isLoading, error } = db.useQuery({ clicks: user?.id ? { $: { where: { userId: user.id } } } : {} });
+    const userClicks = data?.clicks?.length ?? 0;
 
     React.useEffect(() => {
         setIsClient(true);
@@ -36,15 +36,15 @@ export function ShareButton({ url: propUrl, text: propText, tooltip = "Share thi
     if (!isClient || !isLoaded || !isSignedIn || !user) return null;
 
     // Use /share/[amount] route for sharing
-    const url = propUrl || `https://gimme.jrbussard.com/share/${userDollars}`;
+    const url = propUrl || `https://gimme.jrbussard.com/share/${userClicks}`;
     let text = propText;
     if (!text) {
         if (isLoading) {
-            text = "Check out gimme.jrbussard.com - Give a dollar!";
+            text = "Check out gimme.jrbussard.com - Give a click!";
         } else if (error) {
             text = "Join me on gimme.jrbussard.com!";
         } else {
-            text = `I've given $${userDollars} on gimme.jrbussard.com! Join me!`;
+            text = `I've clicked ${userClicks} times on gimme.jrbussard.com! Join me!`;
         }
     }
 
@@ -52,7 +52,7 @@ export function ShareButton({ url: propUrl, text: propText, tooltip = "Share thi
         if (navigator.share) {
             try {
                 await navigator.share({
-                    title: "Gimme a Dollar",
+                    title: "Gimme a Click",
                     text,
                     url,
                 });
