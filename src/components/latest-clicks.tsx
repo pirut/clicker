@@ -1,5 +1,7 @@
 "use client";
 import { db } from "@/lib/instantdb";
+import { getClicksCount } from "@/app/actions/user";
+import { useEffect, useState } from "react";
 
 export default function LatestClicks() {
     const { data, isLoading } = db.useQuery({
@@ -11,10 +13,14 @@ export default function LatestClicks() {
         },
         displayNames: {},
     });
+    const [totalClicks, setTotalClicks] = useState(0);
+
+    useEffect(() => {
+        getClicksCount().then(setTotalClicks);
+    }, [data]);
 
     if (isLoading) return <div>...</div>;
 
-    const totalClicks = data?.clicks?.length || 0;
     const displayNames = data?.displayNames || [];
 
     // Create a map of userId to displayName
