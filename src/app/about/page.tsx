@@ -12,7 +12,7 @@ export default function AboutPage() {
                 <Card className="w-full">
                     <CardHeader>
                         <CardTitle>About</CardTitle>
-                        <CardDescription>Learn more about Give Me a Dollar and the tech behind it</CardDescription>
+                        <CardDescription>Learn more about Clicker and the tech behind it</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Card className="mb-4">
@@ -20,9 +20,7 @@ export default function AboutPage() {
                                 <CardTitle className="text-lg">Clicker</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <CardDescription>
-                                    This site is a playful experiment based on the idea of everyone giving each other a click. It's a joke website, but the clicks are real!
-                                </CardDescription>
+                                <CardDescription>This site is a playful experiment to see how many clicks we can get up to.</CardDescription>
                             </CardContent>
                         </Card>
                         <Card className="mb-4">
@@ -43,11 +41,6 @@ export default function AboutPage() {
                                 <Button asChild variant="link" className="justify-start p-0 h-auto">
                                     <a href="https://clerk.com/" target="_blank" rel="noopener noreferrer">
                                         Clerk
-                                    </a>
-                                </Button>
-                                <Button asChild variant="link" className="justify-start p-0 h-auto">
-                                    <a href="https://stripe.com/" target="_blank" rel="noopener noreferrer">
-                                        Stripe
                                     </a>
                                 </Button>
                                 <Button asChild variant="link" className="justify-start p-0 h-auto">
