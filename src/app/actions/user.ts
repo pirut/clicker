@@ -11,6 +11,14 @@ export async function recordClick() {
         throw new Error("User not authenticated");
     }
 
+    await db.transact(
+        db.tx.clicks[id()].update({
+            userId,
+            createdAt: Date.now(),
+        })
+    );
+
+
     console.log("recordClick called for user:", userId);
     revalidatePath("/");
 }
