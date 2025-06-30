@@ -1,22 +1,16 @@
 "use client";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { useUser } from "@clerk/nextjs";
+
 import { db } from "@/lib/instantdb";
 import { Cursors } from "@instantdb/react";
-import { useEffect } from "react";
+
 import Image from "next/image";
 import GiveClickButton from "@/components/give-click-button";
 
 export default function HomePage() {
-    const { user } = useUser();
     const room = db.room("chat", "main");
-    const { data } = db.useQuery({ clicks: {} });
-    const clicks: { userId: string; createdAt: number }[] = data?.clicks ?? [];
-    const clicksGiven = user ? clicks.filter((d) => d.userId === user.id).length : 0;
-
-    // Get publishPresence from usePresence
-    const { publishPresence } = room.usePresence();
+    // const { data } = db.useQuery({ clicks: {} });
 
     // useEffect(() => {
     //     if (user) {
