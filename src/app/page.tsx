@@ -7,7 +7,7 @@ import { Cursors } from "@instantdb/react";
 
 import Image from "next/image";
 import GiveClickButton from "@/components/give-click-button";
-import TotalClicks from "@/components/total-clicks";
+import LatestClicks from "@/components/latest-clicks";
 
 export default function HomePage() {
     const room = db.room("chat", "main");
@@ -125,7 +125,7 @@ export default function HomePage() {
                 <main className="flex-1 flex flex-col items-center justify-center w-full relative">
                     <div className="relative bg-background rounded-lg shadow-lg w-full max-w-7xl mx-auto px-2 sm:px-4 md:px-8 z-30">
                         <div className="flex flex-col items-center justify-center h-full py-12">
-                            <TotalClicks />
+                            <LatestClicks />
                             <h1 className="text-4xl font-bold mb-4">Click the Button!</h1>
                             <p className="text-lg text-muted-foreground mb-8">The more you click, the higher you climb the leaderboard.</p>
                             <GiveClickButton />

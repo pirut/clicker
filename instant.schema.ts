@@ -12,7 +12,7 @@ const _schema = i.schema({
             email: i.string().unique().indexed().optional(),
         }),
         clicks: i.entity({
-            createdAt: i.number(),
+            createdAt: i.number().indexed(),
             userId: i.string(),
         }),
         displayNames: i.entity({
