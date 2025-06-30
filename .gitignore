@@ -42,3 +42,11 @@ next-env.d.ts
 
 #Cursor Specific
 .cursor
+
+# InstantDB Documentation
+instant_backend.md
+instant_clerk.md
+instant_modeling.md
+instant_reading.md
+instant_setup.md
+instant_writing.md
