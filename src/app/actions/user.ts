@@ -45,7 +45,4 @@ export async function setDisplayName(displayName: string) {
     revalidatePath("/");
 }
 
-export async function getClicksCount() {
-    const { clicks } = await db.query({ clicks: {} });
-    return clicks.length;
-}
+

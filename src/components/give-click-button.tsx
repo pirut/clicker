@@ -9,6 +9,7 @@ import { useState } from "react";
 export default function GiveClickButton() {
     const { userId } = useAuth();
     const [error, setError] = useState<string | null>(null);
+    const [lastClickTime, setLastClickTime] = useState(0);
 
     const handleClick = async () => {
         if (!userId) {
@@ -16,19 +17,7 @@ export default function GiveClickButton() {
             return;
         }
 
-        const oneSecondAgo = Date.now() - 1000;
-        const { clicks } = await db.query({
-            clicks: {
-                $: {
-                    where: {
-                        userId: userId,
-                        createdAt: { ">=": oneSecondAgo },
-                    },
-                },
-            },
-        });
-
-        if (clicks.length > 0) {
+        if (Date.now() - lastClickTime < 1000) {
             setError("You can only click once per second.");
             return;
         }
@@ -39,6 +28,7 @@ export default function GiveClickButton() {
                 createdAt: Date.now(),
             })
         );
+        setLastClickTime(Date.now());
         setError(null);
     };
 

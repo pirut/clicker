@@ -1,10 +1,8 @@
 "use client";
 import { db } from "@/lib/instantdb";
-import { getClicksCount } from "@/app/actions/user";
-import { useEffect, useState } from "react";
 
 export default function LatestClicks() {
-    const { data, isLoading } = db.useQuery({
+    const { data: latestClicksData, isLoading: latestClicksLoading } = db.useQuery({
         clicks: {
             $: {
                 order: { serverCreatedAt: "desc" },
@@ -13,15 +11,15 @@ export default function LatestClicks() {
         },
         displayNames: {},
     });
-    const [totalClicks, setTotalClicks] = useState(0);
 
-    useEffect(() => {
-        getClicksCount().then(setTotalClicks);
-    }, [data]);
+    const { data: allClicksData, isLoading: allClicksLoading } = db.useQuery({
+        clicks: {},
+    });
 
-    if (isLoading) return <div>...</div>;
+    if (latestClicksLoading || allClicksLoading) return <div>...</div>;
 
-    const displayNames = data?.displayNames || [];
+    const totalClicks = allClicksData?.clicks?.length || 0;
+    const displayNames = latestClicksData?.displayNames || [];
 
     // Create a map of userId to displayName
     const displayNameMap: Record<string, string> = {};
@@ -33,7 +31,7 @@ export default function LatestClicks() {
         <div className="text-center text-sm text-muted-foreground mb-2">
             <p>Total Clicks: {totalClicks}</p>
             <ul>
-                {data?.clicks?.map((click) => (
+                {latestClicksData?.clicks?.map((click) => (
                     <li key={click.id}>
                         {displayNameMap[click.userId] || "Anonymous"} at {new Date(click.createdAt).toLocaleTimeString()}
                     </li>
