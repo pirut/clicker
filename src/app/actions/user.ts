@@ -1,11 +1,9 @@
 "use server";
 
 import { db } from "@/lib/instantdb.server";
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { id } from "@instantdb/admin";
 import { revalidatePath } from "next/cache";
-
-
 
 export async function setDisplayName(displayName: string) {
     const { userId } = await auth();
@@ -44,5 +42,3 @@ export async function setDisplayName(displayName: string) {
     }
     revalidatePath("/");
 }
-
-

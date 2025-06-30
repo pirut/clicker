@@ -1,5 +1,17 @@
 "use client";
 import { db } from "@/lib/instantdb";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableRow,
+} from "@/components/ui/table";
 
 export default function LatestClicks() {
     const { data: latestClicksData, isLoading: latestClicksLoading } = db.useQuery({
@@ -28,15 +40,26 @@ export default function LatestClicks() {
     });
 
     return (
-        <div className="text-center text-sm text-muted-foreground mb-2">
-            <p>Total Clicks: {totalClicks}</p>
-            <ul>
-                {latestClicksData?.clicks?.map((click) => (
-                    <li key={click.id}>
-                        {displayNameMap[click.userId] || "Anonymous"} at {new Date(click.createdAt).toLocaleTimeString()}
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <Card className="w-full max-w-md mx-auto">
+            <CardHeader className="text-center">
+                <CardTitle className="text-2xl">Total Clicks: {totalClicks}</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <Table>
+                    <TableBody>
+                        {latestClicksData?.clicks?.map((click) => (
+                            <TableRow key={click.id}>
+                                <TableCell className="font-medium">
+                                    {displayNameMap[click.userId] || "Anonymous"}
+                                </TableCell>
+                                <TableCell className="text-right">
+                                    {new Date(click.createdAt).toLocaleTimeString()}
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </CardContent>
+        </Card>
     );
 }
