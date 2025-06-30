@@ -39,7 +39,7 @@ export function Header() {
     const navigationItems = [
         { href: "/", label: "Home" },
         { href: "/about", label: "About" },
-        { href: "/faq", label: "FAQ" },
+        
         { href: "/leaderboard", label: "Leaderboard" },
     ];
 
