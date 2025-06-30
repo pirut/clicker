@@ -8,19 +8,19 @@ import Link from "next/link";
 const faqs = [
     {
         question: "What is this site?",
-        answer: "It's a fun way to give me a dollar. No catch, just a dollar!",
+        answer: "It's a joke website based on the idea of everyone giving each other a click. The more you click, the more you give!",
     },
     {
         question: "Is this a joke?",
-        answer: "Kind of, but your dollar is real.",
+        answer: "Yes, it's a joke website. But the clicks are real!",
     },
     {
-        question: "What do you do with the money?",
-        answer: "I use it for coffee, snacks, or to keep the site running.",
+        question: "What do you do with the clicks?",
+        answer: "The clicks are just for fun and to see how many times the button can be clicked. They don't represent real money.",
     },
     {
         question: "Can I get a refund?",
-        answer: "No refunds, but you get my eternal gratitude.",
+        answer: "There's no money involved, so no refunds are needed!",
     },
 ];
 
@@ -32,7 +32,7 @@ export default function FAQPage() {
                 <Card className="w-full mb-6">
                     <CardHeader>
                         <CardTitle>Frequently Asked Questions</CardTitle>
-                        <CardDescription>Everything you want to know about Give Me a Dollar</CardDescription>
+                        <CardDescription>Everything you want to know about Clicker</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-4">
                         {faqs.map((faq, idx) => (

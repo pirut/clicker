@@ -20,8 +20,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    title: "Give Me a Dollar",
-    description: "A website to give me a dollar",
+    title: "Clicker",
+    description: "A website to give clicks",
     icons: {
         icon: [
             {

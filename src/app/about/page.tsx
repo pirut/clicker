@@ -17,12 +17,11 @@ export default function AboutPage() {
                     <CardContent>
                         <Card className="mb-4">
                             <CardHeader>
-                                <CardTitle className="text-lg">Give Me a Dollar</CardTitle>
+                                <CardTitle className="text-lg">Clicker</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <CardDescription>
-                                    This site is a playful experiment in generosity, humor, and the internet economy. There&#39;s no big mission—just a simple
-                                    way to send me a dollar if you&#39;re feeling generous or amused.
+                                    This site is a playful experiment based on the idea of everyone giving each other a click. It's a joke website, but the clicks are real!
                                 </CardDescription>
                             </CardContent>
                         </Card>
