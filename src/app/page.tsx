@@ -8,21 +8,11 @@ import { Cursors } from "@instantdb/react";
 import Image from "next/image";
 import GiveClickButton from "@/components/give-click-button";
 import LatestClicks from "@/components/latest-clicks";
+import { Background } from "@/components/background";
+import { motion } from "framer-motion";
 
 export default function HomePage() {
     const room = db.room("chat", "main");
-    // const { data } = db.useQuery({ clicks: {} });
-
-    // useEffect(() => {
-    //     if (user) {
-    //         publishPresence({
-    //             name: user.fullName || user.username || user.primaryEmailAddress?.emailAddress || "Anonymous",
-    //             status: "online",
-    //             profileImageUrl: user.imageUrl,
-    //             clicksGiven,
-    //         });
-    //     }
-    // }, [user, clicksGiven, publishPresence]);
 
     type Presence = {
         name: string;
@@ -120,17 +110,32 @@ export default function HomePage() {
 
     return (
         <Cursors room={room} className="min-w-full h-100vh" userCursorColor="tomato" renderCursor={renderCursor}>
+            <Background />
             <div className="min-h-screen flex flex-col relative">
                 <Header />
-                <main className="flex-1 flex flex-col items-center justify-center w-full relative">
-                    <div className="relative bg-background rounded-lg shadow-lg w-full max-w-7xl mx-auto px-2 sm:px-4 md:px-8 z-30">
-                        <div className="flex flex-col items-center justify-center h-full py-12">
-                            <LatestClicks />
-                            <h1 className="text-4xl font-bold mb-4">Click the Button!</h1>
-                            <p className="text-lg text-muted-foreground mb-8">The more you click, the higher you climb the leaderboard.</p>
+                <main className="flex-1 flex flex-col items-center justify-center w-full relative p-4 pt-24">
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.5 }}
+                        className="relative w-full max-w-4xl mx-auto z-30 flex flex-col md:flex-row gap-12 items-center justify-center"
+                    >
+                        <div className="flex flex-col items-center text-center space-y-8 flex-1">
+                            <div className="space-y-2">
+                                <h1 className="text-6xl md:text-7xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white to-white/50 drop-shadow-2xl">
+                                    CLICKER
+                                </h1>
+                                <p className="text-lg text-muted-foreground max-w-xs mx-auto">
+                                    Compete for the top spot. Every click counts.
+                                </p>
+                            </div>
                             <GiveClickButton />
                         </div>
-                    </div>
+
+                        <div className="w-full max-w-md flex-1">
+                            <LatestClicks />
+                        </div>
+                    </motion.div>
                 </main>
                 <Footer />
             </div>
