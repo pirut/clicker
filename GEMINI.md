@@ -4,7 +4,7 @@ This file helps Gemini understand your project's context and conventions.
 
 ## Project Overview
 
-This is a Next.js application built with TypeScript and styled with Tailwind CSS. It uses Clerk for user authentication, InstantDB for real-time database functionality, and Stripe for payments. The project is a joke website based on the idea of everyone giving each other a dollar.
+This is a Next.js application built with TypeScript and styled with Tailwind CSS. It uses Clerk for user authentication and InstantDB for real-time database functionality. The project is a clicker game where users compete to get the most clicks.
 
 ## Commands
 
@@ -20,7 +20,6 @@ This is a Next.js application built with TypeScript and styled with Tailwind CSS
 -   **Styling:** Tailwind CSS
 -   **Authentication:** Clerk
 -   **Database:** InstantDB
--   **Payments:** Stripe
 
 ## Coding Style
 
@@ -32,4 +31,3 @@ This is a Next.js application built with TypeScript and styled with Tailwind CSS
 
 -   The project uses Clerk for authentication. See `CLERK_SETUP.md` for more details.
 -   The `README.md` file explains the origin of the project.
--   The project name is intentionally misspelled.

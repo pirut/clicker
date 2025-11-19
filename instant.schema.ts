@@ -19,12 +19,7 @@ const _schema = i.schema({
             displayName: i.string(),
             userId: i.string().unique(),
         }),
-        dollars: i.entity({
-            createdAt: i.number(),
-            used: i.boolean().optional(),
-            usedFor: i.string().optional(),
-            userId: i.string(),
-        }),
+
     },
     links: {},
     rooms: {
