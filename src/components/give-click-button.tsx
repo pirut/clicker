@@ -14,6 +14,11 @@ export default function GiveClickButton() {
     const [error, setError] = useState<string | null>(null);
     const [lastClickTime, setLastClickTime] = useState(0);
 
+    // Query for existing displayName to get its ID
+    const { data: displayNameData } = db.useQuery({
+        displayNames: userId ? { $: { where: { userId } } } : {},
+    });
+
     const handleClick = async () => {
         if (!userId) {
             setError("You must be logged in to click.");
@@ -36,13 +41,17 @@ export default function GiveClickButton() {
 
         const displayName = user?.firstName || user?.emailAddresses[0]?.emailAddress || "Anonymous";
 
-        // Create click and update displayName in a single transaction
+        // Find existing displayName entity or create new one
+        const existingDisplayName = displayNameData?.displayNames?.find((dn: { userId: string }) => dn.userId === userId);
+        const displayNameId = existingDisplayName?.id || id();
+
+        // Create click and update/create displayName in a single transaction
         db.transact([
             db.tx.clicks[id()].update({
                 userId,
                 createdAt: Date.now(),
             }),
-            db.tx.displayNames[userId].update({
+            db.tx.displayNames[displayNameId].update({
                 displayName,
                 userId,
             }),

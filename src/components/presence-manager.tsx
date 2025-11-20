@@ -2,6 +2,7 @@
 
 import { useAuth, useUser } from "@clerk/nextjs";
 import { db } from "@/lib/instantdb";
+import { id } from "@instantdb/react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
 const room = db.room("chat", "main");
@@ -14,6 +15,11 @@ export function PresenceManager() {
     // Get user's click count - optimized query
     const { data: clicksData } = db.useQuery({
         clicks: userId ? { $: { where: { userId } } } : {},
+    });
+
+    // Query for existing displayName to get its ID
+    const { data: displayNameData } = db.useQuery({
+        displayNames: userId ? { $: { where: { userId } } } : {},
     });
 
     // Use the presence hook to get publishPresence method
@@ -56,8 +62,12 @@ export function PresenceManager() {
         });
         presenceSetRef.current = true;
 
+        // Find existing displayName entity or create new one
+        const existingDisplayName = displayNameData?.displayNames?.find((dn: { userId: string }) => dn.userId === userId);
+        const displayNameId = existingDisplayName?.id || id();
+
         db.transact(
-            db.tx.displayNames[userId].update({
+            db.tx.displayNames[displayNameId].update({
                 displayName,
                 userId,
             })
@@ -69,7 +79,7 @@ export function PresenceManager() {
                 presenceSetRef.current = false;
             }
         };
-    }, [isLoaded, userId, displayName, profileImageUrl, user, publishPresence, clearPresence]);
+    }, [isLoaded, userId, displayName, profileImageUrl, user, publishPresence, clearPresence, displayNameData]);
 
     // Update clicks presence separately to avoid resetting entire object
     useEffect(() => {
