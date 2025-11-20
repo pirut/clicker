@@ -5,63 +5,60 @@ import { useEffect, useState } from "react";
 
 export function Background() {
     const [mounted, setMounted] = useState(false);
+    const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
     const gridColor = "color-mix(in oklch, var(--border) 65%, transparent)";
 
     useEffect(() => {
         setMounted(true);
+        // Check for reduced motion preference
+        const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+        setPrefersReducedMotion(mediaQuery.matches);
+        
+        const handleChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+        mediaQuery.addEventListener("change", handleChange);
+        return () => mediaQuery.removeEventListener("change", handleChange);
     }, []);
 
     if (!mounted) return null;
 
+    // Simplified animation props for better performance
+    const orbAnimation = prefersReducedMotion ? {} : {
+        scale: [1, 1.15, 1],
+        opacity: [0.2, 0.35, 0.2],
+    };
+
     return (
         <div className="fixed inset-0 -z-10 overflow-hidden bg-background">
-            {/* Gradient Orbs */}
-            <motion.div
-                animate={{
-                    scale: [1, 1.2, 1],
-                    opacity: [0.3, 0.5, 0.3],
-                    x: [0, 100, 0],
-                    y: [0, -50, 0],
-                }}
-                transition={{
-                    duration: 20,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                }}
-                className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px]"
-            />
-            <motion.div
-                animate={{
-                    scale: [1, 1.1, 1],
-                    opacity: [0.2, 0.4, 0.2],
-                    x: [0, -100, 0],
-                    y: [0, 100, 0],
-                }}
-                transition={{
-                    duration: 25,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 2,
-                }}
-                className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-accent/10 rounded-full blur-[120px]"
-            />
-            <motion.div
-                animate={{
-                    scale: [1, 1.3, 1],
-                    opacity: [0.2, 0.3, 0.2],
-                }}
-                transition={{
-                    duration: 18,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 5,
-                }}
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-secondary/20 rounded-full blur-[150px]"
-            />
+            {/* Gradient Orbs - Reduced number and optimized */}
+            {!prefersReducedMotion && (
+                <>
+                    <motion.div
+                        animate={orbAnimation}
+                        transition={{
+                            duration: 25,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                        }}
+                        className="absolute top-0 left-0 w-[400px] h-[400px] bg-primary/15 rounded-full blur-[80px] will-change-transform"
+                        style={{ transform: "translate(0, 0)" }}
+                    />
+                    <motion.div
+                        animate={orbAnimation}
+                        transition={{
+                            duration: 30,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                            delay: 3,
+                        }}
+                        className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-accent/10 rounded-full blur-[100px] will-change-transform"
+                        style={{ transform: "translate(0, 0)" }}
+                    />
+                </>
+            )}
 
-            {/* Grid Pattern Overlay */}
+            {/* Grid Pattern Overlay - Optimized with CSS */}
             <div
-                className="absolute inset-0 opacity-[0.08]"
+                className="absolute inset-0 opacity-[0.06]"
                 style={{
                     backgroundImage: `
                         linear-gradient(to right, ${gridColor} 1px, transparent 1px),
@@ -69,6 +66,7 @@ export function Background() {
                     `,
                     backgroundSize: "48px 48px",
                     mixBlendMode: "multiply",
+                    willChange: "auto",
                 }}
             />
         </div>

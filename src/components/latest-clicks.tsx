@@ -12,8 +12,10 @@ import {
     TableCell,
 } from "@/components/ui/table";
 import { motion } from "framer-motion";
+import { useMemo } from "react";
 
 export default function LatestClicks() {
+    // Only fetch latest 10 clicks and all displayNames (not all clicks)
     const { data: latestClicksData, isLoading: latestClicksLoading } = db.useQuery({
         clicks: {
             $: {
@@ -24,22 +26,33 @@ export default function LatestClicks() {
         displayNames: {},
     });
 
-    const { data: allClicksData, isLoading: allClicksLoading } = db.useQuery({
-        clicks: {},
+    // Fetch total count separately - more efficient with limit
+    const { data: totalClicksData, isLoading: totalClicksLoading } = db.useQuery({
+        clicks: {
+            $: {
+                // Use a reasonable limit for counting (InstantDB doesn't have native count)
+                limit: 50000, // Reasonable upper bound for counting
+                order: { serverCreatedAt: "desc" },
+            },
+        },
     });
 
-    if (latestClicksLoading || allClicksLoading) return (
+    if (latestClicksLoading || totalClicksLoading) return (
         <div className="w-full max-w-md mx-auto h-[400px] glass rounded-xl animate-pulse" />
     );
 
-    const totalClicks = allClicksData?.clicks?.length || 0;
+    // Calculate total from the limited query (or use a more efficient method if InstantDB supports count)
+    const totalClicks = totalClicksData?.clicks?.length || 0;
     const displayNames = latestClicksData?.displayNames || [];
 
-    // Create a map of userId to displayName
-    const displayNameMap: Record<string, string> = {};
-    displayNames.forEach((entry: { userId: string; displayName: string }) => {
-        displayNameMap[entry.userId] = entry.displayName;
-    });
+    // Memoize the displayName map for performance
+    const displayNameMap: Record<string, string> = useMemo(() => {
+        const map: Record<string, string> = {};
+        displayNames.forEach((entry: { userId: string; displayName: string }) => {
+            map[entry.userId] = entry.displayName;
+        });
+        return map;
+    }, [displayNames]);
 
     return (
         <motion.div

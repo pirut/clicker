@@ -21,8 +21,17 @@ export type DisplayName = {
 };
 
 export default function LeaderboardPage() {
-    // Fetch all clicks and display names
-    const { data, isLoading, error } = db.useQuery({ clicks: {}, displayNames: {} });
+    // Fetch clicks with reasonable limit and display names
+    // Note: For accurate leaderboard, we need all clicks, but limit to prevent performance issues
+    const { data, isLoading, error } = db.useQuery({ 
+        clicks: { 
+            $: { 
+                limit: 100000, // Reasonable upper bound for leaderboard calculation
+                order: { serverCreatedAt: "desc" }
+            } 
+        }, 
+        displayNames: {} 
+    });
 
     // Map userId to displayName
     const displayNameMap: Record<string, string> = useMemo(() => {

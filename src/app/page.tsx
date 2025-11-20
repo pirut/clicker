@@ -9,6 +9,7 @@ import Image from "next/image";
 import GiveClickButton from "@/components/give-click-button";
 import LatestClicks from "@/components/latest-clicks";
 import { Background } from "@/components/background";
+import { PresenceManager } from "@/components/presence-manager";
 import { motion } from "framer-motion";
 
 export default function HomePage() {
@@ -67,6 +68,8 @@ export default function HomePage() {
                         alt="profile"
                         width={20}
                         height={20}
+                        unoptimized
+                        loading="lazy"
                         style={{
                             position: "absolute",
                             top: -2,
@@ -109,11 +112,13 @@ export default function HomePage() {
     }
 
     return (
-        <Cursors room={room} className="min-w-full h-100vh" userCursorColor="tomato" renderCursor={renderCursor}>
-            <Background />
-            <div className="min-h-screen flex flex-col relative">
-                <Header />
-                <main className="flex-1 flex flex-col items-center justify-center w-full relative p-4 pt-24">
+        <>
+            <PresenceManager />
+            <Cursors room={room} className="min-w-full h-100vh" userCursorColor="tomato" renderCursor={renderCursor}>
+                <Background />
+                <div className="min-h-screen flex flex-col relative">
+                    <Header />
+                    <main className="flex-1 flex flex-col items-center justify-center w-full relative p-4 pt-24">
                     <motion.div 
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -140,5 +145,6 @@ export default function HomePage() {
                 <Footer />
             </div>
         </Cursors>
+        </>
     );
 }

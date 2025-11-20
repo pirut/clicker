@@ -3,13 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { db } from "@/lib/instantdb";
 import { id } from "@instantdb/react";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 
 export default function GiveClickButton() {
     const { userId } = useAuth();
+    const { user } = useUser();
     const [error, setError] = useState<string | null>(null);
     const [lastClickTime, setLastClickTime] = useState(0);
 
@@ -24,20 +25,29 @@ export default function GiveClickButton() {
             return;
         }
 
-        // Confetti effect
+        // Lighter confetti effect for performance
         confetti({
-            particleCount: 100,
-            spread: 70,
+            particleCount: 50,
+            spread: 60,
             origin: { y: 0.6 },
-            colors: ['#d946ef', '#8b5cf6', '#06b6d4'] // Neon colors
+            colors: ['#8b6f47', '#a0826d', '#c4a574'],
+            disableForReducedMotion: true,
         });
 
-        db.transact(
+        const displayName = user?.firstName || user?.emailAddresses[0]?.emailAddress || "Anonymous";
+
+        // Create click and update displayName in a single transaction
+        db.transact([
             db.tx.clicks[id()].update({
                 userId,
                 createdAt: Date.now(),
-            })
-        );
+            }),
+            db.tx.displayNames[userId].update({
+                displayName,
+                userId,
+            }),
+        ]);
+        
         setLastClickTime(Date.now());
         setError(null);
     };
