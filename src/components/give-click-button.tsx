@@ -61,10 +61,10 @@ export default function GiveClickButton() {
                 <Button 
                     size="lg" 
                     onClick={handleClick}
-                    className="relative h-32 w-32 rounded-full text-xl font-bold bg-gradient-to-br from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-[0_0_40px_-10px_rgba(168,85,247,0.5)] border-4 border-white/10"
+                    className="relative h-32 w-32 rounded-full text-xl font-bold text-primary-foreground bg-gradient-to-br from-primary via-accent to-secondary hover:from-primary/90 hover:via-accent/90 hover:to-secondary/90 shadow-[0_25px_45px_-20px_rgba(62,42,20,0.55)] border-4 border-white/30"
                 >
                     <span className="z-10">CLICK</span>
-                    <div className="absolute inset-0 rounded-full bg-white/20 blur-md" />
+                    <div className="absolute inset-0 rounded-full bg-white/15 blur-md" />
                 </Button>
             </motion.div>
             
