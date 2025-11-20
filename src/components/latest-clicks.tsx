@@ -37,22 +37,22 @@ export default function LatestClicks() {
         },
     });
 
-    if (latestClicksLoading || totalClicksLoading) return (
-        <div className="w-full max-w-md mx-auto h-[400px] glass rounded-xl animate-pulse" />
-    );
-
     // Calculate total from the limited query (or use a more efficient method if InstantDB supports count)
     const totalClicks = totalClicksData?.clicks?.length || 0;
-    const displayNames = latestClicksData?.displayNames || [];
-
-    // Memoize the displayName map for performance
+    
+    // Memoize the displayName map for performance - must be before early return
     const displayNameMap: Record<string, string> = useMemo(() => {
         const map: Record<string, string> = {};
+        const displayNames = latestClicksData?.displayNames || [];
         displayNames.forEach((entry: { userId: string; displayName: string }) => {
             map[entry.userId] = entry.displayName;
         });
         return map;
-    }, [displayNames]);
+    }, [latestClicksData?.displayNames]);
+
+    if (latestClicksLoading || totalClicksLoading) return (
+        <div className="w-full max-w-md mx-auto h-[400px] glass rounded-xl animate-pulse" />
+    );
 
     return (
         <motion.div

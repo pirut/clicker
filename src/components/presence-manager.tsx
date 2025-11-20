@@ -16,6 +16,11 @@ export function PresenceManager() {
         clicks: userId ? { $: { where: { userId } } } : {},
     });
 
+    // Use the presence hook to get publishPresence method
+    const presenceHandle = room.usePresence({
+        keys: ["name", "status", "profileImageUrl", "clicksGiven"],
+    });
+
     const clicksGiven = useMemo(() => {
         return clicksData?.clicks?.length || 0;
     }, [clicksData?.clicks]);
@@ -24,7 +29,12 @@ export function PresenceManager() {
         if (!isLoaded || !userId || !user) {
             // Clear presence if user logs out
             if (presenceSetRef.current) {
-                room.setPresence(null);
+                presenceHandle.publishPresence({
+                    name: undefined,
+                    status: undefined,
+                    profileImageUrl: undefined,
+                    clicksGiven: undefined,
+                });
                 presenceSetRef.current = false;
             }
             return;
@@ -34,7 +44,7 @@ export function PresenceManager() {
         const profileImageUrl = user.imageUrl || "";
 
         // Update presence in the room
-        room.setPresence({
+        presenceHandle.publishPresence({
             name: displayName,
             status: "online",
             profileImageUrl,
@@ -53,11 +63,16 @@ export function PresenceManager() {
         // Cleanup: clear presence when component unmounts
         return () => {
             if (presenceSetRef.current) {
-                room.setPresence(null);
+                presenceHandle.publishPresence({
+                    name: undefined,
+                    status: undefined,
+                    profileImageUrl: undefined,
+                    clicksGiven: undefined,
+                });
                 presenceSetRef.current = false;
             }
         };
-    }, [isLoaded, userId, user, clicksGiven, room]);
+    }, [isLoaded, userId, user, clicksGiven, presenceHandle]);
 
     // Update presence when clicksGiven changes
     useEffect(() => {
@@ -66,13 +81,13 @@ export function PresenceManager() {
         const displayName = user.firstName || user.emailAddresses[0]?.emailAddress || "Anonymous";
         const profileImageUrl = user.imageUrl || "";
 
-        room.setPresence({
+        presenceHandle.publishPresence({
             name: displayName,
             status: "online",
             profileImageUrl,
             clicksGiven,
         });
-    }, [clicksGiven, isLoaded, userId, user, room]);
+    }, [clicksGiven, isLoaded, userId, user, presenceHandle]);
 
     return null; // This component doesn't render anything
 }
