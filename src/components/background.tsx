@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 export function Background() {
     const [mounted, setMounted] = useState(false);
+    const gridColor = "color-mix(in oklch, var(--border) 65%, transparent)";
 
     useEffect(() => {
         setMounted(true);
@@ -59,12 +60,15 @@ export function Background() {
             />
 
             {/* Grid Pattern Overlay */}
-            <div 
-                className="absolute inset-0 opacity-[0.03]"
+            <div
+                className="absolute inset-0 opacity-[0.08]"
                 style={{
-                    backgroundImage: `linear-gradient(to right, #888 1px, transparent 1px),
-                    linear-gradient(to bottom, #888 1px, transparent 1px)`,
-                    backgroundSize: '50px 50px'
+                    backgroundImage: `
+                        linear-gradient(to right, ${gridColor} 1px, transparent 1px),
+                        linear-gradient(to bottom, ${gridColor} 1px, transparent 1px)
+                    `,
+                    backgroundSize: "48px 48px",
+                    mixBlendMode: "multiply",
                 }}
             />
         </div>
