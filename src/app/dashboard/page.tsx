@@ -18,6 +18,15 @@ type DisplayNameUpdates = {
     cursorColor?: string;
     hatSlug?: string | null;
 };
+
+type AvatarItem = {
+    id: string;
+    slug: string;
+    label: string;
+    description: string;
+    price: number;
+};
+
 const EMPTY_LIST: unknown[] = [];
 
 export default function DashboardPage() {
@@ -39,7 +48,7 @@ export default function DashboardPage() {
     const clicks = (data?.clicks ?? EMPTY_LIST) as Array<unknown>;
     const totalClicks = clicks.length;
     const displayNameRecord = data?.displayNames?.[0];
-    const avatarItems = data?.avatarItems ?? EMPTY_LIST;
+    const avatarItems = (data?.avatarItems ?? EMPTY_LIST) as AvatarItem[];
     const avatarPurchases = data?.avatarPurchases ?? EMPTY_LIST;
 
     const ownedSlugs = useMemo(() => new Set((avatarPurchases as Array<{ itemSlug: string }>).map((purchase) => purchase.itemSlug)), [avatarPurchases]);
@@ -111,7 +120,7 @@ export default function DashboardPage() {
         }
     };
 
-    const handlePurchase = async (item: { slug: string; label: string; price: number }) => {
+    const handlePurchase = async (item: AvatarItem) => {
         if (!user?.id) return;
         if (ownedSlugs.has(item.slug)) {
             setStatusMessage(`${item.label} is already unlocked.`);
@@ -308,7 +317,7 @@ export default function DashboardPage() {
                                     <p className="text-sm text-white/60">No items yet. They’ll appear here automatically.</p>
                                 )}
 
-                                {avatarItems.map((item: { id: string; slug: string; label: string; description: string; price: number }) => {
+                                {avatarItems.map((item) => {
                                     const owned = ownedSlugs.has(item.slug);
                                     const canAfford = totalClicks >= item.price;
                                     return (

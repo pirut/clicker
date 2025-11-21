@@ -47,6 +47,8 @@ const _schema = i.schema({
                 name: i.string(),
                 profileImageUrl: i.string(),
                 status: i.string(),
+                cursorColor: i.string().optional(),
+                hatSlug: i.string().optional(),
             }),
         },
     },
