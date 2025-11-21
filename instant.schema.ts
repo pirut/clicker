@@ -18,6 +18,24 @@ const _schema = i.schema({
         displayNames: i.entity({
             displayName: i.string(),
             userId: i.string().unique(),
+            cursorColor: i.string().optional(),
+            hatSlug: i.string().optional(),
+            updatedAt: i.number().optional().indexed(),
+        }),
+        avatarItems: i.entity({
+            slug: i.string().unique().indexed(),
+            label: i.string(),
+            description: i.string().optional(),
+            type: i.string().indexed(),
+            price: i.number(),
+            metadata: i.json().optional(),
+            isActive: i.boolean().optional(),
+            createdAt: i.number().indexed(),
+        }),
+        avatarPurchases: i.entity({
+            userId: i.string().indexed(),
+            itemSlug: i.string().indexed(),
+            purchasedAt: i.number().indexed(),
         }),
 
     },

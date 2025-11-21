@@ -17,14 +17,14 @@ export function PresenceManager() {
         clicks: userId ? { $: { where: { userId } } } : {},
     });
 
-    // Query for existing displayName to get its ID
+    // Query for existing displayName to get its ID + avatar settings
     const { data: displayNameData } = db.useQuery({
         displayNames: userId ? { $: { where: { userId } } } : {},
     });
 
     // Use the presence hook to get publishPresence method
     const presenceHandle = room.usePresence({
-        keys: ["name", "status", "profileImageUrl", "clicksGiven"],
+        keys: ["name", "status", "profileImageUrl", "clicksGiven", "cursorColor", "hatSlug"],
     });
     const publishPresence = presenceHandle.publishPresence;
 
@@ -40,6 +40,16 @@ export function PresenceManager() {
             clicksGiven: undefined,
         });
     }, [publishPresence]);
+
+    const displayNameRecord = useMemo(() => {
+        if (!displayNameData?.displayNames || !userId) {
+            return null;
+        }
+        return displayNameData.displayNames.find((dn: { userId: string }) => dn.userId === userId) || null;
+    }, [displayNameData?.displayNames, userId]);
+
+    const currentCursorColor = displayNameRecord?.cursorColor;
+    const currentHatSlug = displayNameRecord?.hatSlug;
 
     const displayName = user?.firstName || user?.emailAddresses[0]?.emailAddress || "Anonymous";
     const profileImageUrl = user?.imageUrl || "";
@@ -59,17 +69,19 @@ export function PresenceManager() {
             name: displayName,
             status: "online",
             profileImageUrl,
+            cursorColor: currentCursorColor,
+            hatSlug: currentHatSlug,
         });
         presenceSetRef.current = true;
 
         // Find existing displayName entity or create new one
-        const existingDisplayName = displayNameData?.displayNames?.find((dn: { userId: string }) => dn.userId === userId);
-        const displayNameId = existingDisplayName?.id || id();
+        const displayNameId = displayNameRecord?.id || id();
 
         db.transact(
             db.tx.displayNames[displayNameId].update({
                 displayName,
                 userId,
+                updatedAt: Date.now(),
             })
         );
 
@@ -79,7 +91,7 @@ export function PresenceManager() {
                 presenceSetRef.current = false;
             }
         };
-    }, [isLoaded, userId, displayName, profileImageUrl, user, publishPresence, clearPresence, displayNameData]);
+    }, [isLoaded, userId, displayName, profileImageUrl, user, publishPresence, clearPresence, displayNameRecord, currentCursorColor, currentHatSlug]);
 
     // Update clicks presence separately to avoid resetting entire object
     useEffect(() => {
