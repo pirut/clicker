@@ -19,7 +19,7 @@ export default function LatestClicks() {
     const { data: latestClicksData, isLoading: latestClicksLoading } = db.useQuery({
         clicks: {
             $: {
-                order: { serverCreatedAt: "desc" },
+                order: { createdAt: "desc" },
                 limit: 10,
             },
         },
@@ -32,7 +32,7 @@ export default function LatestClicks() {
             $: {
                 // Use a reasonable limit for counting (InstantDB doesn't have native count)
                 limit: 50000, // Reasonable upper bound for counting
-                order: { serverCreatedAt: "desc" },
+                order: { createdAt: "desc" },
             },
         },
     });
