@@ -12,6 +12,7 @@ export default function GiveClickButton() {
     const { userId } = useAuth();
     const { user } = useUser();
     const [error, setError] = useState<string | null>(null);
+    const CLICK_COOLDOWN_MS = 250;
     const [lastClickTime, setLastClickTime] = useState(0);
 
     // Query for existing displayName to get its ID
@@ -25,10 +26,12 @@ export default function GiveClickButton() {
             return;
         }
 
-        if (Date.now() - lastClickTime < 1000) {
-            setError("You can only click once per second.");
+        const now = Date.now();
+        if (now - lastClickTime < CLICK_COOLDOWN_MS) {
+            setError("Whoa! Give it a beat before the next click.");
             return;
         }
+        setLastClickTime(now);
 
         // Lighter confetti effect for performance
         confetti({
@@ -49,15 +52,14 @@ export default function GiveClickButton() {
         db.transact([
             db.tx.clicks[id()].update({
                 userId,
-                createdAt: Date.now(),
+                createdAt: now,
             }),
             db.tx.displayNames[displayNameId].update({
                 displayName,
                 userId,
             }),
         ]);
-        
-        setLastClickTime(Date.now());
+
         setError(null);
     };
 

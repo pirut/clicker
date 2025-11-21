@@ -212,48 +212,54 @@ export default function DashboardPage() {
     return (
         <div className="min-h-screen flex flex-col">
             <Header />
-            <main className="flex-1 px-4 pt-6 pb-8">
-                <div className="max-w-5xl mx-auto space-y-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-2xl">Dashboard</CardTitle>
-                            <CardDescription>Manage your cursor avatar and unlock new looks.</CardDescription>
+            <main className="flex-1 px-4 py-10 lg:py-14">
+                <div className="max-w-5xl mx-auto space-y-8">
+                    <Card className="border-white/10 bg-black/40 backdrop-blur">
+                        <CardHeader className="pb-0">
+                            <CardTitle className="text-2xl font-semibold">Cursor Lab</CardTitle>
+                            <CardDescription>Track your click economy and keep your avatar fresh.</CardDescription>
                         </CardHeader>
-                        <CardContent className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-                            <div className="flex flex-col gap-2">
-                                <span className="text-sm text-white/60">Clicks available</span>
-                                <div className="text-3xl font-semibold text-white">{availableClicks}</div>
-                                <span className="text-xs text-white/60">of {totalClicks} collected clicks</span>
-                                <div className="flex flex-wrap gap-3 mt-1 text-xs text-white/60">
-                                    <span>Spent: {spentClicks}</span>
-                                    <span>Upgrades owned: {ownedSlugs.size}</span>
-                                </div>
-                            </div>
-                            <AvatarPreview
-                                size={110}
-                                cursorColor={displayNameRecord?.cursorColor}
-                                fallbackSeed={displayNameRecord?.displayName ?? defaultDisplayName}
-                                profileImageUrl={user.imageUrl ?? undefined}
-                                clicksGiven={totalClicks}
-                                hatSlug={displayNameRecord?.hatSlug ?? undefined}
-                                name={displayNameRecord?.displayName ?? defaultDisplayName}
-                                showNameTag
-                            />
-                            <div className="space-y-2 text-sm text-white/80 w-full md:w-auto">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-white/60">Signed in as</span>
-                                    <span className="font-medium">{user.emailAddresses[0]?.emailAddress}</span>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-white/60">Clicks collected</span>
-                                    <span className="font-semibold">{totalClicks}</span>
+                        <CardContent className="pt-6">
+                            <div className="flex flex-col gap-6 md:flex-row md:items-center">
+                                <AvatarPreview
+                                    size={130}
+                                    cursorColor={displayNameRecord?.cursorColor}
+                                    fallbackSeed={displayNameRecord?.displayName ?? defaultDisplayName}
+                                    profileImageUrl={user.imageUrl ?? undefined}
+                                    clicksGiven={totalClicks}
+                                    hatSlug={displayNameRecord?.hatSlug ?? undefined}
+                                    name={displayNameRecord?.displayName ?? defaultDisplayName}
+                                    showNameTag
+                                />
+                                <div className="flex-1 space-y-4">
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                        <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                                            <p className="text-xs uppercase tracking-wide text-white/60">Available</p>
+                                            <p className="text-2xl font-semibold text-white">{availableClicks}</p>
+                                            <p className="text-[11px] text-white/50">of {totalClicks} clicks</p>
+                                        </div>
+                                        <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                                            <p className="text-xs uppercase tracking-wide text-white/60">Spent</p>
+                                            <p className="text-2xl font-semibold text-white">{spentClicks}</p>
+                                            <p className="text-[11px] text-white/50">on avatar tweaks</p>
+                                        </div>
+                                        <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                                            <p className="text-xs uppercase tracking-wide text-white/60">Unlocks</p>
+                                            <p className="text-2xl font-semibold text-white">{ownedSlugs.size}</p>
+                                            <p className="text-[11px] text-white/50">perks owned</p>
+                                        </div>
+                                    </div>
+                                    <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                                        <p className="text-xs uppercase tracking-wide text-white/60 mb-1">Account</p>
+                                        <p className="text-sm text-white">{user.emailAddresses[0]?.emailAddress}</p>
+                                    </div>
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
 
-                    <div className="grid gap-6 lg:grid-cols-2">
-                        <Card>
+                    <div className="grid gap-6 lg:grid-cols-[1.2fr_minmax(0,0.9fr)]">
+                        <Card className="border-white/10 bg-black/30 backdrop-blur">
                             <CardHeader>
                                 <CardTitle>Customize</CardTitle>
                                 <CardDescription>Use unlocked upgrades to personalize your avatar.</CardDescription>
@@ -381,11 +387,15 @@ export default function DashboardPage() {
                                         <p className="text-sm text-white/60">Buy the Fun Hat to add flair to your live cursor.</p>
                                     )}
                                 </section>
-                                {statusMessage && <p className="text-sm text-amber-100/90">{statusMessage}</p>}
+                                {statusMessage && (
+                                    <div className="rounded-xl border border-amber-400/30 bg-amber-300/10 px-4 py-3 text-sm text-amber-100">
+                                        {statusMessage}
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
 
-                        <Card id="avatar-shop">
+                        <Card id="avatar-shop" className="border-white/10 bg-black/30 backdrop-blur">
                             <CardHeader>
                                 <CardTitle>Avatar Shop</CardTitle>
                                 <CardDescription>Spend clicks to unlock new personalization perks.</CardDescription>
