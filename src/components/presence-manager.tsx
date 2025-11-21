@@ -65,12 +65,14 @@ export function PresenceManager() {
             return;
         }
 
+        // Update all presence fields together to avoid React error #185
         publishPresence({
             name: displayName,
             status: "online",
             profileImageUrl,
             cursorColor: currentCursorColor,
             hatSlug: currentHatSlug,
+            clicksGiven,
         });
         presenceSetRef.current = true;
 
@@ -91,15 +93,7 @@ export function PresenceManager() {
                 presenceSetRef.current = false;
             }
         };
-    }, [isLoaded, userId, displayName, profileImageUrl, user, publishPresence, clearPresence, displayNameRecord, currentCursorColor, currentHatSlug]);
-
-    // Update clicks presence separately to avoid resetting entire object
-    useEffect(() => {
-        if (!isLoaded || !userId || !user || !presenceSetRef.current) return;
-        publishPresence({
-            clicksGiven,
-        });
-    }, [clicksGiven, isLoaded, userId, user, publishPresence]);
+    }, [isLoaded, userId, displayName, profileImageUrl, user, publishPresence, clearPresence, displayNameRecord, currentCursorColor, currentHatSlug, clicksGiven]);
 
     return null; // This component doesn't render anything
 }
