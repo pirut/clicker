@@ -40,7 +40,12 @@ const _schema = i.schema({
         }),
 
     },
-    links: {},
+    links: {
+        clickAuthor: {
+            forward: { on: "clicks", has: "one", label: "author" },
+            reverse: { on: "displayNames", has: "many", label: "clicks" },
+        },
+    },
     rooms: {
         chat: {
             presence: i.entity({

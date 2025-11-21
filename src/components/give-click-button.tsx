@@ -50,10 +50,12 @@ export default function GiveClickButton() {
 
         // Create click and update/create displayName in a single transaction
         db.transact([
-            db.tx.clicks[id()].update({
-                userId,
-                createdAt: now,
-            }),
+            db.tx.clicks[id()]
+                .update({
+                    userId,
+                    createdAt: now,
+                })
+                .link({ author: displayNameId }),
             db.tx.displayNames[displayNameId].update({
                 displayName,
                 userId,
