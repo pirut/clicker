@@ -11,6 +11,7 @@ export function PresenceManager() {
     const { userId, isLoaded } = useAuth();
     const { user } = useUser();
     const presenceSetRef = useRef(false);
+    const pendingUpdateRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     // Get user's click count - optimized query
     const { data: clicksData } = db.useQuery({
@@ -65,35 +66,54 @@ export function PresenceManager() {
             return;
         }
 
-        // Update all presence fields together to avoid React error #185
-        publishPresence({
-            name: displayName,
-            status: "online",
-            profileImageUrl,
-            cursorColor: currentCursorColor,
-            hatSlug: currentHatSlug,
-            clicksGiven,
-        });
-        presenceSetRef.current = true;
+        if (pendingUpdateRef.current) {
+            clearTimeout(pendingUpdateRef.current);
+        }
 
-        // Find existing displayName entity or create new one
-        const displayNameId = displayNameRecord?.id || id();
+        pendingUpdateRef.current = setTimeout(() => {
+            publishPresence({
+                name: displayName,
+                status: "online",
+                profileImageUrl,
+                cursorColor: currentCursorColor,
+                hatSlug: currentHatSlug,
+                clicksGiven,
+            });
+            presenceSetRef.current = true;
 
-        db.transact(
-            db.tx.displayNames[displayNameId].update({
-                displayName,
-                userId,
-                updatedAt: Date.now(),
-            })
-        );
+            const displayNameId = displayNameRecord?.id || id();
+            db.transact(
+                db.tx.displayNames[displayNameId].update({
+                    displayName,
+                    userId,
+                    updatedAt: Date.now(),
+                })
+            );
+        }, 0);
 
         return () => {
+            if (pendingUpdateRef.current) {
+                clearTimeout(pendingUpdateRef.current);
+                pendingUpdateRef.current = null;
+            }
             if (presenceSetRef.current) {
                 clearPresence();
                 presenceSetRef.current = false;
             }
         };
-    }, [isLoaded, userId, displayName, profileImageUrl, user, publishPresence, clearPresence, displayNameRecord, currentCursorColor, currentHatSlug, clicksGiven]);
+    }, [
+        isLoaded,
+        userId,
+        displayName,
+        profileImageUrl,
+        user,
+        publishPresence,
+        clearPresence,
+        displayNameRecord,
+        currentCursorColor,
+        currentHatSlug,
+        clicksGiven,
+    ]);
 
     return null; // This component doesn't render anything
 }
