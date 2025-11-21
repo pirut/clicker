@@ -49,9 +49,17 @@ export default function DashboardPage() {
     const totalClicks = clicks.length;
     const displayNameRecord = data?.displayNames?.[0];
     const avatarItems = (data?.avatarItems ?? EMPTY_LIST) as AvatarItem[];
-    const avatarPurchases = data?.avatarPurchases ?? EMPTY_LIST;
+    const avatarPurchases = (data?.avatarPurchases ?? EMPTY_LIST) as Array<{ itemSlug: string; amount?: number }>;
 
-    const ownedSlugs = useMemo(() => new Set((avatarPurchases as Array<{ itemSlug: string }>).map((purchase) => purchase.itemSlug)), [avatarPurchases]);
+    const ownedSlugs = useMemo(
+        () => new Set(avatarPurchases.map((purchase) => purchase.itemSlug)),
+        [avatarPurchases]
+    );
+    const spentClicks = useMemo(
+        () => avatarPurchases.reduce((sum, purchase) => sum + (purchase.amount ?? 0), 0),
+        [avatarPurchases]
+    );
+    const availableClicks = Math.max(totalClicks - spentClicks, 0);
     const hasColorUpgrade = ownedSlugs.has("color-change");
     const hasNameUpgrade = ownedSlugs.has("name-change");
     const hasHatUpgrade = ownedSlugs.has("fun-hat");
@@ -77,19 +85,11 @@ export default function DashboardPage() {
         }
     }, [displayNameRecord?.id]);
 
-    const saveDisplayNameUpdates = async (updates: DisplayNameUpdates, field: "color" | "name" | "hat") => {
-        if (!user?.id) return;
-        setSavingField(field);
-        setStatusMessage(null);
+    const getItemBySlug = (slug: string) => avatarItems.find((item) => item.slug === slug);
 
-        let targetId = displayNameRecord?.id || displayNameIdRef.current;
-        if (!targetId) {
-            targetId = id();
-            displayNameIdRef.current = targetId;
-        }
-
+    const buildPayload = (updates: DisplayNameUpdates) => {
         const payload: Record<string, unknown> = {
-            userId: user.id,
+            userId: user?.id,
             updatedAt: Date.now(),
         };
 
@@ -109,14 +109,55 @@ export default function DashboardPage() {
             payload.hatSlug = updates.hatSlug;
         }
 
+        return payload;
+    };
+
+    const applyCustomization = async (
+        slug: string,
+        updates: DisplayNameUpdates,
+        field: "color" | "name" | "hat",
+        successMessage: string
+    ) => {
+        if (!user?.id) return;
+        const item = getItemBySlug(slug);
+        if (!item) {
+            setStatusMessage("Upgrade not available yet.");
+            return;
+        }
+
+        if (availableClicks < item.price) {
+            setStatusMessage(`You need ${item.price - availableClicks} more clicks to ${successMessage.toLowerCase()}.`);
+            return;
+        }
+
+        let targetId = displayNameRecord?.id || displayNameIdRef.current;
+        if (!targetId) {
+            targetId = id();
+            displayNameIdRef.current = targetId;
+        }
+
+        const payload = buildPayload(updates);
+        setSavingField(field);
+        setPurchaseLoading(slug);
+        setStatusMessage(null);
+
         try {
-            await db.transact(db.tx.displayNames[targetId].update(payload));
-            setStatusMessage("Avatar updated!");
+            await db.transact([
+                db.tx.avatarPurchases[id()].update({
+                    userId: user.id,
+                    itemSlug: slug,
+                    purchasedAt: Date.now(),
+                    amount: item.price,
+                }),
+                db.tx.displayNames[targetId].update(payload),
+            ]);
+            setStatusMessage(successMessage);
         } catch (error) {
             console.error(error);
             setStatusMessage("Unable to update avatar right now.");
         } finally {
             setSavingField(null);
+            setPurchaseLoading(null);
         }
     };
 
@@ -126,8 +167,9 @@ export default function DashboardPage() {
             setStatusMessage(`${item.label} is already unlocked.`);
             return;
         }
-        if (totalClicks < item.price) {
-            setStatusMessage(`You need ${item.price - totalClicks} more clicks to unlock ${item.label}.`);
+
+        if (availableClicks < item.price) {
+            setStatusMessage(`You need ${item.price - availableClicks} more clicks to unlock ${item.label}.`);
             return;
         }
 
@@ -140,6 +182,7 @@ export default function DashboardPage() {
                     userId: user.id,
                     itemSlug: item.slug,
                     purchasedAt: Date.now(),
+                    amount: item.price,
                 })
             );
             setStatusMessage(`Unlocked ${item.label}!`);
@@ -150,6 +193,10 @@ export default function DashboardPage() {
             setPurchaseLoading(null);
         }
     };
+
+    const colorPrice = getItemBySlug("color-change")?.price ?? 25;
+    const namePrice = getItemBySlug("name-change")?.price ?? 15;
+    const hatPrice = getItemBySlug("fun-hat")?.price ?? 40;
 
     const scrollToShop = () => {
         const el = document.getElementById("avatar-shop");
@@ -165,14 +212,23 @@ export default function DashboardPage() {
     return (
         <div className="min-h-screen flex flex-col">
             <Header />
-            <main className="flex-1 px-4 py-10">
-                <div className="max-w-5xl mx-auto space-y-8">
+            <main className="flex-1 px-4 pt-6 pb-8">
+                <div className="max-w-5xl mx-auto space-y-6">
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-2xl">Dashboard</CardTitle>
                             <CardDescription>Manage your cursor avatar and unlock new looks.</CardDescription>
                         </CardHeader>
-                        <CardContent className="flex flex-col md:flex-row items-center gap-8">
+                        <CardContent className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                            <div className="flex flex-col gap-2">
+                                <span className="text-sm text-white/60">Clicks available</span>
+                                <div className="text-3xl font-semibold text-white">{availableClicks}</div>
+                                <span className="text-xs text-white/60">of {totalClicks} collected clicks</span>
+                                <div className="flex flex-wrap gap-3 mt-1 text-xs text-white/60">
+                                    <span>Spent: {spentClicks}</span>
+                                    <span>Upgrades owned: {ownedSlugs.size}</span>
+                                </div>
+                            </div>
                             <AvatarPreview
                                 size={110}
                                 cursorColor={displayNameRecord?.cursorColor}
@@ -184,17 +240,13 @@ export default function DashboardPage() {
                                 showNameTag
                             />
                             <div className="space-y-2 text-sm text-white/80 w-full md:w-auto">
-                                <div className="flex items-center justify-between gap-4">
+                                <div className="flex items-center justify-between">
                                     <span className="text-white/60">Signed in as</span>
                                     <span className="font-medium">{user.emailAddresses[0]?.emailAddress}</span>
                                 </div>
-                                <div className="flex items-center justify-between gap-4">
+                                <div className="flex items-center justify-between">
                                     <span className="text-white/60">Clicks collected</span>
                                     <span className="font-semibold">{totalClicks}</span>
-                                </div>
-                                <div className="flex items-center justify-between gap-4">
-                                    <span className="text-white/60">Upgrades owned</span>
-                                    <span className="font-semibold">{ownedSlugs.size}</span>
                                 </div>
                             </div>
                         </CardContent>
@@ -216,7 +268,7 @@ export default function DashboardPage() {
                                             </Button>
                                         )}
                                     </div>
-                                    {hasColorUpgrade ? (
+                                        {hasColorUpgrade ? (
                                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                                             <input
                                                 type="color"
@@ -225,10 +277,21 @@ export default function DashboardPage() {
                                                 className="h-10 rounded border border-white/20 bg-transparent"
                                             />
                                             <Button
-                                                disabled={savingField === "color"}
-                                                onClick={() => saveDisplayNameUpdates({ cursorColor: pendingColor }, "color")}
+                                                disabled={
+                                                    savingField === "color" || purchaseLoading === "color-change"
+                                                }
+                                                onClick={() =>
+                                                    applyCustomization(
+                                                        "color-change",
+                                                        { cursorColor: pendingColor },
+                                                        "color",
+                                                        "Color updated!"
+                                                    )
+                                                }
                                             >
-                                                {savingField === "color" ? "Saving..." : "Apply color"}
+                                                {savingField === "color"
+                                                    ? "Saving..."
+                                                    : `Apply color (costs ${colorPrice})`}
                                             </Button>
                                         </div>
                                     ) : (
@@ -253,10 +316,21 @@ export default function DashboardPage() {
                                                 maxLength={30}
                                             />
                                             <Button
-                                                disabled={savingField === "name"}
-                                                onClick={() => saveDisplayNameUpdates({ displayName: pendingName.trim() || defaultDisplayName }, "name")}
+                                                disabled={
+                                                    savingField === "name" || purchaseLoading === "name-change"
+                                                }
+                                                onClick={() =>
+                                                    applyCustomization(
+                                                        "name-change",
+                                                        { displayName: pendingName.trim() || defaultDisplayName },
+                                                        "name",
+                                                        "Display name saved!"
+                                                    )
+                                                }
                                             >
-                                                {savingField === "name" ? "Saving..." : "Save name"}
+                                                {savingField === "name"
+                                                    ? "Saving..."
+                                                    : `Save name (costs ${namePrice})`}
                                             </Button>
                                         </div>
                                     ) : (
@@ -276,23 +350,31 @@ export default function DashboardPage() {
                                     {hasHatUpgrade ? (
                                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                                             <div className="text-sm text-white/80">
-                                                {displayNameRecord?.hatSlug === "fun-hat" ? "Your cursor is rocking the fun hat." : "Ready to try on a fancy hat?"}
+                                                {displayNameRecord?.hatSlug === "fun-hat"
+                                                    ? "Your cursor is rocking the fun hat."
+                                                    : "Ready to try on a fancy hat?"}
                                             </div>
                                             <Button
                                                 variant={displayNameRecord?.hatSlug === "fun-hat" ? "secondary" : "default"}
-                                                disabled={savingField === "hat"}
+                                                disabled={
+                                                    savingField === "hat" || purchaseLoading === "fun-hat"
+                                                }
                                                 onClick={() =>
-                                                    saveDisplayNameUpdates(
+                                                    applyCustomization(
+                                                        "fun-hat",
                                                         { hatSlug: displayNameRecord?.hatSlug === "fun-hat" ? null : "fun-hat" },
-                                                        "hat"
+                                                        "hat",
+                                                        displayNameRecord?.hatSlug === "fun-hat"
+                                                            ? "Hat removed!"
+                                                            : "Hat applied!"
                                                     )
                                                 }
                                             >
                                                 {savingField === "hat"
                                                     ? "Updating..."
                                                     : displayNameRecord?.hatSlug === "fun-hat"
-                                                      ? "Remove hat"
-                                                      : "Wear hat"}
+                                                      ? `Remove hat (costs ${hatPrice})`
+                                                      : `Wear hat (costs ${hatPrice})`}
                                             </Button>
                                         </div>
                                     ) : (
@@ -319,7 +401,7 @@ export default function DashboardPage() {
 
                                 {avatarItems.map((item) => {
                                     const owned = ownedSlugs.has(item.slug);
-                                    const canAfford = totalClicks >= item.price;
+                                    const canAfford = availableClicks >= item.price;
                                     return (
                                         <div key={item.id ?? item.slug} className="rounded-lg border border-white/10 p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                                             <div>
@@ -342,7 +424,7 @@ export default function DashboardPage() {
                                                           ? "Processing..."
                                                           : canAfford
                                                             ? "Unlock"
-                                                            : `Need ${item.price - totalClicks}`}
+                                                            : `Need ${item.price - availableClicks}`}
                                                 </Button>
                                             </div>
                                         </div>

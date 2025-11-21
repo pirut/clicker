@@ -36,6 +36,7 @@ const _schema = i.schema({
             userId: i.string().indexed(),
             itemSlug: i.string().indexed(),
             purchasedAt: i.number().indexed(),
+            amount: i.number().indexed(),
         }),
 
     },
