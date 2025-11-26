@@ -2,7 +2,6 @@
 
 import { useAuth, useUser } from "@clerk/nextjs";
 import { db } from "@/lib/instantdb";
-import { id } from "@instantdb/react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
 const room = db.room("chat", "main");
@@ -14,21 +13,19 @@ export function PresenceManager() {
     const pendingUpdateRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     // Get user's click count - optimized query with limit for performance
-    // Note: We use a high limit since we need accurate counts, but InstantDB
-    // will efficiently handle this with the indexed userId field
     const { data: clicksData } = db.useQuery({
         clicks: userId
             ? {
                   $: {
                       where: { userId },
                       order: { createdAt: "desc" },
-                      limit: 100000, // High limit for accurate counting, but indexed for performance
+                      limit: 100000,
                   },
               }
             : {},
     });
 
-    // Query for existing displayName to get its ID + avatar settings
+    // Query for existing displayName to get avatar settings
     const { data: displayNameData } = db.useQuery({
         displayNames: userId ? { $: { where: { userId } } } : {},
     });
@@ -83,6 +80,7 @@ export function PresenceManager() {
             clearTimeout(pendingUpdateRef.current);
         }
 
+        // Debounce presence updates to avoid rapid fire
         pendingUpdateRef.current = setTimeout(() => {
             publishPresence({
                 name: displayName,
@@ -93,19 +91,7 @@ export function PresenceManager() {
                 clicksGiven,
             });
             presenceSetRef.current = true;
-
-            // Only update displayName in DB if we don't have a custom one set
-            if (!customDisplayName) {
-                const displayNameId = displayNameRecord?.id || id();
-                db.transact(
-                    db.tx.displayNames[displayNameId].update({
-                        displayName: fallbackDisplayName,
-                        userId,
-                        updatedAt: Date.now(),
-                    })
-                );
-            }
-        }, 0);
+        }, 50);
 
         return () => {
             if (pendingUpdateRef.current) {
@@ -121,13 +107,10 @@ export function PresenceManager() {
         isLoaded,
         userId,
         displayName,
-        fallbackDisplayName,
-        customDisplayName,
         profileImageUrl,
         user,
         publishPresence,
         clearPresence,
-        displayNameRecord,
         currentCursorColor,
         currentHatSlug,
         clicksGiven,
