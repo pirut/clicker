@@ -103,18 +103,7 @@ export function PresenceManager() {
                 presenceSetRef.current = false;
             }
         };
-    }, [
-        isLoaded,
-        userId,
-        displayName,
-        profileImageUrl,
-        user,
-        publishPresence,
-        clearPresence,
-        currentCursorColor,
-        currentHatSlug,
-        clicksGiven,
-    ]);
+    }, [isLoaded, userId, displayName, profileImageUrl, user, publishPresence, clearPresence, currentCursorColor, currentHatSlug, clicksGiven]);
 
     return null; // This component doesn't render anything
 }

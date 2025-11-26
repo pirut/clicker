@@ -63,29 +63,43 @@ export default function GiveClickButton() {
         // Clear any previous error
         setError(null);
 
-        // Get displayName ID - should exist from PresenceManager
-        const displayName = user?.firstName || user?.emailAddresses[0]?.emailAddress || "Anonymous";
-        const displayNameId = existingDisplayName?.id || id();
-
-        // Create click with link - fires optimistically
         const clickId = id();
-        db.transact([
-            // Ensure displayName exists (upsert)
-            db.tx.displayNames[displayNameId].update({
-                displayName,
-                userId: clerkUserId,
-            }),
-            // Create click and link
-            db.tx.clicks[clickId]
-                .update({
+        
+        // If displayName record exists, just create the click and link it
+        // If not, create the displayName record with fallback name
+        if (existingDisplayName?.id) {
+            // Record exists - just create click and link, preserve existing displayName
+            db.transact(
+                db.tx.clicks[clickId]
+                    .update({
+                        userId: clerkUserId,
+                        createdAt: now,
+                    })
+                    .link({ author: existingDisplayName.id })
+            ).catch((err) => {
+                console.error("Failed to create click:", err);
+                setError("Failed to register click. Please try again.");
+            });
+        } else {
+            // No record yet - create displayName with fallback, then click
+            const fallbackName = user?.firstName || user?.emailAddresses[0]?.emailAddress || "Anonymous";
+            const displayNameId = id();
+            db.transact([
+                db.tx.displayNames[displayNameId].update({
+                    displayName: fallbackName,
                     userId: clerkUserId,
-                    createdAt: now,
-                })
-                .link({ author: displayNameId }),
-        ]).catch((err) => {
-            console.error("Failed to create click:", err);
-            setError("Failed to register click. Please try again.");
-        });
+                }),
+                db.tx.clicks[clickId]
+                    .update({
+                        userId: clerkUserId,
+                        createdAt: now,
+                    })
+                    .link({ author: displayNameId }),
+            ]).catch((err) => {
+                console.error("Failed to create click:", err);
+                setError("Failed to register click. Please try again.");
+            });
+        }
     }, [clerkUserId, authLoading, instantUser, user, existingDisplayName]);
 
     return (
