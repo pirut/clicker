@@ -90,7 +90,7 @@ export async function GET(req: Request) {
                     <div style={{ fontSize: 100, marginBottom: 30 }}>🖱️</div>
                     <div style={{ fontWeight: "bold", marginBottom: 20 }}>{`I've clicked ${amount} times!`}</div>
                     <div style={{ fontSize: 36 }}>Join the competition!</div>
-                    <div style={{ fontSize: 24, marginTop: 40, color: "#888" }}>gimme.jrbussard.com</div>
+                    <div style={{ fontSize: 24, marginTop: 40, color: "#888" }}>clicker.jrbussard.com</div>
                 </div>
             ),
             { width: 1200, height: 630 }
@@ -297,7 +297,7 @@ export async function GET(req: Request) {
                         fontSize: 22,
                     }}
                 >
-                    gimme.jrbussard.com
+                    clicker.jrbussard.com
                 </div>
             </div>
         ),

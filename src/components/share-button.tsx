@@ -47,7 +47,9 @@ export function ShareButton({ url: propUrl, text: propText, tooltip = "Invite fr
     }, []);
 
     // Build share URL with user ID for personalized OG
-    const shareUrl = propUrl || (user?.id ? `https://gimme.jrbussard.com/share/${user.id}` : "https://gimme.jrbussard.com");
+    // Remove "user_" prefix from Clerk user ID for cleaner URLs
+    const userIdForUrl = user?.id?.replace(/^user_/, "") || "";
+    const shareUrl = propUrl || (userIdForUrl ? `https://clicker.jrbussard.com/share/${userIdForUrl}` : "https://clicker.jrbussard.com");
     
     const shareText = propText || `I've clicked ${userClicks} times on Clicker! Can you beat my score? 🎯`;
 
@@ -71,13 +73,14 @@ export function ShareButton({ url: propUrl, text: propText, tooltip = "Invite fr
 
     const handleCopyLink = useCallback(async () => {
         try {
-            await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+            // Copy just the URL, not the text
+            await navigator.clipboard.writeText(shareUrl);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         } catch (err) {
             console.error("Failed to copy:", err);
         }
-    }, [shareText, shareUrl]);
+    }, [shareUrl]);
 
     const handleButtonClick = () => {
         if (isShareSupported) {
@@ -172,7 +175,7 @@ export function ShareButton({ url: propUrl, text: propText, tooltip = "Invite fr
                             {/* CTA */}
                             <div className="text-center mt-2">
                                 <p className="text-sm text-white/80">Join me on Clicker!</p>
-                                <p className="text-xs text-white/50 mt-1">gimme.jrbussard.com</p>
+                                <p className="text-xs text-white/50 mt-1">clicker.jrbussard.com</p>
                             </div>
                         </div>
                     </motion.div>

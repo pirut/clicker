@@ -9,7 +9,10 @@ type Props = {
 
 // Generate dynamic metadata for social sharing
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const { userId } = await params;
+    const { userId: userIdParam } = await params;
+
+    // Handle both formats: with or without "user_" prefix
+    const userId = userIdParam.startsWith("user_") ? userIdParam : `user_${userIdParam}`;
 
     // Fetch user data from InstantDB
     const { displayNames, clicks } = await adminDb.query({
@@ -24,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const cursorColor = userProfile?.cursorColor || "";
     const profileImageUrl = userProfile?.profileImageUrl || "";
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gimme.jrbussard.com";
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://clicker.jrbussard.com";
     
     // Build OG image URL with user data
     const ogParams = new URLSearchParams({
@@ -69,7 +72,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function SharePage({ params }: Props) {
     // Redirect to home page - the share page is just for OG previews
-    const { userId } = await params;
+    const { userId: userIdParam } = await params;
+    // Handle both formats: with or without "user_" prefix
+    const userId = userIdParam.startsWith("user_") ? userIdParam : `user_${userIdParam}`;
     redirect(`/?ref=${userId}`);
 }
 
