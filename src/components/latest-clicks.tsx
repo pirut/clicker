@@ -29,10 +29,12 @@ function ClickAvatar({
     cursorColor,
     displayName,
     hatSlug,
+    profileImageUrl,
 }: {
     cursorColor?: string;
     displayName: string;
     hatSlug?: string;
+    profileImageUrl?: string;
 }) {
     const color = cursorColor || getStableHslColor(displayName);
     const hatEmoji = hatSlug ? hatSymbols[hatSlug] || "🧢" : null;
@@ -42,7 +44,7 @@ function ClickAvatar({
         <div className="relative">
             {hatEmoji && (
                 <span
-                    className="absolute -top-2 -left-1 text-sm z-10"
+                    className="absolute -top-2.5 -left-1 text-base z-10"
                     style={{
                         transform: "rotate(-12deg)",
                         filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.3))",
@@ -52,20 +54,28 @@ function ClickAvatar({
                 </span>
             )}
             <div
-                className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm ring-2 ring-white/20 shadow-lg"
+                className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm overflow-hidden"
                 style={{
-                    background: `linear-gradient(135deg, ${color}, ${color}dd)`,
-                    boxShadow: `0 4px 14px ${color}40, 0 0 0 1px ${color}20`,
+                    background: profileImageUrl ? undefined : `linear-gradient(135deg, ${color}, ${color}dd)`,
+                    boxShadow: `0 4px 14px ${color}40, 0 0 0 2px ${color}50`,
                 }}
             >
-                <span className="text-white drop-shadow-md">{initial}</span>
+                {profileImageUrl ? (
+                    <img
+                        src={profileImageUrl}
+                        alt={displayName}
+                        className="w-full h-full object-cover"
+                    />
+                ) : (
+                    <span className="text-white drop-shadow-md">{initial}</span>
+                )}
             </div>
             {/* Glow ring */}
             <div
-                className="absolute inset-0 rounded-full animate-pulse"
+                className="absolute inset-0 rounded-full"
                 style={{
-                    background: `radial-gradient(circle, ${color}30 0%, transparent 70%)`,
-                    transform: "scale(1.3)",
+                    background: `radial-gradient(circle, ${color}25 0%, transparent 70%)`,
+                    transform: "scale(1.4)",
                     zIndex: -1,
                 }}
             />
@@ -84,6 +94,17 @@ export default function LatestClicks() {
         },
     });
 
+    // Query for total clicks count
+    const { data: totalClicksData } = db.useQuery({
+        clicks: {
+            $: {
+                limit: 50000,
+            },
+        },
+    });
+
+    const totalClicks = totalClicksData?.clicks?.length || 0;
+
     if (!latestClicksData && latestClicksLoading) {
         return (
             <div className="w-full max-w-md mx-auto">
@@ -94,7 +115,7 @@ export default function LatestClicks() {
                     <div className="p-4 space-y-3">
                         {[...Array(5)].map((_, i) => (
                             <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/5 animate-pulse">
-                                <div className="w-9 h-9 rounded-full bg-white/10" />
+                                <div className="w-10 h-10 rounded-full bg-white/10" />
                                 <div className="flex-1 space-y-2">
                                     <div className="h-4 w-24 bg-white/10 rounded" />
                                     <div className="h-3 w-16 bg-white/5 rounded" />
@@ -112,21 +133,28 @@ export default function LatestClicks() {
     return (
         <div className="w-full max-w-md mx-auto">
             <div className="glass rounded-2xl overflow-hidden border border-white/5">
-                {/* Header */}
-                <div className="px-6 py-5 border-b border-white/5 bg-gradient-to-r from-white/5 to-transparent">
+                {/* Header with Total Clicks */}
+                <div className="px-5 py-4 border-b border-white/5 bg-gradient-to-r from-primary/10 via-accent/5 to-transparent">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="relative">
                                 <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
                                 <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-emerald-400/50 animate-ping" />
                             </div>
-                            <h2 className="text-lg font-semibold tracking-tight text-foreground/90">
+                            <h2 className="text-base font-semibold tracking-tight text-foreground/90">
                                 Live Activity
                             </h2>
                         </div>
-                        <span className="text-xs font-mono text-muted-foreground/60 bg-white/5 px-2.5 py-1 rounded-full">
-                            {clicks.length} recent
-                        </span>
+                        {/* Total Clicks Counter - Prominent */}
+                        <div className="flex items-center gap-2 bg-gradient-to-r from-primary/20 to-accent/20 px-4 py-2 rounded-xl border border-primary/20">
+                            <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" />
+                            </svg>
+                            <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+                                {totalClicks.toLocaleString()}
+                            </span>
+                            <span className="text-xs text-muted-foreground/70 font-medium">total</span>
+                        </div>
                     </div>
                 </div>
 
@@ -146,11 +174,12 @@ export default function LatestClicks() {
                                 <p className="text-sm text-muted-foreground/60 mt-1">Be the first to click!</p>
                             </motion.div>
                         ) : (
-                            <div className="space-y-1">
+                            <div className="space-y-0.5">
                                 {clicks.map((click, index) => {
                                     const displayName = click.author?.displayName || "Clicker";
                                     const cursorColor = click.author?.cursorColor;
                                     const hatSlug = click.author?.hatSlug;
+                                    const profileImageUrl = click.author?.profileImageUrl;
                                     const color = cursorColor || getStableHslColor(displayName);
 
                                     return (
@@ -168,16 +197,17 @@ export default function LatestClicks() {
                                             className="group relative"
                                         >
                                             <div
-                                                className="flex items-center gap-3 p-3 rounded-xl transition-all duration-200 hover:bg-white/5 cursor-default"
+                                                className="flex items-center gap-3 p-2.5 rounded-xl transition-all duration-200 hover:bg-white/5 cursor-default"
                                                 style={{
-                                                    background: index === 0 ? `linear-gradient(90deg, ${color}08 0%, transparent 100%)` : undefined,
+                                                    background: index === 0 ? `linear-gradient(90deg, ${color}10 0%, transparent 100%)` : undefined,
                                                 }}
                                             >
-                                                {/* Avatar */}
+                                                {/* Avatar with Profile Picture */}
                                                 <ClickAvatar
                                                     cursorColor={cursorColor}
                                                     displayName={displayName}
                                                     hatSlug={hatSlug}
+                                                    profileImageUrl={profileImageUrl}
                                                 />
 
                                                 {/* Content */}
@@ -204,11 +234,11 @@ export default function LatestClicks() {
 
                                                 {/* Click indicator */}
                                                 <div
-                                                    className="w-8 h-8 rounded-lg flex items-center justify-center opacity-40 group-hover:opacity-70 transition-opacity"
+                                                    className="w-7 h-7 rounded-lg flex items-center justify-center opacity-30 group-hover:opacity-60 transition-opacity"
                                                     style={{ background: `${color}15` }}
                                                 >
                                                     <svg
-                                                        className="w-4 h-4"
+                                                        className="w-3.5 h-3.5"
                                                         fill="none"
                                                         stroke={color}
                                                         viewBox="0 0 24 24"

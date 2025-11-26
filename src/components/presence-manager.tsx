@@ -2,6 +2,7 @@
 
 import { useAuth, useUser } from "@clerk/nextjs";
 import { db } from "@/lib/instantdb";
+import { id } from "@instantdb/react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
 const room = db.room("chat", "main");
@@ -11,6 +12,7 @@ export function PresenceManager() {
     const { user } = useUser();
     const presenceSetRef = useRef(false);
     const pendingUpdateRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const lastSavedProfileImageRef = useRef<string | null>(null);
 
     // Get user's click count - optimized query with limit for performance
     const { data: clicksData } = db.useQuery({
@@ -64,6 +66,39 @@ export function PresenceManager() {
     const fallbackDisplayName = user?.firstName || user?.emailAddresses[0]?.emailAddress || "Anonymous";
     const displayName = customDisplayName || fallbackDisplayName;
     const profileImageUrl = user?.imageUrl || "";
+
+    // Save profile image URL to displayNames when it changes
+    useEffect(() => {
+        if (!userId || !profileImageUrl || !displayNameRecord?.id) return;
+        
+        // Only update if profile image has changed
+        if (lastSavedProfileImageRef.current === profileImageUrl) return;
+        if (displayNameRecord.profileImageUrl === profileImageUrl) {
+            lastSavedProfileImageRef.current = profileImageUrl;
+            return;
+        }
+
+        lastSavedProfileImageRef.current = profileImageUrl;
+        db.transact(
+            db.tx.displayNames[displayNameRecord.id].update({
+                profileImageUrl,
+            })
+        ).catch(console.error);
+    }, [userId, profileImageUrl, displayNameRecord?.id, displayNameRecord?.profileImageUrl]);
+
+    // Create displayName record if it doesn't exist (for profile image storage)
+    useEffect(() => {
+        if (!userId || !user || displayNameRecord) return;
+        
+        const displayNameId = id();
+        db.transact(
+            db.tx.displayNames[displayNameId].update({
+                displayName: fallbackDisplayName,
+                userId,
+                profileImageUrl,
+            })
+        ).catch(console.error);
+    }, [userId, user, displayNameRecord, fallbackDisplayName, profileImageUrl]);
 
     useEffect(() => {
         if (!publishPresence) return;

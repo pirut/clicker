@@ -20,6 +20,7 @@ const _schema = i.schema({
             userId: i.string().unique(),
             cursorColor: i.string().optional(),
             hatSlug: i.string().optional(),
+            profileImageUrl: i.string().optional(),
             updatedAt: i.number().optional().indexed(),
         }),
         avatarItems: i.entity({
