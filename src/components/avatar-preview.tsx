@@ -20,17 +20,34 @@ type AvatarPreviewProps = {
 };
 
 const hatSymbols: Record<string, { symbol: string; rotation: string }> = {
+    // Hats
     "fun-hat": { symbol: "🎩", rotation: "-12deg" },
     "party-hat": { symbol: "🥳", rotation: "-8deg" },
     "crown": { symbol: "👑", rotation: "-5deg" },
     "wizard": { symbol: "🧙", rotation: "-10deg" },
     "cap": { symbol: "🧢", rotation: "-6deg" },
+    "cowboy": { symbol: "🤠", rotation: "-7deg" },
+    "beanie": { symbol: "🧶", rotation: "-4deg" },
+    "helmet": { symbol: "⛑️", rotation: "-3deg" },
+    "beret": { symbol: "🎨", rotation: "-9deg" },
+    "santa": { symbol: "🎅", rotation: "-6deg" },
+    "top-hat": { symbol: "🎩", rotation: "-11deg" },
+    // Accessories
+    "sunglasses": { symbol: "🕶️", rotation: "0deg" },
+    "mask": { symbol: "😷", rotation: "0deg" },
+    "halo": { symbol: "😇", rotation: "0deg" },
+    "wings": { symbol: "👼", rotation: "0deg" },
+    "devil": { symbol: "😈", rotation: "0deg" },
+    "robot": { symbol: "🤖", rotation: "0deg" },
+    "alien": { symbol: "👽", rotation: "0deg" },
 };
 
 const HatAccessory = memo(function HatAccessory({ hatSlug, size }: { hatSlug?: string; size: number }) {
     if (!hatSlug) return null;
     const config = hatSymbols[hatSlug] || { symbol: "🧢", rotation: "-6deg" };
-    const topOffset = Math.max(-size * 0.4, -40);
+    // Adjust positioning for different accessory types
+    const isFaceAccessory = hatSlug === "sunglasses" || hatSlug === "mask";
+    const topOffset = isFaceAccessory ? size * 0.1 : Math.max(-size * 0.4, -40);
     const leftOffset = size * 0.08;
 
     return (

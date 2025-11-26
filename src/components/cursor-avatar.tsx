@@ -14,11 +14,26 @@ type CursorAvatarProps = {
 };
 
 const hatSymbols: Record<string, string> = {
+    // Hats
     "fun-hat": "🎩",
     "party-hat": "🥳",
     "crown": "👑",
     "wizard": "🧙",
     "cap": "🧢",
+    "cowboy": "🤠",
+    "beanie": "🧶",
+    "helmet": "⛑️",
+    "beret": "🎨",
+    "santa": "🎅",
+    "top-hat": "🎩",
+    // Accessories
+    "sunglasses": "🕶️",
+    "mask": "😷",
+    "halo": "😇",
+    "wings": "👼",
+    "devil": "😈",
+    "robot": "🤖",
+    "alien": "👽",
 };
 
 // Lightweight cursor component optimized for real-time rendering
@@ -73,7 +88,7 @@ export const CursorAvatar = memo(
                         height: 48,
                     }}
                 >
-                    {/* Hat accessory */}
+                    {/* Hat/accessory */}
                     {hatEmoji && (
                         <span
                             style={{
@@ -81,7 +96,7 @@ export const CursorAvatar = memo(
                                 top: -18,
                                 left: 4,
                                 fontSize: 22,
-                                transform: "rotate(-12deg)",
+                                transform: hatSlug === "sunglasses" || hatSlug === "mask" ? "rotate(0deg)" : "rotate(-12deg)",
                                 filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.3))",
                                 zIndex: 10,
                             }}

@@ -11,7 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { UpgradeFilters, type FilterState } from "@/components/upgrade-filters";
 import { useEnsureDefaultAvatarItems } from "@/lib/avatar-items";
+import { cn } from "@/lib/utils";
 
 type DisplayNameUpdates = {
     displayName?: string;
@@ -25,15 +28,37 @@ type AvatarItem = {
     label: string;
     description: string;
     price: number;
+    category?: string;
+    rarity?: string;
+    sortOrder?: number;
 };
 
 const EMPTY_LIST: unknown[] = [];
+
+const RARITY_COLORS: Record<string, { bg: string; border: string; text: string }> = {
+    common: { bg: "bg-gray-500/20", border: "border-gray-500/30", text: "text-gray-300" },
+    rare: { bg: "bg-blue-500/20", border: "border-blue-500/30", text: "text-blue-300" },
+    epic: { bg: "bg-purple-500/20", border: "border-purple-500/30", text: "text-purple-300" },
+    legendary: { bg: "bg-yellow-500/20", border: "border-yellow-500/30", text: "text-yellow-300" },
+};
+
+const CATEGORIES = ["all", "hats", "effects", "accessories", "colors", "names"] as const;
 
 export default function DashboardPage() {
     const { user, isLoaded, isSignedIn } = useUser();
     const [statusMessage, setStatusMessage] = useState<string | null>(null);
     const [savingField, setSavingField] = useState<null | "color" | "name" | "hat">(null);
     const [purchaseLoading, setPurchaseLoading] = useState<string | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState<string>("all");
+    const [filters, setFilters] = useState<FilterState>({
+        search: "",
+        categories: [],
+        rarities: [],
+        priceRange: [0, 1000],
+        showOwned: null,
+        sortBy: "price",
+        sortOrder: "asc",
+    });
 
     const { data, isLoading } = db.useQuery({
         clicks: user?.id ? { $: { where: { userId: user.id } } } : {},
@@ -57,6 +82,78 @@ export default function DashboardPage() {
     const hasColorUpgrade = ownedSlugs.has("color-change");
     const hasNameUpgrade = ownedSlugs.has("name-change");
     const hasHatUpgrade = ownedSlugs.has("fun-hat");
+
+    // Filter and sort items
+    const filteredItems = useMemo(() => {
+        let items = [...avatarItems];
+
+        // Category filter (from tabs)
+        if (selectedCategory !== "all") {
+            items = items.filter((item) => item.category === selectedCategory);
+        }
+
+        // Search filter
+        if (filters.search) {
+            const searchLower = filters.search.toLowerCase();
+            items = items.filter(
+                (item) =>
+                    item.label.toLowerCase().includes(searchLower) ||
+                    item.description?.toLowerCase().includes(searchLower)
+            );
+        }
+
+        // Category filter (from filter panel)
+        if (filters.categories.length > 0) {
+            items = items.filter((item) => item.category && filters.categories.includes(item.category));
+        }
+
+        // Rarity filter
+        if (filters.rarities.length > 0) {
+            items = items.filter((item) => item.rarity && filters.rarities.includes(item.rarity));
+        }
+
+        // Price range filter
+        items = items.filter(
+            (item) => item.price >= filters.priceRange[0] && item.price <= filters.priceRange[1]
+        );
+
+        // Owned filter
+        if (filters.showOwned === true) {
+            items = items.filter((item) => ownedSlugs.has(item.slug));
+        } else if (filters.showOwned === false) {
+            items = items.filter((item) => !ownedSlugs.has(item.slug));
+        }
+
+        // Sort
+        items.sort((a, b) => {
+            let comparison = 0;
+            switch (filters.sortBy) {
+                case "price":
+                    comparison = a.price - b.price;
+                    break;
+                case "name":
+                    comparison = a.label.localeCompare(b.label);
+                    break;
+                case "rarity":
+                    const rarityOrder = { common: 1, rare: 2, epic: 3, legendary: 4 };
+                    comparison =
+                        (rarityOrder[a.rarity as keyof typeof rarityOrder] ?? 0) -
+                        (rarityOrder[b.rarity as keyof typeof rarityOrder] ?? 0);
+                    break;
+                case "date":
+                    comparison = (a.sortOrder ?? 0) - (b.sortOrder ?? 0);
+                    break;
+            }
+            return filters.sortOrder === "asc" ? comparison : -comparison;
+        });
+
+        return items;
+    }, [avatarItems, selectedCategory, filters, ownedSlugs]);
+
+    const maxPrice = useMemo(
+        () => Math.max(...avatarItems.map((item) => item.price), 500),
+        [avatarItems]
+    );
 
     const [pendingColor, setPendingColor] = useState<string>(displayNameRecord?.cursorColor?.startsWith("#") ? displayNameRecord.cursorColor : "#ff6b6b");
     const [pendingName, setPendingName] = useState<string>(displayNameRecord?.displayName ?? defaultDisplayName);
@@ -166,15 +263,37 @@ export default function DashboardPage() {
         setStatusMessage(null);
 
         try {
-            await db.transact(
+            let targetId = displayNameRecord?.id || displayNameIdRef.current;
+            if (!targetId) {
+                targetId = id();
+                displayNameIdRef.current = targetId;
+            }
+
+            // For hat/accessory items, apply them immediately after purchase
+            const updates: DisplayNameUpdates = {};
+            if ((item.type === "hat" || item.type === "accessory") && item.slug) {
+                // Check if item has hatSlug in metadata or use slug directly
+                const hatSlug = (item as any).metadata?.hatSlug || item.slug;
+                updates.hatSlug = hatSlug;
+            }
+
+            const payload = buildPayload(updates);
+            const transactions = [
                 db.tx.avatarPurchases[id()].update({
                     userId: user.id,
                     itemSlug: item.slug,
                     purchasedAt: Date.now(),
                     amount: item.price,
-                })
-            );
-            setStatusMessage(`Unlocked ${item.label}!`);
+                }),
+            ];
+
+            // Only update displayName if we have hat/accessory to apply
+            if (Object.keys(updates).length > 0) {
+                transactions.push(db.tx.displayNames[targetId].update(payload));
+            }
+
+            await db.transact(transactions);
+            setStatusMessage(`Unlocked ${item.label}!${updates.hatSlug ? " Applied to your avatar." : ""}`);
         } catch (error) {
             console.error(error);
             setStatusMessage("Unable to complete purchase. Please try again.");
@@ -367,46 +486,111 @@ export default function DashboardPage() {
                                 <CardDescription>Spend clicks to unlock new personalization perks.</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                {isLoading && avatarItems.length === 0 && <p className="text-sm text-white/60">Loading shop items...</p>}
+                                <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
+                                    <TabsList className="grid w-full grid-cols-6">
+                                        {CATEGORIES.map((cat) => (
+                                            <TabsTrigger key={cat} value={cat} className="capitalize">
+                                                {cat === "all" ? "All" : cat}
+                                            </TabsTrigger>
+                                        ))}
+                                    </TabsList>
+                                </Tabs>
 
-                                {avatarItems.length === 0 && !isLoading && (
-                                    <p className="text-sm text-white/60">No items yet. They’ll appear here automatically.</p>
+                                <UpgradeFilters filters={filters} onFiltersChange={setFilters} maxPrice={maxPrice} />
+
+                                {isLoading && avatarItems.length === 0 && (
+                                    <p className="text-sm text-white/60">Loading shop items...</p>
                                 )}
 
-                                {avatarItems.map((item) => {
-                                    const owned = ownedSlugs.has(item.slug);
-                                    const canAfford = availableClicks >= item.price;
-                                    return (
-                                        <div
-                                            key={item.id ?? item.slug}
-                                            className="rounded-lg border border-white/10 p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
-                                        >
-                                            <div>
-                                                <div className="flex items-center gap-2">
-                                                    <h4 className="text-white font-semibold">{item.label}</h4>
-                                                    {owned && <Badge variant="secondary">Owned</Badge>}
-                                                </div>
-                                                <p className="text-sm text-white/70 mt-1">{item.description}</p>
-                                                <p className="text-xs text-white/50 mt-2">Requires {item.price} clicks</p>
-                                            </div>
-                                            <div className="flex items-center gap-3">
-                                                <Button
-                                                    variant={owned ? "outline" : "default"}
-                                                    disabled={owned || (!canAfford && !owned) || purchaseLoading === item.slug}
-                                                    onClick={() => handlePurchase(item)}
+                                {filteredItems.length === 0 && !isLoading && (
+                                    <div className="text-center py-12">
+                                        <p className="text-sm text-white/60 mb-2">No items found.</p>
+                                        <p className="text-xs text-white/40">Try adjusting your filters.</p>
+                                    </div>
+                                )}
+
+                                {filteredItems.length > 0 && (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        {filteredItems.map((item) => {
+                                            const owned = ownedSlugs.has(item.slug);
+                                            const canAfford = availableClicks >= item.price;
+                                            const rarity = item.rarity || "common";
+                                            const rarityStyle = RARITY_COLORS[rarity] || RARITY_COLORS.common;
+
+                                            return (
+                                                <div
+                                                    key={item.id ?? item.slug}
+                                                    className={cn(
+                                                        "rounded-lg border p-4 flex flex-col gap-3 transition-all hover:scale-[1.02]",
+                                                        owned
+                                                            ? "border-green-500/30 bg-green-500/5"
+                                                            : canAfford
+                                                            ? cn("border-white/20 bg-white/5", rarityStyle.border)
+                                                            : "border-white/10 bg-white/5 opacity-60"
+                                                    )}
                                                 >
-                                                    {owned
-                                                        ? "Unlocked"
-                                                        : purchaseLoading === item.slug
-                                                        ? "Processing..."
-                                                        : canAfford
-                                                        ? "Unlock"
-                                                        : `Need ${item.price - availableClicks}`}
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
+                                                    <div className="flex items-start justify-between gap-2">
+                                                        <div className="flex-1">
+                                                            <div className="flex items-center gap-2 flex-wrap mb-1">
+                                                                <h4 className="text-white font-semibold">{item.label}</h4>
+                                                                {item.rarity && (
+                                                                    <Badge
+                                                                        className={cn(
+                                                                            "text-xs capitalize",
+                                                                            rarityStyle.bg,
+                                                                            rarityStyle.border,
+                                                                            rarityStyle.text
+                                                                        )}
+                                                                    >
+                                                                        {item.rarity}
+                                                                    </Badge>
+                                                                )}
+                                                                {item.category && (
+                                                                    <Badge variant="outline" className="text-xs capitalize">
+                                                                        {item.category}
+                                                                    </Badge>
+                                                                )}
+                                                            </div>
+                                                            <p className="text-sm text-white/70">{item.description}</p>
+                                                        </div>
+                                                        {owned && (
+                                                            <Badge variant="secondary" className="shrink-0">
+                                                                Owned
+                                                            </Badge>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="flex items-center justify-between mt-auto pt-2 border-t border-white/10">
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-lg font-bold text-white">{item.price}</span>
+                                                            <span className="text-xs text-white/50">clicks</span>
+                                                        </div>
+                                                        <Button
+                                                            variant={owned ? "outline" : "default"}
+                                                            size="sm"
+                                                            disabled={owned || (!canAfford && !owned) || purchaseLoading === item.slug}
+                                                            onClick={() => handlePurchase(item)}
+                                                        >
+                                                            {owned
+                                                                ? "Unlocked"
+                                                                : purchaseLoading === item.slug
+                                                                ? "Processing..."
+                                                                : canAfford
+                                                                ? "Unlock"
+                                                                : `Need ${item.price - availableClicks}`}
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+
+                                {filteredItems.length > 0 && (
+                                    <p className="text-xs text-white/40 text-center">
+                                        Showing {filteredItems.length} of {avatarItems.length} items
+                                    </p>
+                                )}
                             </CardContent>
                         </Card>
                     </div>
