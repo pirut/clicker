@@ -49,21 +49,28 @@ export default function GiveClickButton() {
         const displayNameId = existingDisplayName?.id || id();
 
         // Create click and update/create displayName in a single transaction
+        // Order matters: create/update displayName first, then create click and link
         const clickId = id();
-        db.transact([
-            db.tx.clicks[clickId]
-                .update({
+        try {
+            await db.transact([
+                // First, ensure the displayName exists
+                db.tx.displayNames[displayNameId].update({
+                    displayName,
                     userId,
-                    createdAt: now,
-                })
-                .link({ author: displayNameId }),
-            db.tx.displayNames[displayNameId].update({
-                displayName,
-                userId,
-            }),
-        ]);
-
-        setError(null);
+                }),
+                // Then create the click and link it to the author
+                db.tx.clicks[clickId]
+                    .update({
+                        userId,
+                        createdAt: now,
+                    })
+                    .link({ author: displayNameId }),
+            ]);
+            setError(null);
+        } catch (err) {
+            console.error("Failed to create click:", err);
+            setError("Failed to register click. Please try again.");
+        }
     };
 
     return (

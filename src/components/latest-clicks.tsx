@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 
 export default function LatestClicks() {
     // Fetch latest 10 clicks with their authors using the new relation
+    // This query automatically updates in real-time when new clicks are added
     const { data: latestClicksData, isLoading: latestClicksLoading } = db.useQuery({
         clicks: {
             $: {
@@ -16,15 +17,9 @@ export default function LatestClicks() {
         },
     });
 
-    // We'll assume the total count is something we can get cheaply later or just hide it if it's slow.
-    // For now, removing the heavy query to fix the delay.
-    // If we really need a count, we should maintain a separate counter entity or use a dedicated count query if available.
-    // const totalClicks = 0; // Placeholder or remove the counter from UI if preferred.
-    // Actually, let's keep the component structure but maybe just not show the total if it's expensive,
-    // or query a much smaller limit just to see "some" activity if we want.
-    // But the user complained about the *list* delay. The heavy query was likely blocking the whole component update.
-
     if (!latestClicksData && latestClicksLoading) return <div className="w-full max-w-md mx-auto h-[400px] glass rounded-xl animate-pulse" />;
+
+    const clicks = latestClicksData?.clicks || [];
 
     return (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="w-full max-w-md mx-auto">
@@ -35,22 +30,30 @@ export default function LatestClicks() {
                 <CardContent className="p-0">
                     <Table>
                         <TableBody>
-                            {latestClicksData?.clicks?.map((click, index) => (
-                                <motion.tr
-                                    key={click.id}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: index * 0.05 }}
-                                    className="border-b border-white/5 hover:bg-white/5 transition-colors group"
-                                >
-                                    <TableCell className="font-medium py-3 pl-6 text-foreground/80 group-hover:text-primary transition-colors">
-                                        {click.author?.displayName || "Anonymous"}
+                            {clicks.length === 0 ? (
+                                <tr>
+                                    <TableCell colSpan={2} className="text-center py-8 text-muted-foreground">
+                                        No clicks yet. Be the first!
                                     </TableCell>
-                                    <TableCell className="text-right py-3 pr-6 text-muted-foreground text-xs font-mono">
-                                        {new Date(click.createdAt).toLocaleTimeString()}
-                                    </TableCell>
-                                </motion.tr>
-                            ))}
+                                </tr>
+                            ) : (
+                                clicks.map((click, index) => (
+                                    <motion.tr
+                                        key={click.id}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: Math.min(index * 0.05, 0.5) }}
+                                        className="border-b border-white/5 hover:bg-white/5 transition-colors group"
+                                    >
+                                        <TableCell className="font-medium py-3 pl-6 text-foreground/80 group-hover:text-primary transition-colors">
+                                            {click.author?.displayName || "Anonymous"}
+                                        </TableCell>
+                                        <TableCell className="text-right py-3 pr-6 text-muted-foreground text-xs font-mono">
+                                            {new Date(click.createdAt).toLocaleTimeString()}
+                                        </TableCell>
+                                    </motion.tr>
+                                ))
+                            )}
                         </TableBody>
                     </Table>
                 </CardContent>
