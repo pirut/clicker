@@ -11,7 +11,7 @@ import LatestClicks from "@/components/latest-clicks";
 import { Background } from "@/components/background";
 import { PresenceManager } from "@/components/presence-manager";
 import { motion } from "framer-motion";
-import { AvatarPreview } from "@/components/avatar-preview";
+import { CursorAvatar } from "@/components/cursor-avatar";
 
 // Create room outside component to prevent recreation on each render
 const room = db.room("chat", "main");
@@ -28,23 +28,15 @@ type Presence = {
 export default function HomePage() {
     // Memoize renderCursor to prevent flickering from function recreation
     const renderCursor = useCallback(({ presence, color }: { presence: Presence; color: string }) => {
-        const fallbackSeed = presence?.profileImageUrl || presence?.name || "clicker";
-        const clicksGiven = presence?.clicksGiven || 0;
-        // Calculate opacity based on clicks given (0.4 to 1.0 range for better visibility)
-        const opacity = Math.min(0.4 + clicksGiven * 0.08, 1.0);
-
         return (
-            <AvatarPreview
+            <CursorAvatar
                 cursorColor={presence?.cursorColor}
-                fallbackSeed={fallbackSeed}
+                fallbackSeed={presence?.profileImageUrl || presence?.name || "clicker"}
                 fallbackColor={color}
                 profileImageUrl={presence?.profileImageUrl}
                 clicksGiven={presence?.clicksGiven}
                 hatSlug={presence?.hatSlug}
                 name={presence?.name}
-                showNameTag
-                className="pointer-events-none"
-                style={{ opacity }}
             />
         );
     }, []);

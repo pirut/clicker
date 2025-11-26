@@ -61,8 +61,11 @@ export function PresenceManager() {
 
     const currentCursorColor = displayNameRecord?.cursorColor;
     const currentHatSlug = displayNameRecord?.hatSlug;
+    // Use custom display name from database if set, otherwise fall back to Clerk user info
+    const customDisplayName = displayNameRecord?.displayName;
 
-    const displayName = user?.firstName || user?.emailAddresses[0]?.emailAddress || "Anonymous";
+    const fallbackDisplayName = user?.firstName || user?.emailAddresses[0]?.emailAddress || "Anonymous";
+    const displayName = customDisplayName || fallbackDisplayName;
     const profileImageUrl = user?.imageUrl || "";
 
     useEffect(() => {
@@ -91,14 +94,17 @@ export function PresenceManager() {
             });
             presenceSetRef.current = true;
 
-            const displayNameId = displayNameRecord?.id || id();
-            db.transact(
-                db.tx.displayNames[displayNameId].update({
-                    displayName,
-                    userId,
-                    updatedAt: Date.now(),
-                })
-            );
+            // Only update displayName in DB if we don't have a custom one set
+            if (!customDisplayName) {
+                const displayNameId = displayNameRecord?.id || id();
+                db.transact(
+                    db.tx.displayNames[displayNameId].update({
+                        displayName: fallbackDisplayName,
+                        userId,
+                        updatedAt: Date.now(),
+                    })
+                );
+            }
         }, 0);
 
         return () => {
@@ -115,6 +121,8 @@ export function PresenceManager() {
         isLoaded,
         userId,
         displayName,
+        fallbackDisplayName,
+        customDisplayName,
         profileImageUrl,
         user,
         publishPresence,
