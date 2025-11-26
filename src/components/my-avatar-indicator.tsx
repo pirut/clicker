@@ -60,27 +60,27 @@ export const MyAvatarIndicator = memo(function MyAvatarIndicator() {
 
     return (
         <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.8, x: 20 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.5 }}
-            className="fixed bottom-6 left-6 z-40 pointer-events-none"
+            className="fixed top-20 right-4 z-40 pointer-events-none"
         >
             <div className="relative">
                 {/* Subtle glow background */}
                 <div 
-                    className="absolute inset-0 rounded-full blur-xl opacity-30"
+                    className="absolute inset-0 rounded-full blur-xl opacity-20"
                     style={{ 
                         background: currentCursorColor || "#6366f1",
-                        transform: "scale(1.5)",
+                        transform: "scale(1.3)",
                     }}
                 />
                 
-                {/* Avatar container with glass effect */}
-                <div className="relative glass rounded-2xl p-4 border border-white/20 backdrop-blur-lg">
-                    <div className="flex items-center gap-4">
-                        {/* Avatar */}
+                {/* Avatar container with glass effect - more compact */}
+                <div className="relative glass rounded-xl p-2.5 border border-white/10 backdrop-blur-lg">
+                    <div className="flex items-center gap-2.5">
+                        {/* Avatar - smaller */}
                         <AvatarPreview
-                            size={64}
+                            size={48}
                             cursorColor={currentCursorColor}
                             fallbackSeed={displayName}
                             profileImageUrl={profileImageUrl}
@@ -91,16 +91,13 @@ export const MyAvatarIndicator = memo(function MyAvatarIndicator() {
                             showClicksBadge
                         />
                         
-                        {/* Info */}
+                        {/* Info - more compact */}
                         <div className="flex flex-col">
-                            <span className="text-[10px] uppercase tracking-wider text-white/40 mb-0.5">
+                            <span className="text-[9px] uppercase tracking-wider text-white/30 mb-0.5">
                                 Your Avatar
                             </span>
-                            <span className="text-sm font-medium text-white truncate max-w-[120px]">
+                            <span className="text-xs font-medium text-white truncate max-w-[100px]">
                                 {displayName}
-                            </span>
-                            <span className="text-xs text-white/50">
-                                Others see this ✨
                             </span>
                         </div>
                     </div>
