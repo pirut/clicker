@@ -9,20 +9,33 @@ import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 
 export default function GiveClickButton() {
-    const { userId } = useAuth();
+    const { userId: clerkUserId } = useAuth();
     const { user } = useUser();
     const [error, setError] = useState<string | null>(null);
     const CLICK_COOLDOWN_MS = 250;
     const [lastClickTime, setLastClickTime] = useState(0);
 
-    // Query for existing displayName to get its ID
-    const { data: displayNameData } = db.useQuery({
-        displayNames: userId ? { $: { where: { userId } } } : {},
-    });
+    // Check InstantDB auth state - this is what permissions use
+    const { user: instantUser, isLoading: authLoading } = db.useAuth();
+
+    // Query for existing displayName to get its ID (use Clerk userId for data consistency)
+    const { data: displayNameData } = db.useQuery(
+        clerkUserId ? { displayNames: { $: { where: { userId: clerkUserId } } } } : null
+    );
 
     const handleClick = async () => {
-        if (!userId) {
+        if (!clerkUserId) {
             setError("You must be logged in to click.");
+            return;
+        }
+
+        if (authLoading) {
+            setError("Connecting to database...");
+            return;
+        }
+
+        if (!instantUser) {
+            setError("Syncing authentication... please wait.");
             return;
         }
 
@@ -45,7 +58,7 @@ export default function GiveClickButton() {
         const displayName = user?.firstName || user?.emailAddresses[0]?.emailAddress || "Anonymous";
 
         // Find existing displayName entity or create new one
-        const existingDisplayName = displayNameData?.displayNames?.find((dn: { userId: string }) => dn.userId === userId);
+        const existingDisplayName = displayNameData?.displayNames?.find((dn: { userId: string }) => dn.userId === clerkUserId);
         const displayNameId = existingDisplayName?.id || id();
 
         // Create click and update/create displayName in a single transaction
@@ -56,12 +69,12 @@ export default function GiveClickButton() {
                 // First, ensure the displayName exists
                 db.tx.displayNames[displayNameId].update({
                     displayName,
-                    userId,
+                    userId: clerkUserId,
                 }),
                 // Then create the click and link it to the author
                 db.tx.clicks[clickId]
                     .update({
-                        userId,
+                        userId: clerkUserId,
                         createdAt: now,
                     })
                     .link({ author: displayNameId }),
