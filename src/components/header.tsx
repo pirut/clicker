@@ -41,6 +41,7 @@ export function Header() {
         { href: "/", label: "Home" },
         { href: "/about", label: "About" },
         { href: "/leaderboard", label: "Leaderboard" },
+        { href: "/shop", label: "Shop", icon: "🛒" },
     ];
 
     return (
@@ -63,7 +64,8 @@ export function Header() {
                             {navigationItems.map((item) => (
                                 <NavigationMenuItem key={item.href}>
                                     <Link href={item.href} legacyBehavior passHref>
-                                        <NavigationMenuLink className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+                                        <NavigationMenuLink className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-1">
+                                            {(item as { icon?: string }).icon && <span>{(item as { icon?: string }).icon}</span>}
                                             {item.label}
                                         </NavigationMenuLink>
                                     </Link>
@@ -71,9 +73,9 @@ export function Header() {
                             ))}
                             <SignedIn>
                                 <NavigationMenuItem>
-                                    <Link href="/dashboard" legacyBehavior passHref>
-                                        <NavigationMenuLink className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-                                            Dashboard
+                                    <Link href="/wardrobe" legacyBehavior passHref>
+                                        <NavigationMenuLink className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-1">
+                                            <span>👕</span> Wardrobe
                                         </NavigationMenuLink>
                                     </Link>
                                 </NavigationMenuItem>
@@ -133,18 +135,19 @@ export function Header() {
                                     key={item.href}
                                     href={item.href}
                                     onClick={closeMobileMenu}
-                                    className="px-4 py-3 rounded-md hover:bg-primary/10 text-sm font-medium transition-colors"
+                                    className="px-4 py-3 rounded-md hover:bg-primary/10 text-sm font-medium transition-colors flex items-center gap-2"
                                 >
+                                    {(item as { icon?: string }).icon && <span>{(item as { icon?: string }).icon}</span>}
                                     {item.label}
                                 </Link>
                             ))}
                             <SignedIn>
                                 <Link
-                                    href="/dashboard"
+                                    href="/wardrobe"
                                     onClick={closeMobileMenu}
-                                    className="px-4 py-3 rounded-md hover:bg-primary/10 text-sm font-medium transition-colors"
+                                    className="px-4 py-3 rounded-md hover:bg-primary/10 text-sm font-medium transition-colors flex items-center gap-2"
                                 >
-                                    Dashboard
+                                    <span>👕</span> Wardrobe
                                 </Link>
                             </SignedIn>
                             <div className="pt-4 flex gap-4 sm:hidden">
