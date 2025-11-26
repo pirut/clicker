@@ -51,14 +51,8 @@ export default function DashboardPage() {
     const avatarItems = (data?.avatarItems ?? EMPTY_LIST) as AvatarItem[];
     const avatarPurchases = (data?.avatarPurchases ?? EMPTY_LIST) as Array<{ itemSlug: string; amount?: number }>;
 
-    const ownedSlugs = useMemo(
-        () => new Set(avatarPurchases.map((purchase) => purchase.itemSlug)),
-        [avatarPurchases]
-    );
-    const spentClicks = useMemo(
-        () => avatarPurchases.reduce((sum, purchase) => sum + (purchase.amount ?? 0), 0),
-        [avatarPurchases]
-    );
+    const ownedSlugs = useMemo(() => new Set(avatarPurchases.map((purchase) => purchase.itemSlug)), [avatarPurchases]);
+    const spentClicks = useMemo(() => avatarPurchases.reduce((sum, purchase) => sum + (purchase.amount ?? 0), 0), [avatarPurchases]);
     const availableClicks = Math.max(totalClicks - spentClicks, 0);
     const hasColorUpgrade = ownedSlugs.has("color-change");
     const hasNameUpgrade = ownedSlugs.has("name-change");
@@ -112,12 +106,7 @@ export default function DashboardPage() {
         return payload;
     };
 
-    const applyCustomization = async (
-        slug: string,
-        updates: DisplayNameUpdates,
-        field: "color" | "name" | "hat",
-        successMessage: string
-    ) => {
+    const applyCustomization = async (slug: string, updates: DisplayNameUpdates, field: "color" | "name" | "hat", successMessage: string) => {
         if (!user?.id) return;
         const item = getItemBySlug(slug);
         if (!item) {
@@ -274,7 +263,7 @@ export default function DashboardPage() {
                                             </Button>
                                         )}
                                     </div>
-                                        {hasColorUpgrade ? (
+                                    {hasColorUpgrade ? (
                                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                                             <input
                                                 type="color"
@@ -283,21 +272,10 @@ export default function DashboardPage() {
                                                 className="h-10 rounded border border-white/20 bg-transparent"
                                             />
                                             <Button
-                                                disabled={
-                                                    savingField === "color" || purchaseLoading === "color-change"
-                                                }
-                                                onClick={() =>
-                                                    applyCustomization(
-                                                        "color-change",
-                                                        { cursorColor: pendingColor },
-                                                        "color",
-                                                        "Color updated!"
-                                                    )
-                                                }
+                                                disabled={savingField === "color" || purchaseLoading === "color-change"}
+                                                onClick={() => applyCustomization("color-change", { cursorColor: pendingColor }, "color", "Color updated!")}
                                             >
-                                                {savingField === "color"
-                                                    ? "Saving..."
-                                                    : `Apply color (costs ${colorPrice})`}
+                                                {savingField === "color" ? "Saving..." : `Apply color (costs ${colorPrice})`}
                                             </Button>
                                         </div>
                                     ) : (
@@ -316,15 +294,9 @@ export default function DashboardPage() {
                                     </div>
                                     {hasNameUpgrade ? (
                                         <div className="flex flex-col gap-3">
-                                            <Input
-                                                value={pendingName}
-                                                onChange={(event) => setPendingName(event.target.value.slice(0, 30))}
-                                                maxLength={30}
-                                            />
+                                            <Input value={pendingName} onChange={(event) => setPendingName(event.target.value.slice(0, 30))} maxLength={30} />
                                             <Button
-                                                disabled={
-                                                    savingField === "name" || purchaseLoading === "name-change"
-                                                }
+                                                disabled={savingField === "name" || purchaseLoading === "name-change"}
                                                 onClick={() =>
                                                     applyCustomization(
                                                         "name-change",
@@ -334,9 +306,7 @@ export default function DashboardPage() {
                                                     )
                                                 }
                                             >
-                                                {savingField === "name"
-                                                    ? "Saving..."
-                                                    : `Save name (costs ${namePrice})`}
+                                                {savingField === "name" ? "Saving..." : `Save name (costs ${namePrice})`}
                                             </Button>
                                         </div>
                                     ) : (
@@ -362,25 +332,21 @@ export default function DashboardPage() {
                                             </div>
                                             <Button
                                                 variant={displayNameRecord?.hatSlug === "fun-hat" ? "secondary" : "default"}
-                                                disabled={
-                                                    savingField === "hat" || purchaseLoading === "fun-hat"
-                                                }
+                                                disabled={savingField === "hat" || purchaseLoading === "fun-hat"}
                                                 onClick={() =>
                                                     applyCustomization(
                                                         "fun-hat",
                                                         { hatSlug: displayNameRecord?.hatSlug === "fun-hat" ? null : "fun-hat" },
                                                         "hat",
-                                                        displayNameRecord?.hatSlug === "fun-hat"
-                                                            ? "Hat removed!"
-                                                            : "Hat applied!"
+                                                        displayNameRecord?.hatSlug === "fun-hat" ? "Hat removed!" : "Hat applied!"
                                                     )
                                                 }
                                             >
                                                 {savingField === "hat"
                                                     ? "Updating..."
                                                     : displayNameRecord?.hatSlug === "fun-hat"
-                                                      ? `Remove hat (costs ${hatPrice})`
-                                                      : `Wear hat (costs ${hatPrice})`}
+                                                    ? `Remove hat (costs ${hatPrice})`
+                                                    : `Wear hat (costs ${hatPrice})`}
                                             </Button>
                                         </div>
                                     ) : (
@@ -401,9 +367,7 @@ export default function DashboardPage() {
                                 <CardDescription>Spend clicks to unlock new personalization perks.</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                {isLoading && avatarItems.length === 0 && (
-                                    <p className="text-sm text-white/60">Loading shop items...</p>
-                                )}
+                                {isLoading && avatarItems.length === 0 && <p className="text-sm text-white/60">Loading shop items...</p>}
 
                                 {avatarItems.length === 0 && !isLoading && (
                                     <p className="text-sm text-white/60">No items yet. They’ll appear here automatically.</p>
@@ -413,7 +377,10 @@ export default function DashboardPage() {
                                     const owned = ownedSlugs.has(item.slug);
                                     const canAfford = availableClicks >= item.price;
                                     return (
-                                        <div key={item.id ?? item.slug} className="rounded-lg border border-white/10 p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                                        <div
+                                            key={item.id ?? item.slug}
+                                            className="rounded-lg border border-white/10 p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
+                                        >
                                             <div>
                                                 <div className="flex items-center gap-2">
                                                     <h4 className="text-white font-semibold">{item.label}</h4>
@@ -431,10 +398,10 @@ export default function DashboardPage() {
                                                     {owned
                                                         ? "Unlocked"
                                                         : purchaseLoading === item.slug
-                                                          ? "Processing..."
-                                                          : canAfford
-                                                            ? "Unlock"
-                                                            : `Need ${item.price - availableClicks}`}
+                                                        ? "Processing..."
+                                                        : canAfford
+                                                        ? "Unlock"
+                                                        : `Need ${item.price - availableClicks}`}
                                                 </Button>
                                             </div>
                                         </div>
@@ -448,4 +415,3 @@ export default function DashboardPage() {
         </div>
     );
 }
-

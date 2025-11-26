@@ -1,16 +1,7 @@
 "use client";
 import { db } from "@/lib/instantdb";
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import {
-    Table,
-    TableBody,
-    TableCell,
-} from "@/components/ui/table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell } from "@/components/ui/table";
 import { motion } from "framer-motion";
 
 export default function LatestClicks() {
@@ -33,22 +24,13 @@ export default function LatestClicks() {
     // or query a much smaller limit just to see "some" activity if we want.
     // But the user complained about the *list* delay. The heavy query was likely blocking the whole component update.
 
-    if (!latestClicksData && latestClicksLoading) return (
-        <div className="w-full max-w-md mx-auto h-[400px] glass rounded-xl animate-pulse" />
-    );
+    if (!latestClicksData && latestClicksLoading) return <div className="w-full max-w-md mx-auto h-[400px] glass rounded-xl animate-pulse" />;
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="w-full max-w-md mx-auto"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="w-full max-w-md mx-auto">
             <Card className="glass border-0 overflow-hidden">
                 <CardHeader className="text-center border-b border-white/5 pb-6 bg-white/5">
-                    <CardTitle className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-                        Latest Clicks
-                    </CardTitle>
+                    <CardTitle className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Latest Clicks</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                     <Table>
@@ -62,7 +44,7 @@ export default function LatestClicks() {
                                     className="border-b border-white/5 hover:bg-white/5 transition-colors group"
                                 >
                                     <TableCell className="font-medium py-3 pl-6 text-foreground/80 group-hover:text-primary transition-colors">
-                                        {click.author?.[0]?.displayName || "Anonymous"}
+                                        {click.author?.displayName || "Anonymous"}
                                     </TableCell>
                                     <TableCell className="text-right py-3 pr-6 text-muted-foreground text-xs font-mono">
                                         {new Date(click.createdAt).toLocaleTimeString()}
