@@ -1,4 +1,5 @@
 "use client";
+import { useCallback } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 
@@ -12,26 +13,25 @@ import { PresenceManager } from "@/components/presence-manager";
 import { motion } from "framer-motion";
 import { AvatarPreview } from "@/components/avatar-preview";
 
+// Create room outside component to prevent recreation on each render
+const room = db.room("chat", "main");
+
+type Presence = {
+    name: string;
+    status: string;
+    profileImageUrl?: string;
+    clicksGiven?: number;
+    cursorColor?: string;
+    hatSlug?: string;
+};
+
 export default function HomePage() {
-    const room = db.room("chat", "main");
-
-    type Presence = {
-        name: string;
-        status: string;
-        profileImageUrl?: string;
-        clicksGiven?: number;
-        cursorColor?: string;
-        hatSlug?: string;
-    };
-
-    function renderCursor({ presence, color }: { presence: Presence; color: string }) {
+    // Memoize renderCursor to prevent flickering from function recreation
+    const renderCursor = useCallback(({ presence, color }: { presence: Presence; color: string }) => {
         const fallbackSeed = presence?.profileImageUrl || presence?.name || "clicker";
-
-        // Calculate opacity based on clicks given (0.2 to 0.8 range)
-        const baseOpacity = 0.2;
-        const maxOpacity = 0.8;
         const clicksGiven = presence?.clicksGiven || 0;
-        const opacity = Math.min(baseOpacity + clicksGiven * 0.1, maxOpacity);
+        // Calculate opacity based on clicks given (0.4 to 1.0 range for better visibility)
+        const opacity = Math.min(0.4 + clicksGiven * 0.08, 1.0);
 
         return (
             <AvatarPreview
@@ -42,16 +42,17 @@ export default function HomePage() {
                 clicksGiven={presence?.clicksGiven}
                 hatSlug={presence?.hatSlug}
                 name={presence?.name}
+                showNameTag
                 className="pointer-events-none"
                 style={{ opacity }}
             />
         );
-    }
+    }, []);
 
     return (
         <>
             <PresenceManager />
-            <Cursors room={room} className="min-w-full h-100vh" userCursorColor="tomato" renderCursor={renderCursor}>
+            <Cursors room={room} className="min-w-full h-100vh" userCursorColor="tomato" renderCursor={renderCursor} zIndex={50}>
                 <Background />
                 <div className="min-h-screen flex flex-col relative">
                     <Header />

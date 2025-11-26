@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { CSSProperties } from "react";
+import { CSSProperties, memo, useMemo } from "react";
 import { cn, getStableHslColor } from "@/lib/utils";
 
 type AvatarPreviewProps = {
@@ -20,33 +20,177 @@ type AvatarPreviewProps = {
 };
 
 const hatSymbols: Record<string, { symbol: string; rotation: string }> = {
-    "fun-hat": { symbol: "🎩", rotation: "-4deg" },
+    "fun-hat": { symbol: "🎩", rotation: "-12deg" },
     "party-hat": { symbol: "🥳", rotation: "-8deg" },
+    "crown": { symbol: "👑", rotation: "-5deg" },
+    "wizard": { symbol: "🧙", rotation: "-10deg" },
+    "cap": { symbol: "🧢", rotation: "-6deg" },
 };
 
-function HatAccessory({ hatSlug, size }: { hatSlug?: string; size: number }) {
+const HatAccessory = memo(function HatAccessory({ hatSlug, size }: { hatSlug?: string; size: number }) {
     if (!hatSlug) return null;
     const config = hatSymbols[hatSlug] || { symbol: "🧢", rotation: "-6deg" };
-    const topOffset = Math.max(-size * 0.35, -36);
-    const leftOffset = size * 0.1;
+    const topOffset = Math.max(-size * 0.4, -40);
+    const leftOffset = size * 0.08;
+
     return (
         <div
             style={{
                 position: "absolute",
                 top: topOffset,
                 left: leftOffset,
-                fontSize: size * 0.45,
+                fontSize: size * 0.5,
                 transform: `rotate(${config.rotation})`,
-                zIndex: 2,
+                zIndex: 10,
                 pointerEvents: "none",
+                filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))",
+                transition: "transform 0.2s ease-out",
             }}
         >
             {config.symbol}
         </div>
     );
-}
+});
 
-export function AvatarPreview({
+const ClicksBadge = memo(function ClicksBadge({
+    clicksGiven,
+    size,
+}: {
+    clicksGiven: number;
+    size: number;
+}) {
+    const badgePaddingX = Math.max(Math.round(size * 0.12), 6);
+    const badgePaddingY = Math.max(Math.round(size * 0.04), 2);
+    const fontSize = Math.max(size * 0.22, 11);
+
+    // Dynamic badge color based on click count
+    const getBadgeStyle = () => {
+        if (clicksGiven >= 100) {
+            return {
+                background: "linear-gradient(135deg, #ffd700 0%, #ff8c00 100%)",
+                border: "1.5px solid rgba(255, 215, 0, 0.8)",
+                color: "#1a1a1a",
+                boxShadow: "0 2px 8px rgba(255, 215, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.4)",
+            };
+        } else if (clicksGiven >= 50) {
+            return {
+                background: "linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%)",
+                border: "1.5px solid rgba(192, 192, 192, 0.8)",
+                color: "#1a1a1a",
+                boxShadow: "0 2px 6px rgba(160, 160, 160, 0.4), inset 0 1px 0 rgba(255,255,255,0.5)",
+            };
+        } else if (clicksGiven >= 20) {
+            return {
+                background: "linear-gradient(135deg, #cd7f32 0%, #b87333 100%)",
+                border: "1.5px solid rgba(205, 127, 50, 0.8)",
+                color: "#fff",
+                boxShadow: "0 2px 6px rgba(184, 115, 51, 0.4), inset 0 1px 0 rgba(255,255,255,0.3)",
+            };
+        }
+        return {
+            background: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,240,240,0.95) 100%)",
+            border: "1.5px solid rgba(0,0,0,0.15)",
+            color: "#333",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.8)",
+        };
+    };
+
+    const badgeStyle = getBadgeStyle();
+
+    return (
+        <div
+            style={{
+                position: "absolute",
+                bottom: -4,
+                left: "50%",
+                transform: "translateX(-50%)",
+                ...badgeStyle,
+                borderRadius: 999,
+                padding: `${badgePaddingY}px ${badgePaddingX}px`,
+                fontSize,
+                fontWeight: 700,
+                zIndex: 5,
+                fontFamily: "var(--font-mono), JetBrains Mono, monospace",
+                letterSpacing: "-0.02em",
+                whiteSpace: "nowrap",
+                minWidth: size * 0.4,
+                textAlign: "center",
+            }}
+        >
+            {clicksGiven}
+        </div>
+    );
+});
+
+const ProfileImage = memo(function ProfileImage({
+    profileImageUrl,
+    imageSize,
+}: {
+    profileImageUrl: string;
+    imageSize: number;
+}) {
+    return (
+        <div
+            style={{
+                position: "absolute",
+                top: -imageSize * 0.15,
+                right: -imageSize * 0.15,
+                width: imageSize,
+                height: imageSize,
+                borderRadius: "50%",
+                overflow: "hidden",
+                border: "2px solid #fff",
+                background: "#fff",
+                zIndex: 3,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+            }}
+        >
+            <Image
+                src={profileImageUrl}
+                alt="profile"
+                width={imageSize}
+                height={imageSize}
+                unoptimized
+                priority
+                style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                }}
+            />
+        </div>
+    );
+});
+
+const NameTag = memo(function NameTag({ name, size }: { name: string; size: number }) {
+    const fontSize = Math.max(size * 0.24, 11);
+
+    return (
+        <div
+            style={{
+                marginTop: 4,
+                padding: "3px 8px",
+                background: "rgba(0,0,0,0.75)",
+                backdropFilter: "blur(8px)",
+                borderRadius: 6,
+                fontSize,
+                fontWeight: 500,
+                color: "#fff",
+                textAlign: "center",
+                maxWidth: size * 2.5,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+                border: "1px solid rgba(255,255,255,0.1)",
+            }}
+        >
+            {name}
+        </div>
+    );
+});
+
+export const AvatarPreview = memo(function AvatarPreview({
     size = 48,
     cursorColor,
     fallbackSeed = "avatar",
@@ -60,81 +204,71 @@ export function AvatarPreview({
     className,
     style,
 }: AvatarPreviewProps) {
-    const dotSize = Math.max(Math.round(size * 0.42), 18);
-    const imageSize = Math.max(Math.round(size * 0.42), 18);
-    const badgePaddingX = Math.round(size * 0.08);
-    const badgePaddingY = Math.round(size * 0.02);
-    const dotOffset = (size - dotSize) / 2;
-    const resolvedColor = cursorColor || fallbackColor || getStableHslColor(fallbackSeed);
+    const dotSize = useMemo(() => Math.max(Math.round(size * 0.5), 20), [size]);
+    const imageSize = useMemo(() => Math.max(Math.round(size * 0.45), 20), [size]);
+    const dotOffset = useMemo(() => (size - dotSize) / 2, [size, dotSize]);
+    const resolvedColor = useMemo(
+        () => cursorColor || fallbackColor || getStableHslColor(fallbackSeed),
+        [cursorColor, fallbackColor, fallbackSeed]
+    );
+
+    // Create a subtle pulsing glow effect based on the cursor color
+    const glowColor = useMemo(() => {
+        if (cursorColor?.startsWith("#")) {
+            return cursorColor + "40"; // Add alpha
+        }
+        return "rgba(255,255,255,0.2)";
+    }, [cursorColor]);
 
     return (
-        <div className={cn("flex flex-col items-center gap-1", className)} style={style}>
+        <div className={cn("flex flex-col items-center", className)} style={style}>
             <div style={{ position: "relative", width: size, height: size }}>
                 <HatAccessory hatSlug={hatSlug} size={size} />
+                
+                {/* Glow effect behind the main dot */}
+                <div
+                    style={{
+                        width: dotSize * 1.4,
+                        height: dotSize * 1.4,
+                        borderRadius: "50%",
+                        background: `radial-gradient(circle, ${glowColor} 0%, transparent 70%)`,
+                        position: "absolute",
+                        left: dotOffset - (dotSize * 0.2),
+                        top: dotOffset - (dotSize * 0.2),
+                        zIndex: 0,
+                        pointerEvents: "none",
+                    }}
+                />
+                
+                {/* Main cursor dot */}
                 <div
                     style={{
                         width: dotSize,
                         height: dotSize,
-                        borderRadius: dotSize / 2,
-                        background: resolvedColor,
+                        borderRadius: "50%",
+                        background: `linear-gradient(135deg, ${resolvedColor} 0%, ${resolvedColor}dd 100%)`,
                         position: "absolute",
                         left: dotOffset,
                         top: dotOffset,
-                        zIndex: 1,
-                        boxShadow: "0 2px 8px 0 rgba(0,0,0,0.12)",
-                        border: "2px solid #fff",
-                        transition: "background 0.3s",
+                        zIndex: 2,
+                        boxShadow: `0 3px 12px ${resolvedColor}60, 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 2px rgba(255,255,255,0.3)`,
+                        border: "2.5px solid rgba(255,255,255,0.9)",
                     }}
                 />
+                
                 {profileImageUrl && (
-                    <Image
-                        src={profileImageUrl}
-                        alt="profile"
-                        width={imageSize}
-                        height={imageSize}
-                        unoptimized
-                        loading="lazy"
-                        style={{
-                            position: "absolute",
-                            top: -2,
-                            right: -2,
-                            borderRadius: imageSize / 2,
-                            border: "2px solid #fff",
-                            background: "#fff",
-                            zIndex: 1,
-                            boxShadow: "0 1px 4px 0 rgba(0,0,0,0.1)",
-                            transform: "rotate(-2deg) scale(0.85)",
-                        }}
+                    <ProfileImage
+                        profileImageUrl={profileImageUrl}
+                        imageSize={imageSize}
                     />
                 )}
+                
                 {showClicksBadge && typeof clicksGiven === "number" && (
-                    <div
-                        style={{
-                            position: "absolute",
-                            top: -2,
-                            left: -2,
-                            background: "linear-gradient(90deg, #fffbe7 60%, #ffe7e7 100%)",
-                            color: "#222",
-                            borderRadius: 6,
-                            padding: `${badgePaddingY}px ${badgePaddingX}px`,
-                            fontSize: Math.max(size * 0.18, 10),
-                            fontWeight: 600,
-                            zIndex: 1,
-                            border: "1px solid #ffe066",
-                            fontFamily: "JetBrains Mono, monospace",
-                            boxShadow: "0 1px 4px 0 rgba(255,224,102,0.15)",
-                            letterSpacing: 0.3,
-                            transform: "rotate(-1deg)",
-                        }}
-                    >
-                        {clicksGiven}
-                    </div>
+                    <ClicksBadge clicksGiven={clicksGiven} size={size} />
                 )}
             </div>
-            {showNameTag && (
-                <div className="text-sm font-medium text-white text-center leading-tight">{name ?? "Anonymous"}</div>
-            )}
+            
+            {showNameTag && name && <NameTag name={name} size={size} />}
         </div>
     );
-}
-
+});
