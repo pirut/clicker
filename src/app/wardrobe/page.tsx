@@ -17,6 +17,8 @@ type DisplayNameUpdates = {
     displayName?: string;
     cursorColor?: string;
     hatSlug?: string | null;
+    accessorySlug?: string | null;
+    effectSlug?: string | null;
 };
 
 type AvatarItem = {
@@ -44,7 +46,7 @@ export default function WardrobePage() {
     const { user, isLoaded, isSignedIn } = useUser();
     const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error" | "info"; text: string } | null>(null);
     const [savingField, setSavingField] = useState<string | null>(null);
-    const [selectedTab, setSelectedTab] = useState<"appearance" | "hats" | "accessories">("appearance");
+    const [selectedTab, setSelectedTab] = useState<"appearance" | "hats" | "accessories" | "effects">("appearance");
 
     const { data } = db.useQuery({
         clicks: user?.id ? { $: { where: { userId: user.id } } } : {},
@@ -71,6 +73,7 @@ export default function WardrobePage() {
 
     const ownedHats = useMemo(() => ownedItems.filter((i) => i.type === "hat"), [ownedItems]);
     const ownedAccessories = useMemo(() => ownedItems.filter((i) => i.type === "accessory"), [ownedItems]);
+    const ownedEffects = useMemo(() => ownedItems.filter((i) => i.type === "effect"), [ownedItems]);
     const hasColorUpgrade = ownedSlugs.has("color-change");
     const hasNameUpgrade = ownedSlugs.has("name-change");
 
@@ -110,6 +113,8 @@ export default function WardrobePage() {
         if (updates.displayName !== undefined) payload.displayName = updates.displayName;
         if (updates.cursorColor !== undefined) payload.cursorColor = updates.cursorColor;
         if (updates.hatSlug !== undefined) payload.hatSlug = updates.hatSlug;
+        if (updates.accessorySlug !== undefined) payload.accessorySlug = updates.accessorySlug;
+        if (updates.effectSlug !== undefined) payload.effectSlug = updates.effectSlug;
 
         return payload;
     };
@@ -156,7 +161,7 @@ export default function WardrobePage() {
         }
     };
 
-    const equipHat = async (hatSlug: string | null) => {
+    const equipItem = async (slotType: "hat" | "accessory" | "effect", slug: string | null) => {
         if (!user?.id) return;
 
         let targetId = displayNameRecord?.id || displayNameIdRef.current;
@@ -165,18 +170,21 @@ export default function WardrobePage() {
             displayNameIdRef.current = targetId;
         }
 
-        setSavingField("hat");
+        setSavingField(slotType);
         setStatusMessage(null);
 
+        const updatePayload: Record<string, unknown> = {
+            userId: user.id,
+            updatedAt: Date.now(),
+        };
+
+        if (slotType === "hat") updatePayload.hatSlug = slug;
+        if (slotType === "accessory") updatePayload.accessorySlug = slug;
+        if (slotType === "effect") updatePayload.effectSlug = slug;
+
         try {
-            await db.transact(
-                db.tx.displayNames[targetId].update({
-                    userId: user.id,
-                    hatSlug: hatSlug,
-                    updatedAt: Date.now(),
-                })
-            );
-            setStatusMessage({ type: "success", text: hatSlug ? "Equipped!" : "Unequipped!" });
+            await db.transact(db.tx.displayNames[targetId].update(updatePayload));
+            setStatusMessage({ type: "success", text: slug ? "Equipped!" : "Unequipped!" });
         } catch (error) {
             console.error(error);
             setStatusMessage({ type: "error", text: "Failed to update." });
@@ -197,6 +205,8 @@ export default function WardrobePage() {
     }
 
     const currentHatSlug = displayNameRecord?.hatSlug;
+    const currentAccessorySlug = (displayNameRecord as { accessorySlug?: string } | undefined)?.accessorySlug;
+    const currentEffectSlug = (displayNameRecord as { effectSlug?: string } | undefined)?.effectSlug;
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -234,7 +244,9 @@ export default function WardrobePage() {
                                         fallbackSeed={displayNameRecord?.displayName ?? defaultDisplayName}
                                         profileImageUrl={user.imageUrl ?? undefined}
                                         clicksGiven={totalClicks}
-                                        hatSlug={displayNameRecord?.hatSlug ?? undefined}
+                                        hatSlug={currentHatSlug ?? undefined}
+                                        accessorySlug={currentAccessorySlug ?? undefined}
+                                        effectSlug={currentEffectSlug ?? undefined}
                                         name={displayNameRecord?.displayName ?? defaultDisplayName}
                                         showNameTag
                                     />
@@ -292,11 +304,12 @@ export default function WardrobePage() {
                             className="space-y-6"
                         >
                             {/* Tab Navigation */}
-                            <div className="flex gap-2 p-1 bg-white/5 rounded-xl">
+                            <div className="flex gap-2 p-1 bg-white/5 rounded-xl overflow-x-auto">
                                 {[
                                     { id: "appearance", label: "Appearance", icon: "🎨" },
                                     { id: "hats", label: "Hats", icon: "🎩", count: ownedHats.length },
                                     { id: "accessories", label: "Accessories", icon: "🎭", count: ownedAccessories.length },
+                                    { id: "effects", label: "Effects", icon: "✨", count: ownedEffects.length },
                                 ].map((tab) => (
                                     <button
                                         key={tab.id}
@@ -425,7 +438,7 @@ export default function WardrobePage() {
                                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                                             {/* None option */}
                                             <button
-                                                onClick={() => equipHat(null)}
+                                                onClick={() => equipItem("hat", null)}
                                                 disabled={savingField === "hat"}
                                                 className={cn(
                                                     "rounded-xl p-4 border-2 transition-all text-center",
@@ -448,7 +461,7 @@ export default function WardrobePage() {
                                                 return (
                                                     <button
                                                         key={item.id}
-                                                        onClick={() => equipHat(hatSlug)}
+                                                        onClick={() => equipItem("hat", hatSlug)}
                                                         disabled={savingField === "hat"}
                                                         className={cn(
                                                             "rounded-xl p-4 border-2 transition-all text-center",
@@ -503,11 +516,11 @@ export default function WardrobePage() {
                                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                                             {/* None option */}
                                             <button
-                                                onClick={() => equipHat(null)}
-                                                disabled={savingField === "hat"}
+                                                onClick={() => equipItem("accessory", null)}
+                                                disabled={savingField === "accessory"}
                                                 className={cn(
                                                     "rounded-xl p-4 border-2 transition-all text-center",
-                                                    !currentHatSlug
+                                                    !currentAccessorySlug
                                                         ? "border-emerald-500/50 bg-emerald-500/10"
                                                         : "border-white/10 bg-white/5 hover:border-white/20"
                                                 )}
@@ -518,16 +531,16 @@ export default function WardrobePage() {
                                             </button>
 
                                             {ownedAccessories.map((item) => {
-                                                const hatSlug = item.metadata?.hatSlug || item.slug;
-                                                const isEquipped = currentHatSlug === hatSlug;
+                                                const accessorySlug = item.metadata?.hatSlug || item.slug;
+                                                const isEquipped = currentAccessorySlug === accessorySlug;
                                                 const rarity = item.rarity || "common";
                                                 const rarityStyle = RARITY_COLORS[rarity];
 
                                                 return (
                                                     <button
                                                         key={item.id}
-                                                        onClick={() => equipHat(hatSlug)}
-                                                        disabled={savingField === "hat"}
+                                                        onClick={() => equipItem("accessory", accessorySlug)}
+                                                        disabled={savingField === "accessory"}
                                                         className={cn(
                                                             "rounded-xl p-4 border-2 transition-all text-center",
                                                             isEquipped
@@ -544,6 +557,82 @@ export default function WardrobePage() {
                                                              item.label.includes("Robot") ? "🤖" :
                                                              item.label.includes("Alien") ? "👽" :
                                                              "🎭"}
+                                                        </div>
+                                                        <p className="font-medium text-white text-sm">{item.label}</p>
+                                                        <Badge className={cn("text-xs mt-1", rarityStyle.bg, rarityStyle.text)}>
+                                                            {rarity}
+                                                        </Badge>
+                                                        {isEquipped && (
+                                                            <p className="text-xs text-emerald-400 mt-2">✓ Equipped</p>
+                                                        )}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </motion.div>
+                            )}
+
+                            {/* Effects Tab */}
+                            {selectedTab === "effects" && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                >
+                                    {ownedEffects.length === 0 ? (
+                                        <div className="glass rounded-2xl p-12 text-center">
+                                            <p className="text-5xl mb-4">✨</p>
+                                            <h3 className="text-xl font-semibold text-white mb-2">No Effects Yet</h3>
+                                            <p className="text-white/50 mb-6">Visit the shop to buy some magical effects!</p>
+                                            <Link href="/shop">
+                                                <Button>Browse Effects</Button>
+                                            </Link>
+                                        </div>
+                                    ) : (
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                            {/* None option */}
+                                            <button
+                                                onClick={() => equipItem("effect", null)}
+                                                disabled={savingField === "effect"}
+                                                className={cn(
+                                                    "rounded-xl p-4 border-2 transition-all text-center",
+                                                    !currentEffectSlug
+                                                        ? "border-emerald-500/50 bg-emerald-500/10"
+                                                        : "border-white/10 bg-white/5 hover:border-white/20"
+                                                )}
+                                            >
+                                                <div className="text-4xl mb-2">❌</div>
+                                                <p className="font-medium text-white">None</p>
+                                                <p className="text-xs text-white/40">No effect</p>
+                                            </button>
+
+                                            {ownedEffects.map((item) => {
+                                                const effectSlug = item.metadata?.hatSlug || item.slug;
+                                                const isEquipped = currentEffectSlug === effectSlug;
+                                                const rarity = item.rarity || "common";
+                                                const rarityStyle = RARITY_COLORS[rarity];
+
+                                                return (
+                                                    <button
+                                                        key={item.id}
+                                                        onClick={() => equipItem("effect", effectSlug)}
+                                                        disabled={savingField === "effect"}
+                                                        className={cn(
+                                                            "rounded-xl p-4 border-2 transition-all text-center",
+                                                            isEquipped
+                                                                ? "border-emerald-500/50 bg-emerald-500/10"
+                                                                : cn("hover:border-white/30", rarityStyle.border, "bg-white/5")
+                                                        )}
+                                                    >
+                                                        <div className="text-4xl mb-2">
+                                                            {item.label.includes("Sparkle") ? "✨" :
+                                                             item.label.includes("Glow") ? "💫" :
+                                                             item.label.includes("Rainbow") ? "🌈" :
+                                                             item.label.includes("Fire") ? "🔥" :
+                                                             item.label.includes("Ice") ? "❄️" :
+                                                             item.label.includes("Lightning") ? "⚡" :
+                                                             item.label.includes("Star") ? "⭐" :
+                                                             "✨"}
                                                         </div>
                                                         <p className="font-medium text-white text-sm">{item.label}</p>
                                                         <Badge className={cn("text-xs mt-1", rarityStyle.bg, rarityStyle.text)}>

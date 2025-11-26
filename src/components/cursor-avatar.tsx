@@ -10,11 +10,12 @@ type CursorAvatarProps = {
     profileImageUrl?: string;
     clicksGiven?: number;
     hatSlug?: string;
+    accessorySlug?: string;
+    effectSlug?: string;
     name?: string;
 };
 
 const hatSymbols: Record<string, string> = {
-    // Hats
     "fun-hat": "🎩",
     "party-hat": "🥳",
     "crown": "👑",
@@ -26,7 +27,9 @@ const hatSymbols: Record<string, string> = {
     "beret": "🎨",
     "santa": "🎅",
     "top-hat": "🎩",
-    // Accessories
+};
+
+const accessorySymbols: Record<string, string> = {
     "sunglasses": "🕶️",
     "mask": "😷",
     "halo": "😇",
@@ -34,6 +37,16 @@ const hatSymbols: Record<string, string> = {
     "devil": "😈",
     "robot": "🤖",
     "alien": "👽",
+};
+
+const effectSymbols: Record<string, string> = {
+    "sparkles": "✨",
+    "glow": "💫",
+    "rainbow": "🌈",
+    "fire": "🔥",
+    "ice": "❄️",
+    "lightning": "⚡",
+    "stars": "⭐",
 };
 
 // Lightweight cursor component optimized for real-time rendering
@@ -46,10 +59,14 @@ export const CursorAvatar = memo(
         profileImageUrl,
         clicksGiven = 0,
         hatSlug,
+        accessorySlug,
+        effectSlug,
         name,
     }: CursorAvatarProps) {
         const color = cursorColor || fallbackColor || getStableHslColor(fallbackSeed);
         const hatEmoji = hatSlug ? hatSymbols[hatSlug] || "🧢" : null;
+        const accessoryEmoji = accessorySlug ? accessorySymbols[accessorySlug] || null : null;
+        const effectEmoji = effectSlug ? effectSymbols[effectSlug] || null : null;
 
         // Tier colors for badges
         let badgeBg = "rgba(255,255,255,0.95)";
@@ -88,7 +105,7 @@ export const CursorAvatar = memo(
                         height: 48,
                     }}
                 >
-                    {/* Hat/accessory */}
+                    {/* Hat */}
                     {hatEmoji && (
                         <span
                             style={{
@@ -96,12 +113,45 @@ export const CursorAvatar = memo(
                                 top: -18,
                                 left: 4,
                                 fontSize: 22,
-                                transform: hatSlug === "sunglasses" || hatSlug === "mask" ? "rotate(0deg)" : "rotate(-12deg)",
+                                transform: "rotate(-12deg)",
                                 filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.3))",
-                                zIndex: 10,
+                                zIndex: 12,
                             }}
                         >
                             {hatEmoji}
+                        </span>
+                    )}
+
+                    {/* Accessory */}
+                    {accessoryEmoji && (
+                        <span
+                            style={{
+                                position: "absolute",
+                                top: accessorySlug === "sunglasses" || accessorySlug === "mask" ? 8 : 2,
+                                left: accessorySlug === "sunglasses" || accessorySlug === "mask" ? 8 : 30,
+                                fontSize: 18,
+                                filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.3))",
+                                zIndex: 11,
+                            }}
+                        >
+                            {accessoryEmoji}
+                        </span>
+                    )}
+
+                    {/* Effect */}
+                    {effectEmoji && (
+                        <span
+                            style={{
+                                position: "absolute",
+                                top: -4,
+                                right: -4,
+                                fontSize: 16,
+                                filter: "drop-shadow(0 0 4px rgba(255,255,255,0.5))",
+                                zIndex: 13,
+                                animation: "pulse 2s ease-in-out infinite",
+                            }}
+                        >
+                            {effectEmoji}
                         </span>
                     )}
 
@@ -212,6 +262,8 @@ export const CursorAvatar = memo(
             prevProps.profileImageUrl === nextProps.profileImageUrl &&
             prevProps.clicksGiven === nextProps.clicksGiven &&
             prevProps.hatSlug === nextProps.hatSlug &&
+            prevProps.accessorySlug === nextProps.accessorySlug &&
+            prevProps.effectSlug === nextProps.effectSlug &&
             prevProps.name === nextProps.name
         );
     }

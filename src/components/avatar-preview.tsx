@@ -12,6 +12,8 @@ type AvatarPreviewProps = {
     profileImageUrl?: string;
     clicksGiven?: number;
     hatSlug?: string;
+    accessorySlug?: string;
+    effectSlug?: string;
     name?: string;
     showNameTag?: boolean;
     showClicksBadge?: boolean;
@@ -20,7 +22,6 @@ type AvatarPreviewProps = {
 };
 
 const hatSymbols: Record<string, { symbol: string; rotation: string }> = {
-    // Hats
     "fun-hat": { symbol: "🎩", rotation: "-12deg" },
     "party-hat": { symbol: "🥳", rotation: "-8deg" },
     "crown": { symbol: "👑", rotation: "-5deg" },
@@ -32,7 +33,9 @@ const hatSymbols: Record<string, { symbol: string; rotation: string }> = {
     "beret": { symbol: "🎨", rotation: "-9deg" },
     "santa": { symbol: "🎅", rotation: "-6deg" },
     "top-hat": { symbol: "🎩", rotation: "-11deg" },
-    // Accessories
+};
+
+const accessorySymbols: Record<string, { symbol: string; rotation: string }> = {
     "sunglasses": { symbol: "🕶️", rotation: "0deg" },
     "mask": { symbol: "😷", rotation: "0deg" },
     "halo": { symbol: "😇", rotation: "0deg" },
@@ -42,12 +45,20 @@ const hatSymbols: Record<string, { symbol: string; rotation: string }> = {
     "alien": { symbol: "👽", rotation: "0deg" },
 };
 
-const HatAccessory = memo(function HatAccessory({ hatSlug, size }: { hatSlug?: string; size: number }) {
+const effectSymbols: Record<string, { symbol: string; animation?: string }> = {
+    "sparkles": { symbol: "✨", animation: "pulse" },
+    "glow": { symbol: "💫", animation: "pulse" },
+    "rainbow": { symbol: "🌈", animation: "spin" },
+    "fire": { symbol: "🔥", animation: "pulse" },
+    "ice": { symbol: "❄️", animation: "pulse" },
+    "lightning": { symbol: "⚡", animation: "flash" },
+    "stars": { symbol: "⭐", animation: "twinkle" },
+};
+
+const HatItem = memo(function HatItem({ hatSlug, size }: { hatSlug?: string; size: number }) {
     if (!hatSlug) return null;
     const config = hatSymbols[hatSlug] || { symbol: "🧢", rotation: "-6deg" };
-    // Adjust positioning for different accessory types
-    const isFaceAccessory = hatSlug === "sunglasses" || hatSlug === "mask";
-    const topOffset = isFaceAccessory ? size * 0.1 : Math.max(-size * 0.4, -40);
+    const topOffset = Math.max(-size * 0.4, -40);
     const leftOffset = size * 0.08;
 
     return (
@@ -58,10 +69,59 @@ const HatAccessory = memo(function HatAccessory({ hatSlug, size }: { hatSlug?: s
                 left: leftOffset,
                 fontSize: size * 0.5,
                 transform: `rotate(${config.rotation})`,
-                zIndex: 10,
+                zIndex: 12,
                 pointerEvents: "none",
                 filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))",
                 transition: "transform 0.2s ease-out",
+            }}
+        >
+            {config.symbol}
+        </div>
+    );
+});
+
+const AccessoryItem = memo(function AccessoryItem({ accessorySlug, size }: { accessorySlug?: string; size: number }) {
+    if (!accessorySlug) return null;
+    const config = accessorySymbols[accessorySlug] || { symbol: "🎭", rotation: "0deg" };
+    const isFaceAccessory = accessorySlug === "sunglasses" || accessorySlug === "mask";
+    const topOffset = isFaceAccessory ? size * 0.15 : size * 0.05;
+    const leftOffset = isFaceAccessory ? size * 0.15 : size * 0.6;
+
+    return (
+        <div
+            style={{
+                position: "absolute",
+                top: topOffset,
+                left: leftOffset,
+                fontSize: size * 0.4,
+                transform: `rotate(${config.rotation})`,
+                zIndex: 11,
+                pointerEvents: "none",
+                filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))",
+                transition: "transform 0.2s ease-out",
+            }}
+        >
+            {config.symbol}
+        </div>
+    );
+});
+
+const EffectItem = memo(function EffectItem({ effectSlug, size }: { effectSlug?: string; size: number }) {
+    if (!effectSlug) return null;
+    const config = effectSymbols[effectSlug] || { symbol: "✨" };
+
+    return (
+        <div
+            style={{
+                position: "absolute",
+                top: -size * 0.1,
+                right: -size * 0.1,
+                fontSize: size * 0.35,
+                zIndex: 13,
+                pointerEvents: "none",
+                filter: "drop-shadow(0 0 6px rgba(255,255,255,0.5))",
+                animation: config.animation === "pulse" ? "pulse 2s ease-in-out infinite" : 
+                          config.animation === "spin" ? "spin 4s linear infinite" : undefined,
             }}
         >
             {config.symbol}
@@ -215,6 +275,8 @@ export const AvatarPreview = memo(function AvatarPreview({
     profileImageUrl,
     clicksGiven,
     hatSlug,
+    accessorySlug,
+    effectSlug,
     name,
     showNameTag = false,
     showClicksBadge = true,
@@ -240,7 +302,9 @@ export const AvatarPreview = memo(function AvatarPreview({
     return (
         <div className={cn("flex flex-col items-center", className)} style={style}>
             <div style={{ position: "relative", width: size, height: size }}>
-                <HatAccessory hatSlug={hatSlug} size={size} />
+                <HatItem hatSlug={hatSlug} size={size} />
+                <AccessoryItem accessorySlug={accessorySlug} size={size} />
+                <EffectItem effectSlug={effectSlug} size={size} />
                 
                 {/* Glow effect behind the main dot */}
                 <div

@@ -34,7 +34,7 @@ export function PresenceManager() {
 
     // Use the presence hook to get publishPresence method
     const presenceHandle = room.usePresence({
-        keys: ["name", "status", "profileImageUrl", "clicksGiven", "cursorColor", "hatSlug"],
+        keys: ["name", "status", "profileImageUrl", "clicksGiven", "cursorColor", "hatSlug", "accessorySlug", "effectSlug"],
     });
     const publishPresence = presenceHandle.publishPresence;
 
@@ -60,6 +60,8 @@ export function PresenceManager() {
 
     const currentCursorColor = displayNameRecord?.cursorColor;
     const currentHatSlug = displayNameRecord?.hatSlug;
+    const currentAccessorySlug = (displayNameRecord as { accessorySlug?: string } | null)?.accessorySlug;
+    const currentEffectSlug = (displayNameRecord as { effectSlug?: string } | null)?.effectSlug;
     // Use custom display name from database if set, otherwise fall back to Clerk user info
     const customDisplayName = displayNameRecord?.displayName;
 
@@ -123,6 +125,8 @@ export function PresenceManager() {
                 profileImageUrl,
                 cursorColor: currentCursorColor,
                 hatSlug: currentHatSlug,
+                accessorySlug: currentAccessorySlug,
+                effectSlug: currentEffectSlug,
                 clicksGiven,
             });
             presenceSetRef.current = true;
@@ -138,7 +142,7 @@ export function PresenceManager() {
                 presenceSetRef.current = false;
             }
         };
-    }, [isLoaded, userId, displayName, profileImageUrl, user, publishPresence, clearPresence, currentCursorColor, currentHatSlug, clicksGiven]);
+    }, [isLoaded, userId, displayName, profileImageUrl, user, publishPresence, clearPresence, currentCursorColor, currentHatSlug, currentAccessorySlug, currentEffectSlug, clicksGiven]);
 
     return null; // This component doesn't render anything
 }

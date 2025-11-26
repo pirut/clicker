@@ -23,6 +23,8 @@ type Presence = {
     clicksGiven?: number;
     cursorColor?: string;
     hatSlug?: string;
+    accessorySlug?: string;
+    effectSlug?: string;
 };
 
 export default function HomePage() {
@@ -36,6 +38,8 @@ export default function HomePage() {
                 profileImageUrl={presence?.profileImageUrl}
                 clicksGiven={presence?.clicksGiven}
                 hatSlug={presence?.hatSlug}
+                accessorySlug={presence?.accessorySlug}
+                effectSlug={presence?.effectSlug}
                 name={presence?.name}
             />
         );
