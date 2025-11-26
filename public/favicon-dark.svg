@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="gradDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#c99a5c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e6b87a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Background circle for better visibility -->
+  <circle cx="16" cy="16" r="15" fill="#1a1a1a" opacity="0.4"/>
+  <!-- Cursor/pointer shape -->
+  <path d="M 6 6 L 6 22 L 11 19 L 16 24 L 18 22 L 13 17 L 20 15 Z" fill="url(#gradDark)" stroke="#9a6f3c" stroke-width="0.8" stroke-linejoin="round"/>
+  <!-- Click indicator circle -->
+  <circle cx="18" cy="13" r="2" fill="#1a1a1a" opacity="0.95"/>
+  <circle cx="18" cy="13" r="1.2" fill="#c99a5c" opacity="0.9"/>
+</svg>
+

@@ -20,20 +20,96 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    title: "Clicker",
-    description: "A website to give clicks",
-    icons: {
-        icon: [
+    title: {
+        default: "Clicker",
+        template: "%s | Clicker",
+    },
+    description: "Compete for the top spot. Every click counts. Join the competitive clicking game and see if you can make it to the leaderboard!",
+    keywords: ["clicker", "clicking game", "competitive", "leaderboard", "game", "click counter"],
+    authors: [{ name: "Clicker Team" }],
+    creator: "Clicker",
+    publisher: "Clicker",
+    formatDetection: {
+        email: false,
+        address: false,
+        telephone: false,
+    },
+    ...(process.env.NEXT_PUBLIC_SITE_URL && {
+        metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL),
+    }),
+    alternates: {
+        canonical: "/",
+    },
+    openGraph: {
+        type: "website",
+        locale: "en_US",
+        url: "/",
+        siteName: "Clicker",
+        title: "Clicker - Compete for the top spot",
+        description: "Compete for the top spot. Every click counts. Join the competitive clicking game and see if you can make it to the leaderboard!",
+        images: [
             {
-                url: "/Dollar_Sign.svg",
-                media: "(prefers-color-scheme: light)",
-            },
-            {
-                url: "/Dollar_Sign_White.svg",
-                media: "(prefers-color-scheme: dark)",
+                url: "/og-image.png",
+                width: 1200,
+                height: 630,
+                alt: "Clicker - Competitive Clicking Game",
             },
         ],
     },
+    twitter: {
+        card: "summary_large_image",
+        title: "Clicker - Compete for the top spot",
+        description: "Compete for the top spot. Every click counts. Join the competitive clicking game!",
+        images: ["/og-image.png"],
+        creator: "@clicker",
+    },
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true,
+            "max-video-preview": -1,
+            "max-image-preview": "large",
+            "max-snippet": -1,
+        },
+    },
+    icons: {
+        icon: [
+            {
+                url: "/favicon.svg",
+                type: "image/svg+xml",
+                media: "(prefers-color-scheme: light)",
+            },
+            {
+                url: "/favicon-dark.svg",
+                type: "image/svg+xml",
+                media: "(prefers-color-scheme: dark)",
+            },
+            {
+                url: "/favicon.ico",
+                sizes: "any",
+            },
+        ],
+        apple: [
+            {
+                url: "/apple-icon.png",
+                sizes: "180x180",
+                type: "image/png",
+            },
+        ],
+        shortcut: "/favicon.ico",
+    },
+    manifest: "/manifest.json",
+    viewport: {
+        width: "device-width",
+        initialScale: 1,
+        maximumScale: 5,
+    },
+    themeColor: [
+        { media: "(prefers-color-scheme: light)", color: "#9a6f3c" },
+        { media: "(prefers-color-scheme: dark)", color: "#1a1a1a" },
+    ],
 };
 
 export default function RootLayout({
