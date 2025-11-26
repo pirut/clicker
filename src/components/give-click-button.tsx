@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { db } from "@/lib/instantdb";
 import { id } from "@instantdb/react";
 import { useAuth, useUser } from "@clerk/nextjs";
-import { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 
@@ -13,7 +13,7 @@ export default function GiveClickButton() {
     const { user } = useUser();
     const [error, setError] = useState<string | null>(null);
     const CLICK_COOLDOWN_MS = 250;
-    const [lastClickTime, setLastClickTime] = useState(0);
+    const lastClickTimeRef = useRef(0);
 
     // Check InstantDB auth state - this is what permissions use
     const { user: instantUser, isLoading: authLoading } = db.useAuth();
@@ -23,7 +23,10 @@ export default function GiveClickButton() {
         clerkUserId ? { displayNames: { $: { where: { userId: clerkUserId } } } } : null
     );
 
-    const handleClick = async () => {
+    // Find existing displayName entity (created by PresenceManager)
+    const existingDisplayName = displayNameData?.displayNames?.[0];
+    
+    const handleClick = useCallback(() => {
         if (!clerkUserId) {
             setError("You must be logged in to click.");
             return;
@@ -40,51 +43,50 @@ export default function GiveClickButton() {
         }
 
         const now = Date.now();
-        if (now - lastClickTime < CLICK_COOLDOWN_MS) {
+        if (now - lastClickTimeRef.current < CLICK_COOLDOWN_MS) {
             setError("Whoa! Give it a beat before the next click.");
             return;
         }
-        setLastClickTime(now);
+        lastClickTimeRef.current = now;
 
-        // Lighter confetti effect for performance
-        confetti({
-            particleCount: 50,
-            spread: 60,
-            origin: { y: 0.6 },
-            colors: ['#8b6f47', '#a0826d', '#c4a574'],
-            disableForReducedMotion: true,
+        // Run confetti async to not block main thread
+        requestAnimationFrame(() => {
+            confetti({
+                particleCount: 30,
+                spread: 50,
+                origin: { y: 0.6 },
+                colors: ['#8b6f47', '#a0826d', '#c4a574'],
+                disableForReducedMotion: true,
+            });
         });
 
-        const displayName = user?.firstName || user?.emailAddresses[0]?.emailAddress || "Anonymous";
+        // Clear any previous error
+        setError(null);
 
-        // Find existing displayName entity or create new one
-        const existingDisplayName = displayNameData?.displayNames?.find((dn: { userId: string }) => dn.userId === clerkUserId);
+        // Get displayName ID - should exist from PresenceManager
+        const displayName = user?.firstName || user?.emailAddresses[0]?.emailAddress || "Anonymous";
         const displayNameId = existingDisplayName?.id || id();
 
-        // Create click and update/create displayName in a single transaction
-        // Order matters: create/update displayName first, then create click and link
+        // Create click with link - fires optimistically
         const clickId = id();
-        try {
-            await db.transact([
-                // First, ensure the displayName exists
-                db.tx.displayNames[displayNameId].update({
-                    displayName,
+        db.transact([
+            // Ensure displayName exists (upsert)
+            db.tx.displayNames[displayNameId].update({
+                displayName,
+                userId: clerkUserId,
+            }),
+            // Create click and link
+            db.tx.clicks[clickId]
+                .update({
                     userId: clerkUserId,
-                }),
-                // Then create the click and link it to the author
-                db.tx.clicks[clickId]
-                    .update({
-                        userId: clerkUserId,
-                        createdAt: now,
-                    })
-                    .link({ author: displayNameId }),
-            ]);
-            setError(null);
-        } catch (err) {
+                    createdAt: now,
+                })
+                .link({ author: displayNameId }),
+        ]).catch((err) => {
             console.error("Failed to create click:", err);
             setError("Failed to register click. Please try again.");
-        }
-    };
+        });
+    }, [clerkUserId, authLoading, instantUser, user, existingDisplayName]);
 
     return (
         <div className="flex flex-col items-center gap-6">
