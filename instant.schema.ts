@@ -39,7 +39,6 @@ const _schema = i.schema({
             purchasedAt: i.number().indexed(),
             amount: i.number().indexed(),
         }),
-
     },
     links: {
         clickAuthor: {
