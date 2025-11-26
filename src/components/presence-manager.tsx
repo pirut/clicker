@@ -13,9 +13,19 @@ export function PresenceManager() {
     const presenceSetRef = useRef(false);
     const pendingUpdateRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    // Get user's click count - optimized query
+    // Get user's click count - optimized query with limit for performance
+    // Note: We use a high limit since we need accurate counts, but InstantDB
+    // will efficiently handle this with the indexed userId field
     const { data: clicksData } = db.useQuery({
-        clicks: userId ? { $: { where: { userId } } } : {},
+        clicks: userId
+            ? {
+                  $: {
+                      where: { userId },
+                      order: { createdAt: "desc" },
+                      limit: 100000, // High limit for accurate counting, but indexed for performance
+                  },
+              }
+            : {},
     });
 
     // Query for existing displayName to get its ID + avatar settings
@@ -117,4 +127,3 @@ export function PresenceManager() {
 
     return null; // This component doesn't render anything
 }
-

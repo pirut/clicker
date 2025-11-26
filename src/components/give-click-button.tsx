@@ -49,8 +49,9 @@ export default function GiveClickButton() {
         const displayNameId = existingDisplayName?.id || id();
 
         // Create click and update/create displayName in a single transaction
+        const clickId = id();
         db.transact([
-            db.tx.clicks[id()]
+            db.tx.clicks[clickId]
                 .update({
                     userId,
                     createdAt: now,

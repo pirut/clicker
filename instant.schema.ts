@@ -13,7 +13,7 @@ const _schema = i.schema({
         }),
         clicks: i.entity({
             createdAt: i.number().indexed(),
-            userId: i.string(),
+            userId: i.string().indexed(),
         }),
         displayNames: i.entity({
             displayName: i.string(),

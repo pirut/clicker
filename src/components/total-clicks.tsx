@@ -7,7 +7,7 @@ export default function TotalClicks() {
     clicks: { 
       $: { 
         limit: 50000, // Reasonable upper bound
-        order: { serverCreatedAt: "desc" }
+        order: { createdAt: "desc" }
       } 
     } 
   });
