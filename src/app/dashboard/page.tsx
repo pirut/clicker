@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UpgradeFilters, type FilterState } from "@/components/upgrade-filters";
 import { useEnsureDefaultAvatarItems } from "@/lib/avatar-items";
 import { cn } from "@/lib/utils";
@@ -28,9 +28,11 @@ type AvatarItem = {
     label: string;
     description: string;
     price: number;
+    type?: string;
     category?: string;
     rarity?: string;
     sortOrder?: number;
+    metadata?: { hatSlug?: string; [key: string]: unknown };
 };
 
 const EMPTY_LIST: unknown[] = [];
@@ -273,26 +275,29 @@ export default function DashboardPage() {
             const updates: DisplayNameUpdates = {};
             if ((item.type === "hat" || item.type === "accessory") && item.slug) {
                 // Check if item has hatSlug in metadata or use slug directly
-                const hatSlug = (item as any).metadata?.hatSlug || item.slug;
+                const hatSlug = item.metadata?.hatSlug || item.slug;
                 updates.hatSlug = hatSlug;
             }
 
             const payload = buildPayload(updates);
-            const transactions = [
-                db.tx.avatarPurchases[id()].update({
-                    userId: user.id,
-                    itemSlug: item.slug,
-                    purchasedAt: Date.now(),
-                    amount: item.price,
-                }),
-            ];
+            
+            // Create purchase transaction
+            const purchaseTx = db.tx.avatarPurchases[id()].update({
+                userId: user.id,
+                itemSlug: item.slug,
+                purchasedAt: Date.now(),
+                amount: item.price,
+            });
 
             // Only update displayName if we have hat/accessory to apply
             if (Object.keys(updates).length > 0) {
-                transactions.push(db.tx.displayNames[targetId].update(payload));
+                await db.transact([
+                    purchaseTx,
+                    db.tx.displayNames[targetId].update(payload),
+                ]);
+            } else {
+                await db.transact(purchaseTx);
             }
-
-            await db.transact(transactions);
             setStatusMessage(`Unlocked ${item.label}!${updates.hatSlug ? " Applied to your avatar." : ""}`);
         } catch (error) {
             console.error(error);

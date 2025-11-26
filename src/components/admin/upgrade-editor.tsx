@@ -5,7 +5,6 @@ import { id } from "@instantdb/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { db } from "@/lib/instantdb";
 
@@ -14,8 +13,8 @@ type AvatarItem = {
     slug: string;
     label: string;
     description?: string;
-    type: string;
-    category: string;
+    type?: string;
+    category?: string;
     rarity?: string;
     price: number;
     sortOrder?: number;

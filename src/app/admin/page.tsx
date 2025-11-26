@@ -57,41 +57,19 @@ export default function AdminPage() {
         avatarItems: {},
     });
 
-    const avatarItems = (data?.avatarItems ?? []) as AvatarItem[];
-
     const userEmail = user?.emailAddresses[0]?.emailAddress;
     const admin = isAdmin(userEmail);
 
-    if (!isLoaded) {
-        return <div className="min-h-screen flex items-center justify-center text-white/80">Loading...</div>;
-    }
-
-    if (!admin) {
-        return (
-            <div className="min-h-screen flex flex-col">
-                <Header />
-                <main className="flex-1 flex items-center justify-center px-4">
-                    <Card className="border-red-500/30 bg-red-500/10 max-w-md">
-                        <CardHeader>
-                            <CardTitle className="text-red-300">Access Denied</CardTitle>
-                            <CardDescription className="text-red-200/70">
-                                You don't have permission to access this page.
-                            </CardDescription>
-                        </CardHeader>
-                    </Card>
-                </main>
-            </div>
-        );
-    }
-
+    // Move useMemo before any conditional returns to follow React hooks rules
     const sortedItems = useMemo(() => {
-        return [...avatarItems].sort((a, b) => {
+        const items = (data?.avatarItems ?? []) as AvatarItem[];
+        return [...items].sort((a, b) => {
             if (a.sortOrder !== undefined && b.sortOrder !== undefined) {
                 return a.sortOrder - b.sortOrder;
             }
             return (a.createdAt || 0) - (b.createdAt || 0);
         });
-    }, [avatarItems]);
+    }, [data?.avatarItems]);
 
     const handleEdit = (item: AvatarItem) => {
         setEditingItem(item);
@@ -112,6 +90,28 @@ export default function AdminPage() {
         setShowEditor(false);
         setEditingItem(null);
     };
+
+    if (!isLoaded) {
+        return <div className="min-h-screen flex items-center justify-center text-white/80">Loading...</div>;
+    }
+
+    if (!admin) {
+        return (
+            <div className="min-h-screen flex flex-col">
+                <Header />
+                <main className="flex-1 flex items-center justify-center px-4">
+                    <Card className="border-red-500/30 bg-red-500/10 max-w-md">
+                        <CardHeader>
+                            <CardTitle className="text-red-300">Access Denied</CardTitle>
+                            <CardDescription className="text-red-200/70">
+                                You do not have permission to access this page.
+                            </CardDescription>
+                        </CardHeader>
+                    </Card>
+                </main>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -213,4 +213,3 @@ export default function AdminPage() {
         </div>
     );
 }
-
