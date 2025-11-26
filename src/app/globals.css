@@ -193,3 +193,70 @@ body [data-testid*="cursors"] {
     z-index: 0 !important;
     pointer-events: none !important;
 }
+
+/* Keep native cursor visible - don't hide it for the current user */
+body,
+body * {
+    cursor: auto !important;
+}
+
+/* Allow specific interactive elements to have pointer cursor */
+button,
+a,
+[role="button"],
+input[type="submit"],
+input[type="button"],
+.cursor-pointer {
+    cursor: pointer !important;
+}
+
+input,
+textarea,
+[contenteditable="true"] {
+    cursor: text !important;
+}
+
+/* Pulse animation for effects */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes flash {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+}
+
+@keyframes twinkle {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    25% {
+        opacity: 0.4;
+        transform: scale(0.8);
+    }
+    75% {
+        opacity: 0.8;
+        transform: scale(1.2);
+    }
+}
