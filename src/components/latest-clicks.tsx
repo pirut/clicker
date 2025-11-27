@@ -2,14 +2,7 @@
 import { db } from "@/lib/instantdb";
 import { getStableHslColor } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-
-const hatSymbols: Record<string, string> = {
-    "fun-hat": "🎩",
-    "party-hat": "🥳",
-    "crown": "👑",
-    "wizard": "🧙",
-    "cap": "🧢",
-};
+import { UserAvatar } from "./user-avatar";
 
 function formatRelativeTime(timestamp: number): string {
     const now = Date.now();
@@ -23,64 +16,6 @@ function formatRelativeTime(timestamp: number): string {
     if (minutes < 60) return `${minutes}m ago`;
     if (hours < 24) return `${hours}h ago`;
     return new Date(timestamp).toLocaleDateString();
-}
-
-function ClickAvatar({
-    cursorColor,
-    displayName,
-    hatSlug,
-    profileImageUrl,
-}: {
-    cursorColor?: string;
-    displayName: string;
-    hatSlug?: string;
-    profileImageUrl?: string;
-}) {
-    const color = cursorColor || getStableHslColor(displayName);
-    const hatEmoji = hatSlug ? hatSymbols[hatSlug] || "🧢" : null;
-    const initial = displayName.charAt(0).toUpperCase();
-
-    return (
-        <div className="relative flex-shrink-0">
-            {hatEmoji && (
-                <span
-                    className="absolute -top-2 sm:-top-2.5 -left-0.5 sm:-left-1 text-sm sm:text-base z-10"
-                    style={{
-                        transform: "rotate(-12deg)",
-                        filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.3))",
-                    }}
-                >
-                    {hatEmoji}
-                </span>
-            )}
-            <div
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm overflow-hidden"
-                style={{
-                    background: profileImageUrl ? undefined : `linear-gradient(135deg, ${color}, ${color}dd)`,
-                    boxShadow: `0 4px 14px ${color}40, 0 0 0 2px ${color}50`,
-                }}
-            >
-                {profileImageUrl ? (
-                    <img
-                        src={profileImageUrl}
-                        alt={displayName}
-                        className="w-full h-full object-cover"
-                    />
-                ) : (
-                    <span className="text-white drop-shadow-md">{initial}</span>
-                )}
-            </div>
-            {/* Glow ring */}
-            <div
-                className="absolute inset-0 rounded-full"
-                style={{
-                    background: `radial-gradient(circle, ${color}25 0%, transparent 70%)`,
-                    transform: "scale(1.4)",
-                    zIndex: -1,
-                }}
-            />
-        </div>
-    );
 }
 
 export default function LatestClicks() {
@@ -175,40 +110,49 @@ export default function LatestClicks() {
                             </motion.div>
                         ) : (
                             <div className="space-y-0.5">
-                                {clicks.map((click, index) => {
-                                    const displayName = click.author?.displayName || "Clicker";
-                                    const cursorColor = click.author?.cursorColor;
-                                    const hatSlug = click.author?.hatSlug;
-                                    const profileImageUrl = click.author?.profileImageUrl;
-                                    const color = cursorColor || getStableHslColor(displayName);
+{clicks.map((click, index) => {
+                                                    const displayName = click.author?.displayName || "Clicker";
+                                                    const cursorColor = click.author?.cursorColor;
+                                                    const hatSlug = click.author?.hatSlug;
+                                                    const accessorySlug = click.author?.accessorySlug;
+                                                    const effectSlug = click.author?.effectSlug;
+                                                    const profileImageUrl = click.author?.profileImageUrl;
+                                                    const color = cursorColor || getStableHslColor(displayName);
 
-                                    return (
-                                        <motion.div
-                                            key={click.id}
-                                            initial={{ opacity: 0, x: -20, scale: 0.95 }}
-                                            animate={{ opacity: 1, x: 0, scale: 1 }}
-                                            exit={{ opacity: 0, x: 20, scale: 0.95 }}
-                                            transition={{
-                                                type: "spring",
-                                                stiffness: 500,
-                                                damping: 30,
-                                                delay: index * 0.03,
-                                            }}
-                                            className="group relative"
-                                        >
-                                            <div
-                                                className="flex items-center gap-2 sm:gap-3 p-2 sm:p-2.5 rounded-lg sm:rounded-xl transition-all duration-200 hover:bg-muted/30 dark:hover:bg-white/5 cursor-default"
-                                                style={{
-                                                    background: index === 0 ? `linear-gradient(90deg, ${color}10 0%, transparent 100%)` : undefined,
-                                                }}
-                                            >
-                                                {/* Avatar with Profile Picture */}
-                                                <ClickAvatar
-                                                    cursorColor={cursorColor}
-                                                    displayName={displayName}
-                                                    hatSlug={hatSlug}
-                                                    profileImageUrl={profileImageUrl}
-                                                />
+                                                    return (
+                                                        <motion.div
+                                                            key={click.id}
+                                                            initial={{ opacity: 0, x: -20, scale: 0.95 }}
+                                                            animate={{ opacity: 1, x: 0, scale: 1 }}
+                                                            exit={{ opacity: 0, x: 20, scale: 0.95 }}
+                                                            transition={{
+                                                                type: "spring",
+                                                                stiffness: 500,
+                                                                damping: 30,
+                                                                delay: index * 0.03,
+                                                            }}
+                                                            className="group relative"
+                                                        >
+                                                            <div
+                                                                className="flex items-center gap-2 sm:gap-3 p-2 sm:p-2.5 rounded-lg sm:rounded-xl transition-all duration-200 hover:bg-muted/30 dark:hover:bg-white/5 cursor-default"
+                                                                style={{
+                                                                    background: index === 0 ? `linear-gradient(90deg, ${color}10 0%, transparent 100%)` : undefined,
+                                                                }}
+                                                            >
+                                                                {/* Avatar with Profile Picture and Effects */}
+                                                                <div className="relative flex-shrink-0">
+                                                                    <UserAvatar
+                                                                        size="sm"
+                                                                        cursorColor={cursorColor}
+                                                                        fallbackSeed={displayName}
+                                                                        profileImageUrl={profileImageUrl}
+                                                                        hatSlug={hatSlug}
+                                                                        accessorySlug={accessorySlug}
+                                                                        effectSlug={effectSlug}
+                                                                        showClicksBadge={false}
+                                                                        showParticles={index === 0} // Only show particles for the most recent click
+                                                                    />
+                                                                </div>
 
                                                 {/* Content */}
                                                 <div className="flex-1 min-w-0">

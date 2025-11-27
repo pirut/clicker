@@ -24,6 +24,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const clickCount = clicks?.length ?? 0;
     const displayName = userProfile?.displayName || "A Clicker";
     const hatSlug = userProfile?.hatSlug || "";
+    const accessorySlug = userProfile?.accessorySlug || "";
+    const effectSlug = userProfile?.effectSlug || "";
     const cursorColor = userProfile?.cursorColor || "";
     const profileImageUrl = userProfile?.profileImageUrl || "";
 
@@ -35,6 +37,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         clicks: clickCount.toString(),
         name: displayName,
         ...(hatSlug && { hat: hatSlug }),
+        ...(accessorySlug && { accessory: accessorySlug }),
+        ...(effectSlug && { effect: effectSlug }),
         ...(cursorColor && { color: cursorColor }),
         ...(profileImageUrl && { avatar: profileImageUrl }),
     });

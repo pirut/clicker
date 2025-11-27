@@ -7,6 +7,7 @@ import { useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import GiveClickButton from "@/components/give-click-button";
+import { UserAvatar } from "@/components/user-avatar";
 
 // Types based on schema
 export type Click = {
@@ -18,6 +19,11 @@ export type DisplayName = {
     id: string;
     displayName: string;
     userId: string;
+    cursorColor?: string;
+    hatSlug?: string;
+    accessorySlug?: string;
+    effectSlug?: string;
+    profileImageUrl?: string;
 };
 
 export default function LeaderboardPage() {
@@ -33,11 +39,11 @@ export default function LeaderboardPage() {
         displayNames: {} 
     });
 
-    // Map userId to displayName
-    const displayNameMap: Record<string, string> = useMemo(() => {
-        const map: Record<string, string> = {};
+    // Map userId to full displayName record with avatar info
+    const displayNameMap: Record<string, DisplayName> = useMemo(() => {
+        const map: Record<string, DisplayName> = {};
         (data?.displayNames ?? []).forEach((entry: DisplayName) => {
-            map[entry.userId] = entry.displayName;
+            map[entry.userId] = entry;
         });
         return map;
     }, [data?.displayNames]);
@@ -50,11 +56,19 @@ export default function LeaderboardPage() {
         });
         // Convert to array and sort
         return Object.entries(counts)
-            .map(([userId, count]) => ({
-                userId,
-                displayName: displayNameMap[userId] || "Anonymous",
-                count,
-            }))
+            .map(([userId, count]) => {
+                const profile = displayNameMap[userId];
+                return {
+                    userId,
+                    displayName: profile?.displayName || "Anonymous",
+                    cursorColor: profile?.cursorColor,
+                    hatSlug: profile?.hatSlug,
+                    accessorySlug: profile?.accessorySlug,
+                    effectSlug: profile?.effectSlug,
+                    profileImageUrl: profile?.profileImageUrl,
+                    count,
+                };
+            })
             .sort((a, b) => b.count - a.count)
             .slice(0, 100);
     }, [data?.clicks, displayNameMap]);
@@ -124,37 +138,54 @@ export default function LeaderboardPage() {
                                 </div>
                             ) : (
                                 <div className="rounded-md border overflow-x-auto">
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead className="w-12 sm:w-16 text-center text-xs sm:text-sm">Rank</TableHead>
-                                                <TableHead className="text-center text-xs sm:text-sm">Name</TableHead>
-                                                <TableHead className="text-center w-16 sm:w-24 text-xs sm:text-sm">Clicks</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {leaderboard.map((entry, idx) => {
-                                                const placeIcon = getPlaceIcon(idx);
-                                                return (
-                                                    <TableRow key={entry.userId} className={idx === 0 ? "bg-muted/50" : ""}>
-                                                        <TableCell className="text-center font-medium text-xs sm:text-sm py-2 sm:py-4">
-                                                            <div className="flex items-center justify-center gap-0.5 sm:gap-1">
-                                                                {placeIcon && <span className="text-sm sm:text-base">{placeIcon}</span>}
-                                                                <span>{idx + 1}</span>
-                                                            </div>
-                                                        </TableCell>
-                                                        <TableCell className="font-medium text-center text-xs sm:text-sm py-2 sm:py-4 max-w-[120px] sm:max-w-none truncate">{entry.displayName}</TableCell>
-                                                        <TableCell className="text-center py-2 sm:py-4">
-                                                            <Badge variant="secondary" className="text-[10px] sm:text-xs">
-                                                                {entry.count}
-                                                            </Badge>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                );
-                                            })}
-                                        </TableBody>
-                                    </Table>
-                                </div>
+                                                                    <Table>
+                                                                        <TableHeader>
+                                                                            <TableRow>
+                                                                                <TableHead className="w-12 sm:w-16 text-center text-xs sm:text-sm">Rank</TableHead>
+                                                                                <TableHead className="text-xs sm:text-sm pl-2">Player</TableHead>
+                                                                                <TableHead className="text-center w-16 sm:w-24 text-xs sm:text-sm">Clicks</TableHead>
+                                                                            </TableRow>
+                                                                        </TableHeader>
+                                                                        <TableBody>
+                                                                            {leaderboard.map((entry, idx) => {
+                                                                                const placeIcon = getPlaceIcon(idx);
+                                                                                return (
+                                                                                    <TableRow key={entry.userId} className={idx === 0 ? "bg-muted/50" : ""}>
+                                                                                        <TableCell className="text-center font-medium text-xs sm:text-sm py-2 sm:py-4">
+                                                                                            <div className="flex items-center justify-center gap-0.5 sm:gap-1">
+                                                                                                {placeIcon && <span className="text-sm sm:text-base">{placeIcon}</span>}
+                                                                                                <span>{idx + 1}</span>
+                                                                                            </div>
+                                                                                        </TableCell>
+                                                                                        <TableCell className="py-2 sm:py-4">
+                                                                                            <div className="flex items-center gap-2 sm:gap-3">
+                                                                                                <UserAvatar
+                                                                                                    size="xs"
+                                                                                                    cursorColor={entry.cursorColor}
+                                                                                                    fallbackSeed={entry.displayName}
+                                                                                                    profileImageUrl={entry.profileImageUrl}
+                                                                                                    hatSlug={entry.hatSlug}
+                                                                                                    accessorySlug={entry.accessorySlug}
+                                                                                                    effectSlug={entry.effectSlug}
+                                                                                                    showClicksBadge={false}
+                                                                                                    showParticles={idx < 3} // Only show particles for top 3
+                                                                                                />
+                                                                                                <span className="font-medium text-xs sm:text-sm truncate max-w-[100px] sm:max-w-[180px]">
+                                                                                                    {entry.displayName}
+                                                                                                </span>
+                                                                                            </div>
+                                                                                        </TableCell>
+                                                                                        <TableCell className="text-center py-2 sm:py-4">
+                                                                                            <Badge variant="secondary" className="text-[10px] sm:text-xs">
+                                                                                                {entry.count}
+                                                                                            </Badge>
+                                                                                        </TableCell>
+                                                                                    </TableRow>
+                                                                                );
+                                                                            })}
+                                                                        </TableBody>
+                                                                    </Table>
+                                                                </div>
                             )}
                         </CardContent>
                     </Card>

@@ -1,12 +1,14 @@
 "use client";
 
+import { memo, useMemo, CSSProperties } from "react";
 import Image from "next/image";
-import { CSSProperties, memo, useMemo } from "react";
 import { cn, getStableHslColor } from "@/lib/utils";
 import { ParticleEffect, EffectType } from "./particle-effect";
 
-type AvatarPreviewProps = {
-    size?: number;
+export type UserAvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
+
+export interface UserAvatarProps {
+    size?: UserAvatarSize;
     cursorColor?: string;
     fallbackSeed?: string;
     fallbackColor?: string;
@@ -21,9 +23,73 @@ type AvatarPreviewProps = {
     showParticles?: boolean;
     className?: string;
     style?: CSSProperties;
+}
+
+// Size configurations
+const SIZE_CONFIG: Record<UserAvatarSize, {
+    container: number;
+    dot: number;
+    image: number;
+    hat: number;
+    accessory: number;
+    effect: number;
+    badge: { paddingX: number; paddingY: number; fontSize: number };
+    nameTag: number;
+}> = {
+    xs: {
+        container: 32,
+        dot: 16,
+        image: 14,
+        hat: 14,
+        accessory: 12,
+        effect: 10,
+        badge: { paddingX: 4, paddingY: 1, fontSize: 8 },
+        nameTag: 9,
+    },
+    sm: {
+        container: 40,
+        dot: 20,
+        image: 18,
+        hat: 18,
+        accessory: 14,
+        effect: 12,
+        badge: { paddingX: 5, paddingY: 2, fontSize: 9 },
+        nameTag: 10,
+    },
+    md: {
+        container: 48,
+        dot: 24,
+        image: 22,
+        hat: 22,
+        accessory: 18,
+        effect: 16,
+        badge: { paddingX: 6, paddingY: 2, fontSize: 10 },
+        nameTag: 11,
+    },
+    lg: {
+        container: 80,
+        dot: 40,
+        image: 36,
+        hat: 36,
+        accessory: 28,
+        effect: 24,
+        badge: { paddingX: 8, paddingY: 3, fontSize: 12 },
+        nameTag: 13,
+    },
+    xl: {
+        container: 140,
+        dot: 70,
+        image: 63,
+        hat: 56,
+        accessory: 44,
+        effect: 36,
+        badge: { paddingX: 12, paddingY: 4, fontSize: 16 },
+        nameTag: 16,
+    },
 };
 
-const hatSymbols: Record<string, { symbol: string; rotation: string }> = {
+// Hat emoji mappings
+const HAT_SYMBOLS: Record<string, { symbol: string; rotation: string }> = {
     "fun-hat": { symbol: "🎩", rotation: "-12deg" },
     "party-hat": { symbol: "🥳", rotation: "-8deg" },
     "crown": { symbol: "👑", rotation: "-5deg" },
@@ -37,7 +103,8 @@ const hatSymbols: Record<string, { symbol: string; rotation: string }> = {
     "top-hat": { symbol: "🎩", rotation: "-11deg" },
 };
 
-const accessorySymbols: Record<string, { symbol: string; rotation: string }> = {
+// Accessory emoji mappings
+const ACCESSORY_SYMBOLS: Record<string, { symbol: string; rotation: string }> = {
     "sunglasses": { symbol: "🕶️", rotation: "0deg" },
     "mask": { symbol: "😷", rotation: "0deg" },
     "halo": { symbol: "😇", rotation: "0deg" },
@@ -47,17 +114,7 @@ const accessorySymbols: Record<string, { symbol: string; rotation: string }> = {
     "alien": { symbol: "👽", rotation: "0deg" },
 };
 
-const effectSymbols: Record<string, { symbol: string; animation?: string }> = {
-    "sparkles": { symbol: "✨", animation: "pulse" },
-    "glow": { symbol: "💫", animation: "pulse" },
-    "rainbow": { symbol: "🌈", animation: "spin" },
-    "fire": { symbol: "🔥", animation: "pulse" },
-    "ice": { symbol: "❄️", animation: "pulse" },
-    "lightning": { symbol: "⚡", animation: "flash" },
-    "stars": { symbol: "⭐", animation: "twinkle" },
-};
-
-// Map effect slugs to effect types for particle system
+// Map effect slugs to effect types
 const EFFECT_MAP: Record<string, EffectType> = {
     "sparkles": "sparkles",
     "glow": "glow",
@@ -74,24 +131,27 @@ const EFFECT_MAP: Record<string, EffectType> = {
     "stars-effect": "stars",
 };
 
-const HatItem = memo(function HatItem({ hatSlug, size }: { hatSlug?: string; size: number }) {
-    if (!hatSlug) return null;
-    const config = hatSymbols[hatSlug] || { symbol: "🧢", rotation: "-6deg" };
-    const topOffset = Math.max(-size * 0.4, -40);
-    const leftOffset = size * 0.08;
-
+// Hat component
+const Hat = memo(function Hat({ 
+    hatSlug, 
+    fontSize 
+}: { 
+    hatSlug: string; 
+    fontSize: number;
+}) {
+    const config = HAT_SYMBOLS[hatSlug] || { symbol: "🧢", rotation: "-6deg" };
+    
     return (
         <div
             style={{
                 position: "absolute",
-                top: topOffset,
-                left: leftOffset,
-                fontSize: size * 0.5,
+                top: -fontSize * 0.8,
+                left: fontSize * 0.15,
+                fontSize,
                 transform: `rotate(${config.rotation})`,
                 zIndex: 12,
                 pointerEvents: "none",
                 filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))",
-                transition: "transform 0.2s ease-out",
             }}
         >
             {config.symbol}
@@ -99,25 +159,30 @@ const HatItem = memo(function HatItem({ hatSlug, size }: { hatSlug?: string; siz
     );
 });
 
-const AccessoryItem = memo(function AccessoryItem({ accessorySlug, size }: { accessorySlug?: string; size: number }) {
-    if (!accessorySlug) return null;
-    const config = accessorySymbols[accessorySlug] || { symbol: "🎭", rotation: "0deg" };
+// Accessory component
+const Accessory = memo(function Accessory({ 
+    accessorySlug, 
+    fontSize,
+    containerSize,
+}: { 
+    accessorySlug: string; 
+    fontSize: number;
+    containerSize: number;
+}) {
+    const config = ACCESSORY_SYMBOLS[accessorySlug] || { symbol: "🎭", rotation: "0deg" };
     const isFaceAccessory = accessorySlug === "sunglasses" || accessorySlug === "mask";
-    const topOffset = isFaceAccessory ? size * 0.15 : size * 0.05;
-    const leftOffset = isFaceAccessory ? size * 0.15 : size * 0.6;
-
+    
     return (
         <div
             style={{
                 position: "absolute",
-                top: topOffset,
-                left: leftOffset,
-                fontSize: size * 0.4,
+                top: isFaceAccessory ? containerSize * 0.15 : containerSize * 0.05,
+                left: isFaceAccessory ? containerSize * 0.15 : containerSize * 0.6,
+                fontSize,
                 transform: `rotate(${config.rotation})`,
                 zIndex: 11,
                 pointerEvents: "none",
                 filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))",
-                transition: "transform 0.2s ease-out",
             }}
         >
             {config.symbol}
@@ -125,40 +190,14 @@ const AccessoryItem = memo(function AccessoryItem({ accessorySlug, size }: { acc
     );
 });
 
-const EffectItem = memo(function EffectItem({ effectSlug, size }: { effectSlug?: string; size: number }) {
-    if (!effectSlug) return null;
-    const config = effectSymbols[effectSlug] || { symbol: "✨" };
-
-    return (
-        <div
-            style={{
-                position: "absolute",
-                top: -size * 0.1,
-                right: -size * 0.1,
-                fontSize: size * 0.35,
-                zIndex: 13,
-                pointerEvents: "none",
-                filter: "drop-shadow(0 0 6px rgba(255,255,255,0.5))",
-                animation: config.animation === "pulse" ? "pulse 2s ease-in-out infinite" : 
-                          config.animation === "spin" ? "spin 4s linear infinite" : undefined,
-            }}
-        >
-            {config.symbol}
-        </div>
-    );
-});
-
+// Badge showing click count
 const ClicksBadge = memo(function ClicksBadge({
     clicksGiven,
-    size,
+    config,
 }: {
     clicksGiven: number;
-    size: number;
+    config: typeof SIZE_CONFIG.md.badge;
 }) {
-    const badgePaddingX = Math.max(Math.round(size * 0.12), 6);
-    const badgePaddingY = Math.max(Math.round(size * 0.04), 2);
-    const fontSize = Math.max(size * 0.22, 11);
-
     // Dynamic badge color based on click count
     const getBadgeStyle = () => {
         if (clicksGiven >= 100) {
@@ -202,15 +241,13 @@ const ClicksBadge = memo(function ClicksBadge({
                 transform: "translateX(-50%)",
                 ...badgeStyle,
                 borderRadius: 999,
-                padding: `${badgePaddingY}px ${badgePaddingX}px`,
-                fontSize,
+                padding: `${config.paddingY}px ${config.paddingX}px`,
+                fontSize: config.fontSize,
                 fontWeight: 700,
-                zIndex: 5,
+                zIndex: 15,
                 fontFamily: "var(--font-mono), JetBrains Mono, monospace",
                 letterSpacing: "-0.02em",
                 whiteSpace: "nowrap",
-                minWidth: size * 0.4,
-                textAlign: "center",
             }}
         >
             {clicksGiven}
@@ -218,6 +255,7 @@ const ClicksBadge = memo(function ClicksBadge({
     );
 });
 
+// Profile image component
 const ProfileImage = memo(function ProfileImage({
     profileImageUrl,
     imageSize,
@@ -258,9 +296,16 @@ const ProfileImage = memo(function ProfileImage({
     );
 });
 
-const NameTag = memo(function NameTag({ name, size }: { name: string; size: number }) {
-    const fontSize = Math.max(size * 0.24, 11);
-
+// Name tag component
+const NameTag = memo(function NameTag({ 
+    name, 
+    fontSize,
+    containerSize,
+}: { 
+    name: string; 
+    fontSize: number;
+    containerSize: number;
+}) {
     return (
         <div
             style={{
@@ -273,7 +318,7 @@ const NameTag = memo(function NameTag({ name, size }: { name: string; size: numb
                 fontWeight: 500,
                 color: "#fff",
                 textAlign: "center",
-                maxWidth: size * 2.5,
+                maxWidth: containerSize * 2.5,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
@@ -286,8 +331,9 @@ const NameTag = memo(function NameTag({ name, size }: { name: string; size: numb
     );
 });
 
-export const AvatarPreview = memo(function AvatarPreview({
-    size = 48,
+// Main avatar component
+export const UserAvatar = memo(function UserAvatar({
+    size = "md",
     cursorColor,
     fallbackSeed = "avatar",
     fallbackColor,
@@ -302,62 +348,60 @@ export const AvatarPreview = memo(function AvatarPreview({
     showParticles = true,
     className,
     style,
-}: AvatarPreviewProps) {
-    const dotSize = useMemo(() => Math.max(Math.round(size * 0.5), 20), [size]);
-    const imageSize = useMemo(() => Math.max(Math.round(size * 0.45), 20), [size]);
-    const dotOffset = useMemo(() => (size - dotSize) / 2, [size, dotSize]);
+}: UserAvatarProps) {
+    const config = SIZE_CONFIG[size];
+    const dotOffset = (config.container - config.dot) / 2;
+    
     const resolvedColor = useMemo(
         () => cursorColor || fallbackColor || getStableHslColor(fallbackSeed),
         [cursorColor, fallbackColor, fallbackSeed]
     );
 
+    // Get effect type from slug
+    const effectType = effectSlug ? EFFECT_MAP[effectSlug] : undefined;
+
     // Create a subtle pulsing glow effect based on the cursor color
     const glowColor = useMemo(() => {
         if (cursorColor?.startsWith("#")) {
-            return cursorColor + "40"; // Add alpha
+            return cursorColor + "40";
         }
         return "rgba(255,255,255,0.2)";
     }, [cursorColor]);
 
-    // Get effect type for particle system
-    const effectType = useMemo(() => {
-        return effectSlug ? EFFECT_MAP[effectSlug] : undefined;
-    }, [effectSlug]);
-
-    // Determine particle intensity based on size
-    const particleIntensity = useMemo(() => {
-        if (size >= 120) return "high";
-        if (size >= 60) return "medium";
-        return "low";
-    }, [size]);
-
     return (
         <div className={cn("flex flex-col items-center", className)} style={style}>
-            <div style={{ position: "relative", width: size, height: size }}>
-                {/* Particle Effects (behind everything) */}
+            <div style={{ position: "relative", width: config.container, height: config.container }}>
+                {/* Particle effects layer (behind avatar) */}
                 {showParticles && effectType && (
                     <ParticleEffect 
                         effect={effectType} 
-                        size={size}
-                        intensity={particleIntensity as "low" | "medium" | "high"}
+                        size={config.container}
+                        intensity={size === "xl" ? "high" : size === "lg" ? "medium" : "low"}
                     />
                 )}
                 
-                <HatItem hatSlug={hatSlug} size={size} />
-                <AccessoryItem accessorySlug={accessorySlug} size={size} />
-                {/* Only show emoji effect if particles are disabled */}
-                {!showParticles && <EffectItem effectSlug={effectSlug} size={size} />}
+                {/* Hat */}
+                {hatSlug && <Hat hatSlug={hatSlug} fontSize={config.hat} />}
+                
+                {/* Accessory */}
+                {accessorySlug && (
+                    <Accessory 
+                        accessorySlug={accessorySlug} 
+                        fontSize={config.accessory}
+                        containerSize={config.container}
+                    />
+                )}
                 
                 {/* Glow effect behind the main dot */}
                 <div
                     style={{
-                        width: dotSize * 1.4,
-                        height: dotSize * 1.4,
+                        width: config.dot * 1.4,
+                        height: config.dot * 1.4,
                         borderRadius: "50%",
                         background: `radial-gradient(circle, ${glowColor} 0%, transparent 70%)`,
                         position: "absolute",
-                        left: dotOffset - (dotSize * 0.2),
-                        top: dotOffset - (dotSize * 0.2),
+                        left: dotOffset - (config.dot * 0.2),
+                        top: dotOffset - (config.dot * 0.2),
                         zIndex: 0,
                         pointerEvents: "none",
                     }}
@@ -366,8 +410,8 @@ export const AvatarPreview = memo(function AvatarPreview({
                 {/* Main cursor dot */}
                 <div
                     style={{
-                        width: dotSize,
-                        height: dotSize,
+                        width: config.dot,
+                        height: config.dot,
                         borderRadius: "50%",
                         background: `linear-gradient(135deg, ${resolvedColor} 0%, ${resolvedColor}dd 100%)`,
                         position: "absolute",
@@ -379,19 +423,30 @@ export const AvatarPreview = memo(function AvatarPreview({
                     }}
                 />
                 
+                {/* Profile image */}
                 {profileImageUrl && (
                     <ProfileImage
                         profileImageUrl={profileImageUrl}
-                        imageSize={imageSize}
+                        imageSize={config.image}
                     />
                 )}
                 
+                {/* Clicks badge */}
                 {showClicksBadge && typeof clicksGiven === "number" && (
-                    <ClicksBadge clicksGiven={clicksGiven} size={size} />
+                    <ClicksBadge clicksGiven={clicksGiven} config={config.badge} />
                 )}
             </div>
             
-            {showNameTag && name && <NameTag name={name} size={size} />}
+            {/* Name tag */}
+            {showNameTag && name && (
+                <NameTag name={name} fontSize={config.nameTag} containerSize={config.container} />
+            )}
         </div>
     );
 });
+
+// Export a simple avatar version without particles for lightweight usage
+export const SimpleUserAvatar = memo(function SimpleUserAvatar(props: UserAvatarProps) {
+    return <UserAvatar {...props} showParticles={false} />;
+});
+
