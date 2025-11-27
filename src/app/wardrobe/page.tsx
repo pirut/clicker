@@ -36,10 +36,10 @@ type AvatarItem = {
 const EMPTY_LIST: unknown[] = [];
 
 const RARITY_COLORS: Record<string, { bg: string; border: string; text: string }> = {
-    common: { bg: "bg-slate-500/20", border: "border-slate-400/40", text: "text-slate-300" },
-    rare: { bg: "bg-blue-500/20", border: "border-blue-400/50", text: "text-blue-300" },
-    epic: { bg: "bg-purple-500/20", border: "border-purple-400/50", text: "text-purple-300" },
-    legendary: { bg: "bg-amber-500/20", border: "border-amber-400/50", text: "text-amber-300" },
+    common: { bg: "bg-slate-200 dark:bg-slate-500/20", border: "border-slate-400", text: "text-slate-700 dark:text-slate-300" },
+    rare: { bg: "bg-blue-100 dark:bg-blue-500/20", border: "border-blue-400", text: "text-blue-700 dark:text-blue-300" },
+    epic: { bg: "bg-purple-100 dark:bg-purple-500/20", border: "border-purple-400", text: "text-purple-700 dark:text-purple-300" },
+    legendary: { bg: "bg-amber-100 dark:bg-amber-500/20", border: "border-amber-400", text: "text-amber-700 dark:text-amber-300" },
 };
 
 export default function WardrobePage() {
@@ -255,15 +255,15 @@ export default function WardrobePage() {
 
                                 {/* Stats */}
                                 <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-6">
-                                    <div className="rounded-lg sm:rounded-xl bg-muted/50 dark:bg-white/5 p-2 sm:p-3">
-                                        <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground">{availableClicks}</p>
+                                    <div className="rounded-lg sm:rounded-xl bg-primary/5 dark:bg-white/5 p-2 sm:p-3 border border-primary/10 dark:border-white/5">
+                                        <p className="text-lg sm:text-xl lg:text-2xl font-bold text-primary dark:text-foreground">{availableClicks}</p>
                                         <p className="text-[8px] sm:text-[10px] uppercase tracking-wider text-muted-foreground">Available</p>
                                     </div>
-                                    <div className="rounded-lg sm:rounded-xl bg-muted/50 p-2 sm:p-3">
+                                    <div className="rounded-lg sm:rounded-xl bg-muted/50 dark:bg-white/5 p-2 sm:p-3 border border-border/50 dark:border-white/5">
                                         <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground">{spentClicks}</p>
                                         <p className="text-[8px] sm:text-[10px] uppercase tracking-wider text-muted-foreground">Spent</p>
                                     </div>
-                                    <div className="rounded-lg sm:rounded-xl bg-muted/50 p-2 sm:p-3">
+                                    <div className="rounded-lg sm:rounded-xl bg-muted/50 dark:bg-white/5 p-2 sm:p-3 border border-border/50 dark:border-white/5">
                                         <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground">{ownedItems.length}</p>
                                         <p className="text-[8px] sm:text-[10px] uppercase tracking-wider text-muted-foreground">Owned</p>
                                     </div>
@@ -285,10 +285,10 @@ export default function WardrobePage() {
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: 10 }}
                                         className={cn(
-                                            "mt-4 rounded-xl p-4 text-sm",
-                                            statusMessage.type === "success" && "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30",
-                                            statusMessage.type === "error" && "bg-red-500/20 text-red-300 border border-red-500/30",
-                                            statusMessage.type === "info" && "bg-blue-500/20 text-blue-300 border border-blue-500/30"
+                                            "mt-4 rounded-xl p-4 text-sm font-medium",
+                                            statusMessage.type === "success" && "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/30",
+                                            statusMessage.type === "error" && "bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-500/30",
+                                            statusMessage.type === "info" && "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-500/30"
                                         )}
                                     >
                                         {statusMessage.text}
@@ -305,7 +305,7 @@ export default function WardrobePage() {
                             className="space-y-6"
                         >
                             {/* Tab Navigation */}
-                            <div className="flex gap-1 sm:gap-2 p-1 bg-muted/30 dark:bg-white/5 rounded-xl overflow-x-auto">
+                            <div className="flex gap-1 sm:gap-2 p-1.5 bg-muted/50 dark:bg-white/5 rounded-xl overflow-x-auto border border-border/50 dark:border-white/5">
                                 {[
                                     { id: "appearance", label: "Appearance", icon: "🎨" },
                                     { id: "hats", label: "Hats", icon: "🎩", count: ownedHats.length },
@@ -318,8 +318,8 @@ export default function WardrobePage() {
                                         className={cn(
                                             "flex-1 py-2 sm:py-3 px-2 sm:px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-1 sm:gap-2 min-w-0",
                                             selectedTab === tab.id
-                                                ? "bg-primary/10 text-foreground dark:bg-white/10 dark:text-white"
-                                                : "text-muted-foreground hover:text-foreground dark:text-white/50 dark:hover:text-white/70"
+                                                ? "bg-card text-foreground shadow-sm border border-border/50 dark:bg-white/10 dark:text-white dark:border-white/10"
+                                                : "text-muted-foreground hover:text-foreground hover:bg-card/50 dark:text-white/50 dark:hover:text-white/70 dark:hover:bg-white/5"
                                         )}
                                     >
                                         <span className="text-sm sm:text-base">{tab.icon}</span>
@@ -445,8 +445,8 @@ export default function WardrobePage() {
                                                 className={cn(
                                                     "rounded-xl p-4 border transition-all text-center bg-card shadow-sm",
                                                     !currentHatSlug
-                                                        ? "border-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/20"
-                                                        : "border-border hover:border-primary/50 hover:shadow-md"
+                                                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-500/20 ring-2 ring-emerald-500/20"
+                                                        : "border-border hover:border-primary/50 hover:shadow-md hover:bg-muted/30 dark:hover:bg-white/5"
                                                 )}
                                             >
                                                 <div className="text-4xl mb-2">❌</div>
@@ -468,8 +468,8 @@ export default function WardrobePage() {
                                                         className={cn(
                                                             "rounded-xl p-4 border transition-all text-center bg-card shadow-sm",
                                                             isEquipped
-                                                                ? "border-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/20"
-                                                                : cn("border-border hover:border-primary/50 hover:shadow-md", rarityStyle.border)
+                                                                ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-500/20 ring-2 ring-emerald-500/20"
+                                                                : cn("border-border hover:border-primary/50 hover:shadow-md hover:bg-muted/30 dark:hover:bg-white/5", rarityStyle.border)
                                                         )}
                                                     >
                                                         <div className="text-4xl mb-2">
@@ -489,7 +489,7 @@ export default function WardrobePage() {
                                                             {rarity}
                                                         </Badge>
                                                         {isEquipped && (
-                                                            <p className="text-xs text-emerald-400 mt-2">✓ Equipped</p>
+                                                            <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-2 font-medium">✓ Equipped</p>
                                                         )}
                                                     </button>
                                                 );
@@ -523,8 +523,8 @@ export default function WardrobePage() {
                                                 className={cn(
                                                     "rounded-xl p-4 border transition-all text-center bg-card shadow-sm",
                                                     !currentAccessorySlug
-                                                        ? "border-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/20"
-                                                        : "border-border hover:border-primary/50 hover:shadow-md"
+                                                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-500/20 ring-2 ring-emerald-500/20"
+                                                        : "border-border hover:border-primary/50 hover:shadow-md hover:bg-muted/30 dark:hover:bg-white/5"
                                                 )}
                                             >
                                                 <div className="text-4xl mb-2">❌</div>
@@ -546,8 +546,8 @@ export default function WardrobePage() {
                                                         className={cn(
                                                             "rounded-xl p-4 border transition-all text-center bg-card shadow-sm",
                                                             isEquipped
-                                                                ? "border-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/20"
-                                                                : cn("border-border hover:border-primary/50 hover:shadow-md", rarityStyle.border)
+                                                                ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-500/20 ring-2 ring-emerald-500/20"
+                                                                : cn("border-border hover:border-primary/50 hover:shadow-md hover:bg-muted/30 dark:hover:bg-white/5", rarityStyle.border)
                                                         )}
                                                     >
                                                         <div className="text-4xl mb-2">
@@ -565,7 +565,7 @@ export default function WardrobePage() {
                                                             {rarity}
                                                         </Badge>
                                                         {isEquipped && (
-                                                            <p className="text-xs text-emerald-400 mt-2">✓ Equipped</p>
+                                                            <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-2 font-medium">✓ Equipped</p>
                                                         )}
                                                     </button>
                                                 );
@@ -599,8 +599,8 @@ export default function WardrobePage() {
                                                 className={cn(
                                                     "rounded-xl p-4 border transition-all text-center bg-card shadow-sm",
                                                     !currentEffectSlug
-                                                        ? "border-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/20"
-                                                        : "border-border hover:border-primary/50 hover:shadow-md"
+                                                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-500/20 ring-2 ring-emerald-500/20"
+                                                        : "border-border hover:border-primary/50 hover:shadow-md hover:bg-muted/30 dark:hover:bg-white/5"
                                                 )}
                                             >
                                                 <div className="text-4xl mb-2">❌</div>
@@ -622,8 +622,8 @@ export default function WardrobePage() {
                                                         className={cn(
                                                             "rounded-xl p-4 border transition-all text-center bg-card shadow-sm",
                                                             isEquipped
-                                                                ? "border-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/20"
-                                                                : cn("border-border hover:border-primary/50 hover:shadow-md", rarityStyle.border)
+                                                                ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-500/20 ring-2 ring-emerald-500/20"
+                                                                : cn("border-border hover:border-primary/50 hover:shadow-md hover:bg-muted/30 dark:hover:bg-white/5", rarityStyle.border)
                                                         )}
                                                     >
                                                         <div className="text-4xl mb-2">
@@ -641,7 +641,7 @@ export default function WardrobePage() {
                                                             {rarity}
                                                         </Badge>
                                                         {isEquipped && (
-                                                            <p className="text-xs text-emerald-400 mt-2">✓ Equipped</p>
+                                                            <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-2 font-medium">✓ Equipped</p>
                                                         )}
                                                     </button>
                                                 );

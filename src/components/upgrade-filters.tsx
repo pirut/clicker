@@ -20,10 +20,10 @@ const CATEGORIES = ["hats", "effects", "accessories", "colors", "names"] as cons
 const RARITIES = ["common", "rare", "epic", "legendary"] as const;
 
 const RARITY_COLORS: Record<string, string> = {
-    common: "bg-gray-500/20 text-gray-300 border-gray-500/30",
-    rare: "bg-blue-500/20 text-blue-300 border-blue-500/30",
-    epic: "bg-purple-500/20 text-purple-300 border-purple-500/30",
-    legendary: "bg-yellow-500/20 text-yellow-300 border-yellow-500/30",
+    common: "bg-gray-200 dark:bg-gray-500/20 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-500/30",
+    rare: "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-500/30",
+    epic: "bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-500/30",
+    legendary: "bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 border-yellow-300 dark:border-yellow-500/30",
 };
 
 interface UpgradeFiltersProps {
@@ -96,7 +96,7 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
                         {isExpanded ? "Less" : "More"} Filters
                     </Button>
                     {hasActiveFilters && (
-                        <Button variant="ghost" size="sm" onClick={resetFilters} className="text-white/70 text-xs sm:text-sm flex-1 sm:flex-none">
+                        <Button variant="ghost" size="sm" onClick={resetFilters} className="text-muted-foreground hover:text-foreground text-xs sm:text-sm flex-1 sm:flex-none">
                             Reset
                         </Button>
                     )}
@@ -104,7 +104,7 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
             </div>
 
             {isExpanded && (
-                <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 rounded-lg border border-border bg-muted/30">
+                <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 rounded-lg border border-border bg-card shadow-sm">
                     {/* Categories */}
                     <div>
                         <label className="text-xs sm:text-sm font-medium text-foreground mb-1.5 sm:mb-2 block">Categories</label>

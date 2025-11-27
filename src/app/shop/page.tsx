@@ -30,10 +30,10 @@ type AvatarItem = {
 const EMPTY_LIST: unknown[] = [];
 
 const RARITY_COLORS: Record<string, { bg: string; border: string; text: string; glow: string }> = {
-    common: { bg: "bg-slate-500/20", border: "border-slate-400/40", text: "text-slate-300", glow: "" },
-    rare: { bg: "bg-blue-500/20", border: "border-blue-400/50", text: "text-blue-300", glow: "shadow-blue-500/20" },
-    epic: { bg: "bg-purple-500/20", border: "border-purple-400/50", text: "text-purple-300", glow: "shadow-purple-500/30" },
-    legendary: { bg: "bg-amber-500/20", border: "border-amber-400/50", text: "text-amber-300", glow: "shadow-amber-500/40" },
+    common: { bg: "bg-slate-200 dark:bg-slate-500/20", border: "border-slate-300 dark:border-slate-400/40", text: "text-slate-700 dark:text-slate-300", glow: "" },
+    rare: { bg: "bg-blue-100 dark:bg-blue-500/20", border: "border-blue-300 dark:border-blue-400/50", text: "text-blue-700 dark:text-blue-300", glow: "shadow-blue-500/20" },
+    epic: { bg: "bg-purple-100 dark:bg-purple-500/20", border: "border-purple-300 dark:border-purple-400/50", text: "text-purple-700 dark:text-purple-300", glow: "shadow-purple-500/30" },
+    legendary: { bg: "bg-amber-100 dark:bg-amber-500/20", border: "border-amber-300 dark:border-amber-400/50", text: "text-amber-700 dark:text-amber-300", glow: "shadow-amber-500/40" },
 };
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -251,11 +251,11 @@ export default function ShopPage() {
                                 exit={{ opacity: 0, y: -20, scale: 0.95 }}
                                 className="mb-6"
                             >
-                                <div className="glass rounded-xl p-3 sm:p-4 border border-emerald-500/30 bg-emerald-500/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+                                <div className="glass rounded-xl p-3 sm:p-4 border border-emerald-400 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
                                     <div className="flex items-center gap-2 sm:gap-3">
                                         <span className="text-xl sm:text-2xl">🎉</span>
                                         <div>
-                                            <p className="font-semibold text-emerald-300 text-sm sm:text-base">{successMessage.message}</p>
+                                            <p className="font-semibold text-emerald-700 dark:text-emerald-300 text-sm sm:text-base">{successMessage.message}</p>
                                         </div>
                                     </div>
                                     <div className="flex gap-2 w-full sm:w-auto">
@@ -286,12 +286,12 @@ export default function ShopPage() {
                         className="mb-6"
                     >
                         <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
-                            <TabsList className="w-full grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2 h-auto p-1.5 sm:p-2 bg-muted/30 dark:bg-white/5 rounded-xl">
+                            <TabsList className="w-full grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2 h-auto p-1.5 sm:p-2 bg-muted/50 dark:bg-white/5 rounded-xl border border-border/50 dark:border-white/5">
                                 {CATEGORIES.map((cat) => (
                                     <TabsTrigger
                                         key={cat}
                                         value={cat}
-                                        className="py-2 sm:py-3 px-2 sm:px-4 rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-foreground dark:data-[state=active]:bg-white/10 dark:data-[state=active]:text-white transition-all text-xs sm:text-sm"
+                                        className="py-2 sm:py-3 px-2 sm:px-4 rounded-lg data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 dark:data-[state=active]:bg-white/10 dark:data-[state=active]:text-white dark:data-[state=active]:border-white/10 transition-all text-xs sm:text-sm"
                                     >
                                         <span className="sm:mr-2">{CATEGORY_ICONS[cat]}</span>
                                         <span className="capitalize hidden sm:inline">{cat}</span>
@@ -371,8 +371,8 @@ export default function ShopPage() {
                                                 "group relative rounded-xl border p-5 transition-all duration-300",
                                                 "bg-card text-card-foreground shadow-sm",
                                                 owned
-                                                    ? "border-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/20"
-                                                    : cn("border-border hover:border-primary/50 hover:shadow-md", rarityStyle.border),
+                                                    ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-500/20 ring-2 ring-emerald-500/20"
+                                                    : cn("border-border hover:border-primary/50 hover:shadow-lg hover:bg-muted/20 dark:hover:bg-white/5", rarityStyle.border),
                                                 !owned && !canAfford && "opacity-50"
                                             )}
                                         >
@@ -409,7 +409,7 @@ export default function ShopPage() {
                                                         </div>
                                                     </div>
                                                     {owned && (
-                                                        <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30">
+                                                        <Badge className="bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-400 dark:border-emerald-500/30">
                                                             ✓ Owned
                                                         </Badge>
                                                     )}
@@ -421,7 +421,7 @@ export default function ShopPage() {
                                                 </p>
 
                                                 {/* Footer */}
-                                                <div className="flex items-center justify-between pt-3 border-t border-border">
+                                                <div className="flex items-center justify-between pt-3 border-t border-border/50 dark:border-border">
                                                     <div className="flex items-baseline gap-1">
                                                         <span className="text-2xl font-bold text-foreground">{item.price}</span>
                                                         <span className="text-sm text-muted-foreground">clicks</span>
