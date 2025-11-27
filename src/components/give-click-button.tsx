@@ -5,7 +5,6 @@ import { id } from "@instantdb/react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { useState, useCallback, useRef } from "react";
 import { motion, useAnimation } from "framer-motion";
-import confetti from "canvas-confetti";
 
 export default function GiveClickButton() {
     const { userId: clerkUserId } = useAuth();
@@ -53,17 +52,6 @@ export default function GiveClickButton() {
         controls.start({
             scale: [1, 1.15, 1],
             transition: { duration: 0.3, ease: "easeOut" }
-        });
-
-        // Run confetti async to not block main thread
-        requestAnimationFrame(() => {
-            confetti({
-                particleCount: 40,
-                spread: 60,
-                origin: { y: 0.65 },
-                colors: ['#c4a574', '#8b6f47', '#d4af37', '#f0d78c'],
-                disableForReducedMotion: true,
-            });
         });
 
         // Clear any previous error
