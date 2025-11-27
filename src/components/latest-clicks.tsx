@@ -110,15 +110,15 @@ export default function LatestClicks() {
             <div className="w-full max-w-md mx-auto">
                 <div className="glass rounded-xl sm:rounded-2xl overflow-hidden">
                     <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-white/5">
-                        <div className="h-5 sm:h-6 w-28 sm:w-32 bg-white/10 rounded animate-pulse" />
+                        <div className="h-5 sm:h-6 w-28 sm:w-32 bg-muted/50 dark:bg-white/10 rounded animate-pulse" />
                     </div>
                     <div className="p-3 sm:p-4 space-y-2 sm:space-y-3">
                         {[...Array(5)].map((_, i) => (
-                            <div key={i} className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-white/5 animate-pulse">
-                                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 flex-shrink-0" />
+                            <div key={i} className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-muted/30 dark:bg-white/5 animate-pulse">
+                                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-muted/50 dark:bg-white/10 flex-shrink-0" />
                                 <div className="flex-1 space-y-1.5 sm:space-y-2">
-                                    <div className="h-3 sm:h-4 w-20 sm:w-24 bg-white/10 rounded" />
-                                    <div className="h-2.5 sm:h-3 w-14 sm:w-16 bg-white/5 rounded" />
+                                    <div className="h-3 sm:h-4 w-20 sm:w-24 bg-muted/50 dark:bg-white/10 rounded" />
+                                    <div className="h-2.5 sm:h-3 w-14 sm:w-16 bg-muted/30 dark:bg-white/5 rounded" />
                                 </div>
                             </div>
                         ))}
@@ -132,9 +132,9 @@ export default function LatestClicks() {
 
     return (
         <div className="w-full max-w-md mx-auto">
-            <div className="glass rounded-xl sm:rounded-2xl overflow-hidden border border-white/5">
+            <div className="glass rounded-xl sm:rounded-2xl overflow-hidden border border-border/50 dark:border-white/5">
                 {/* Header with Total Clicks */}
-                <div className="px-3 sm:px-5 py-3 sm:py-4 border-b border-white/5 bg-gradient-to-r from-primary/10 via-accent/5 to-transparent">
+                <div className="px-3 sm:px-5 py-3 sm:py-4 border-b border-border/50 dark:border-white/5 bg-gradient-to-r from-primary/10 via-accent/5 to-transparent">
                     <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                             <div className="relative flex-shrink-0">
@@ -167,7 +167,7 @@ export default function LatestClicks() {
                                 animate={{ opacity: 1 }}
                                 className="text-center py-8 sm:py-12 text-muted-foreground"
                             >
-                                <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-full bg-white/5 flex items-center justify-center">
+                                <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-full bg-muted/30 dark:bg-white/5 flex items-center justify-center">
                                     <span className="text-xl sm:text-2xl">👆</span>
                                 </div>
                                 <p className="font-medium text-sm sm:text-base">No clicks yet</p>
@@ -197,7 +197,7 @@ export default function LatestClicks() {
                                             className="group relative"
                                         >
                                             <div
-                                                className="flex items-center gap-2 sm:gap-3 p-2 sm:p-2.5 rounded-lg sm:rounded-xl transition-all duration-200 hover:bg-white/5 cursor-default"
+                                                className="flex items-center gap-2 sm:gap-3 p-2 sm:p-2.5 rounded-lg sm:rounded-xl transition-all duration-200 hover:bg-muted/30 dark:hover:bg-white/5 cursor-default"
                                                 style={{
                                                     background: index === 0 ? `linear-gradient(90deg, ${color}10 0%, transparent 100%)` : undefined,
                                                 }}
@@ -255,7 +255,7 @@ export default function LatestClicks() {
 
                                             {/* Subtle divider */}
                                             {index < clicks.length - 1 && (
-                                                <div className="mx-2 sm:mx-3 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+                                                <div className="mx-2 sm:mx-3 h-px bg-gradient-to-r from-transparent via-border/50 dark:via-white/5 to-transparent" />
                                             )}
                                         </motion.div>
                                     );

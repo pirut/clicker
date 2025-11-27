@@ -286,7 +286,7 @@ export default function ShopPage() {
                         className="mb-6"
                     >
                         <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
-                            <TabsList className="w-full grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2 h-auto p-1.5 sm:p-2 bg-white/5 rounded-xl">
+                            <TabsList className="w-full grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2 h-auto p-1.5 sm:p-2 bg-muted/30 dark:bg-white/5 rounded-xl">
                                 {CATEGORIES.map((cat) => (
                                     <TabsTrigger
                                         key={cat}
@@ -369,9 +369,9 @@ export default function ShopPage() {
                                             whileHover={{ scale: 1.02, y: -4 }}
                                             className={cn(
                                                 "group relative rounded-xl border-2 p-5 transition-all duration-300",
-                                                "bg-gradient-to-b from-white/5 to-transparent backdrop-blur-sm",
+                                                "bg-card/80 dark:bg-gradient-to-b dark:from-white/5 dark:to-transparent backdrop-blur-sm",
                                                 owned
-                                                    ? "border-emerald-500/40 bg-emerald-500/5"
+                                                    ? "border-emerald-500/40 bg-emerald-500/10 dark:bg-emerald-500/5"
                                                     : cn(rarityStyle.border, "hover:shadow-lg", rarityStyle.glow),
                                                 !owned && !canAfford && "opacity-50"
                                             )}

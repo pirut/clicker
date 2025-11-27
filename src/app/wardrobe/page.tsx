@@ -255,7 +255,7 @@ export default function WardrobePage() {
 
                                 {/* Stats */}
                                 <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-6">
-                                    <div className="rounded-lg sm:rounded-xl bg-white/5 p-2 sm:p-3">
+                                    <div className="rounded-lg sm:rounded-xl bg-muted/50 dark:bg-white/5 p-2 sm:p-3">
                                         <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground">{availableClicks}</p>
                                         <p className="text-[8px] sm:text-[10px] uppercase tracking-wider text-muted-foreground">Available</p>
                                     </div>
@@ -305,7 +305,7 @@ export default function WardrobePage() {
                             className="space-y-6"
                         >
                             {/* Tab Navigation */}
-                            <div className="flex gap-1 sm:gap-2 p-1 bg-white/5 rounded-xl overflow-x-auto">
+                            <div className="flex gap-1 sm:gap-2 p-1 bg-muted/30 dark:bg-white/5 rounded-xl overflow-x-auto">
                                 {[
                                     { id: "appearance", label: "Appearance", icon: "🎨" },
                                     { id: "hats", label: "Hats", icon: "🎩", count: ownedHats.length },
@@ -347,7 +347,7 @@ export default function WardrobePage() {
                                             </div>
                                             {!hasColorUpgrade && (
                                                 <Link href="/shop">
-                                                    <Badge variant="outline" className="cursor-pointer hover:bg-white/10 text-xs">
+                                                    <Badge variant="outline" className="cursor-pointer hover:bg-muted/50 dark:hover:bg-white/10 text-xs">
                                                         🔒 Unlock in Shop
                                                     </Badge>
                                                 </Link>
@@ -385,7 +385,7 @@ export default function WardrobePage() {
                                             </div>
                                             {!hasNameUpgrade && (
                                                 <Link href="/shop">
-                                                    <Badge variant="outline" className="cursor-pointer hover:bg-white/10 text-xs">
+                                                    <Badge variant="outline" className="cursor-pointer hover:bg-muted/50 dark:hover:bg-white/10 text-xs">
                                                         🔒 Unlock in Shop
                                                     </Badge>
                                                 </Link>
@@ -398,7 +398,7 @@ export default function WardrobePage() {
                                                     onChange={(e) => setPendingName(e.target.value.slice(0, 30))}
                                                     maxLength={30}
                                                     placeholder="Enter your display name"
-                                                    className="flex-1 bg-white/5 border-white/10 text-sm"
+                                                    className="flex-1 bg-muted/30 dark:bg-white/5 border-border dark:border-white/10 text-sm"
                                                 />
                                                 <Button
                                                     disabled={savingField === "name"}
@@ -446,7 +446,7 @@ export default function WardrobePage() {
                                                     "rounded-xl p-4 border-2 transition-all text-center",
                                                     !currentHatSlug
                                                         ? "border-emerald-500/50 bg-emerald-500/10"
-                                                        : "border-white/10 bg-white/5 hover:border-white/20"
+                                                        : "border-border dark:border-white/10 bg-muted/30 dark:bg-white/5 hover:border-border/80 dark:hover:border-white/20"
                                                 )}
                                             >
                                                 <div className="text-4xl mb-2">❌</div>
@@ -469,7 +469,7 @@ export default function WardrobePage() {
                                                             "rounded-xl p-4 border-2 transition-all text-center",
                                                             isEquipped
                                                                 ? "border-emerald-500/50 bg-emerald-500/10"
-                                                                : cn("hover:border-white/30", rarityStyle.border, "bg-white/5")
+                                                                : cn("hover:border-border/80 dark:hover:border-white/30", rarityStyle.border, "bg-muted/30 dark:bg-white/5")
                                                         )}
                                                     >
                                                         <div className="text-4xl mb-2">
@@ -524,7 +524,7 @@ export default function WardrobePage() {
                                                     "rounded-xl p-4 border-2 transition-all text-center",
                                                     !currentAccessorySlug
                                                         ? "border-emerald-500/50 bg-emerald-500/10"
-                                                        : "border-white/10 bg-white/5 hover:border-white/20"
+                                                        : "border-border dark:border-white/10 bg-muted/30 dark:bg-white/5 hover:border-border/80 dark:hover:border-white/20"
                                                 )}
                                             >
                                                 <div className="text-4xl mb-2">❌</div>
@@ -547,7 +547,7 @@ export default function WardrobePage() {
                                                             "rounded-xl p-4 border-2 transition-all text-center",
                                                             isEquipped
                                                                 ? "border-emerald-500/50 bg-emerald-500/10"
-                                                                : cn("hover:border-white/30", rarityStyle.border, "bg-white/5")
+                                                                : cn("hover:border-border/80 dark:hover:border-white/30", rarityStyle.border, "bg-muted/30 dark:bg-white/5")
                                                         )}
                                                     >
                                                         <div className="text-4xl mb-2">
@@ -600,7 +600,7 @@ export default function WardrobePage() {
                                                     "rounded-xl p-4 border-2 transition-all text-center",
                                                     !currentEffectSlug
                                                         ? "border-emerald-500/50 bg-emerald-500/10"
-                                                        : "border-white/10 bg-white/5 hover:border-white/20"
+                                                        : "border-border dark:border-white/10 bg-muted/30 dark:bg-white/5 hover:border-border/80 dark:hover:border-white/20"
                                                 )}
                                             >
                                                 <div className="text-4xl mb-2">❌</div>
@@ -623,7 +623,7 @@ export default function WardrobePage() {
                                                             "rounded-xl p-4 border-2 transition-all text-center",
                                                             isEquipped
                                                                 ? "border-emerald-500/50 bg-emerald-500/10"
-                                                                : cn("hover:border-white/30", rarityStyle.border, "bg-white/5")
+                                                                : cn("hover:border-border/80 dark:hover:border-white/30", rarityStyle.border, "bg-muted/30 dark:bg-white/5")
                                                         )}
                                                     >
                                                         <div className="text-4xl mb-2">

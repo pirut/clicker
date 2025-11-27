@@ -160,7 +160,7 @@ export function ShareButton({ url: propUrl, text: propText, tooltip = "Invite fr
                             </div>
 
                             {/* Stats */}
-                            <div className="flex items-center gap-2 bg-white/10 rounded-full px-4 py-2">
+                            <div className="flex items-center gap-2 bg-muted/50 dark:bg-white/10 rounded-full px-4 py-2">
                                 <span className="text-2xl font-bold">{userClicks.toLocaleString()}</span>
                                 <span className="text-sm text-white/70">clicks</span>
                             </div>

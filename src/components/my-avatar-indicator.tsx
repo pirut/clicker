@@ -76,7 +76,7 @@ export const MyAvatarIndicator = memo(function MyAvatarIndicator() {
                 />
                 
                 {/* Avatar container with glass effect - more compact */}
-                <div className="relative glass rounded-xl p-2.5 border border-white/10 backdrop-blur-lg">
+                <div className="relative glass rounded-xl p-2.5 border border-border/50 dark:border-white/10 backdrop-blur-lg">
                     <div className="flex items-center gap-2.5">
                         {/* Avatar - smaller */}
                         <AvatarPreview
