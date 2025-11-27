@@ -211,23 +211,23 @@ export default function WardrobePage() {
     return (
         <div className="min-h-screen flex flex-col">
             <Header />
-            <main className="flex-1 pt-24 pb-12 px-4">
+            <main className="flex-1 pt-20 sm:pt-24 pb-8 sm:pb-12 px-3 sm:px-4">
                 <div className="max-w-6xl mx-auto">
                     {/* Header */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="text-center mb-10"
+                        className="text-center mb-6 sm:mb-10"
                     >
-                        <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-300 bg-clip-text text-transparent">
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 sm:mb-4 bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-300 bg-clip-text text-transparent">
                             Your Wardrobe
                         </h1>
-                        <p className="text-white/60 text-lg">
+                        <p className="text-white/60 text-sm sm:text-base md:text-lg px-2">
                             Customize your avatar with your unlocked items
                         </p>
                     </motion.div>
 
-                    <div className="grid lg:grid-cols-[400px_1fr] gap-8">
+                    <div className="grid lg:grid-cols-[320px_1fr] xl:grid-cols-[400px_1fr] gap-6 lg:gap-8">
                         {/* Avatar Preview Panel */}
                         <motion.div
                             initial={{ opacity: 0, x: -20 }}
@@ -235,11 +235,11 @@ export default function WardrobePage() {
                             transition={{ delay: 0.1 }}
                             className="lg:sticky lg:top-24 lg:self-start"
                         >
-                            <div className="glass rounded-3xl p-8 text-center">
-                                <h2 className="text-sm uppercase tracking-wider text-white/50 mb-6">Preview</h2>
-                                <div className="flex justify-center mb-6">
+                            <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 text-center">
+                                <h2 className="text-xs sm:text-sm uppercase tracking-wider text-white/50 mb-4 sm:mb-6">Preview</h2>
+                                <div className="flex justify-center mb-4 sm:mb-6">
                                     <AvatarPreview
-                                        size={180}
+                                        size={140}
                                         cursorColor={displayNameRecord?.cursorColor}
                                         fallbackSeed={displayNameRecord?.displayName ?? defaultDisplayName}
                                         profileImageUrl={user.imageUrl ?? undefined}
@@ -249,27 +249,28 @@ export default function WardrobePage() {
                                         effectSlug={currentEffectSlug ?? undefined}
                                         name={displayNameRecord?.displayName ?? defaultDisplayName}
                                         showNameTag
+                                        className="sm:scale-110 lg:scale-125 origin-center"
                                     />
                                 </div>
 
                                 {/* Stats */}
-                                <div className="grid grid-cols-3 gap-3 mb-6">
-                                    <div className="rounded-xl bg-white/5 p-3">
-                                        <p className="text-2xl font-bold text-white">{availableClicks}</p>
-                                        <p className="text-[10px] uppercase tracking-wider text-white/40">Available</p>
+                                <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-6">
+                                    <div className="rounded-lg sm:rounded-xl bg-white/5 p-2 sm:p-3">
+                                        <p className="text-lg sm:text-xl lg:text-2xl font-bold text-white">{availableClicks}</p>
+                                        <p className="text-[8px] sm:text-[10px] uppercase tracking-wider text-white/40">Available</p>
                                     </div>
-                                    <div className="rounded-xl bg-white/5 p-3">
-                                        <p className="text-2xl font-bold text-white">{spentClicks}</p>
-                                        <p className="text-[10px] uppercase tracking-wider text-white/40">Spent</p>
+                                    <div className="rounded-lg sm:rounded-xl bg-white/5 p-2 sm:p-3">
+                                        <p className="text-lg sm:text-xl lg:text-2xl font-bold text-white">{spentClicks}</p>
+                                        <p className="text-[8px] sm:text-[10px] uppercase tracking-wider text-white/40">Spent</p>
                                     </div>
-                                    <div className="rounded-xl bg-white/5 p-3">
-                                        <p className="text-2xl font-bold text-white">{ownedItems.length}</p>
-                                        <p className="text-[10px] uppercase tracking-wider text-white/40">Owned</p>
+                                    <div className="rounded-lg sm:rounded-xl bg-white/5 p-2 sm:p-3">
+                                        <p className="text-lg sm:text-xl lg:text-2xl font-bold text-white">{ownedItems.length}</p>
+                                        <p className="text-[8px] sm:text-[10px] uppercase tracking-wider text-white/40">Owned</p>
                                     </div>
                                 </div>
 
                                 <Link href="/shop">
-                                    <Button className="w-full bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 gap-2">
+                                    <Button className="w-full bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 gap-2 text-sm sm:text-base">
                                         <span>🛒</span>
                                         Visit Shop
                                     </Button>
@@ -304,7 +305,7 @@ export default function WardrobePage() {
                             className="space-y-6"
                         >
                             {/* Tab Navigation */}
-                            <div className="flex gap-2 p-1 bg-white/5 rounded-xl overflow-x-auto">
+                            <div className="flex gap-1 sm:gap-2 p-1 bg-white/5 rounded-xl overflow-x-auto">
                                 {[
                                     { id: "appearance", label: "Appearance", icon: "🎨" },
                                     { id: "hats", label: "Hats", icon: "🎩", count: ownedHats.length },
@@ -315,16 +316,16 @@ export default function WardrobePage() {
                                         key={tab.id}
                                         onClick={() => setSelectedTab(tab.id as typeof selectedTab)}
                                         className={cn(
-                                            "flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2",
+                                            "flex-1 py-2 sm:py-3 px-2 sm:px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-1 sm:gap-2 min-w-0",
                                             selectedTab === tab.id
                                                 ? "bg-white/10 text-white"
                                                 : "text-white/50 hover:text-white/70"
                                         )}
                                     >
-                                        <span>{tab.icon}</span>
-                                        <span>{tab.label}</span>
+                                        <span className="text-sm sm:text-base">{tab.icon}</span>
+                                        <span className="hidden sm:inline text-sm">{tab.label}</span>
                                         {tab.count !== undefined && (
-                                            <Badge variant="secondary" className="text-xs">{tab.count}</Badge>
+                                            <Badge variant="secondary" className="text-[10px] sm:text-xs">{tab.count}</Badge>
                                         )}
                                     </button>
                                 ))}
@@ -335,69 +336,69 @@ export default function WardrobePage() {
                                 <motion.div
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="space-y-6"
+                                    className="space-y-4 sm:space-y-6"
                                 >
                                     {/* Cursor Color */}
-                                    <div className="glass rounded-2xl p-6">
-                                        <div className="flex items-center justify-between mb-4">
+                                    <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6">
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-3 sm:mb-4">
                                             <div>
-                                                <h3 className="font-semibold text-white text-lg">Cursor Color</h3>
-                                                <p className="text-sm text-white/50">Change your cursor color</p>
+                                                <h3 className="font-semibold text-white text-base sm:text-lg">Cursor Color</h3>
+                                                <p className="text-xs sm:text-sm text-white/50">Change your cursor color</p>
                                             </div>
                                             {!hasColorUpgrade && (
                                                 <Link href="/shop">
-                                                    <Badge variant="outline" className="cursor-pointer hover:bg-white/10">
+                                                    <Badge variant="outline" className="cursor-pointer hover:bg-white/10 text-xs">
                                                         🔒 Unlock in Shop
                                                     </Badge>
                                                 </Link>
                                             )}
                                         </div>
                                         {hasColorUpgrade ? (
-                                            <div className="flex flex-col sm:flex-row gap-4">
+                                            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                                                 <div className="relative">
                                                     <input
                                                         type="color"
                                                         value={pendingColor}
                                                         onChange={(e) => setPendingColor(e.target.value)}
-                                                        className="w-full sm:w-20 h-12 rounded-xl border-2 border-white/20 bg-transparent cursor-pointer"
+                                                        className="w-full sm:w-20 h-10 sm:h-12 rounded-lg sm:rounded-xl border-2 border-white/20 bg-transparent cursor-pointer"
                                                     />
                                                 </div>
                                                 <Button
                                                     disabled={savingField === "color"}
                                                     onClick={() => applyChange("color-change", { cursorColor: pendingColor }, "color")}
-                                                    className="flex-1 sm:flex-none"
+                                                    className="flex-1 sm:flex-none text-sm"
                                                 >
                                                     {savingField === "color" ? "Saving..." : `Apply (${colorPrice} clicks)`}
                                                 </Button>
                                             </div>
                                         ) : (
-                                            <p className="text-white/40 text-sm">Purchase Cursor Color Lab from the shop to unlock custom colors.</p>
+                                            <p className="text-white/40 text-xs sm:text-sm">Purchase Cursor Color Lab from the shop to unlock custom colors.</p>
                                         )}
                                     </div>
 
                                     {/* Display Name */}
-                                    <div className="glass rounded-2xl p-6">
-                                        <div className="flex items-center justify-between mb-4">
+                                    <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6">
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-3 sm:mb-4">
                                             <div>
-                                                <h3 className="font-semibold text-white text-lg">Display Name</h3>
-                                                <p className="text-sm text-white/50">What others see above your cursor</p>
+                                                <h3 className="font-semibold text-white text-base sm:text-lg">Display Name</h3>
+                                                <p className="text-xs sm:text-sm text-white/50">What others see above your cursor</p>
                                             </div>
                                             {!hasNameUpgrade && (
                                                 <Link href="/shop">
-                                                    <Badge variant="outline" className="cursor-pointer hover:bg-white/10">
+                                                    <Badge variant="outline" className="cursor-pointer hover:bg-white/10 text-xs">
                                                         🔒 Unlock in Shop
                                                     </Badge>
                                                 </Link>
                                             )}
                                         </div>
                                         {hasNameUpgrade ? (
-                                            <div className="flex flex-col sm:flex-row gap-4">
+                                            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                                                 <Input
                                                     value={pendingName}
                                                     onChange={(e) => setPendingName(e.target.value.slice(0, 30))}
                                                     maxLength={30}
                                                     placeholder="Enter your display name"
-                                                    className="flex-1 bg-white/5 border-white/10"
+                                                    className="flex-1 bg-white/5 border-white/10 text-sm"
                                                 />
                                                 <Button
                                                     disabled={savingField === "name"}
@@ -408,12 +409,13 @@ export default function WardrobePage() {
                                                             "name"
                                                         )
                                                     }
+                                                    className="text-sm"
                                                 >
                                                     {savingField === "name" ? "Saving..." : `Save (${namePrice} clicks)`}
                                                 </Button>
                                             </div>
                                         ) : (
-                                            <p className="text-white/40 text-sm">Purchase Stage Name from the shop to customize your name.</p>
+                                            <p className="text-white/40 text-xs sm:text-sm">Purchase Stage Name from the shop to customize your name.</p>
                                         )}
                                     </div>
                                 </motion.div>

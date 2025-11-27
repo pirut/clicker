@@ -110,7 +110,7 @@ export default function GiveClickButton() {
     }, [clerkUserId, authLoading, instantUser, user, existingDisplayName, controls]);
 
     return (
-        <div className="flex flex-col items-center gap-6">
+        <div className="flex flex-col items-center gap-4 sm:gap-6">
             <motion.div
                 className="relative"
                 whileHover={{ scale: 1.03 }}
@@ -124,7 +124,7 @@ export default function GiveClickButton() {
                 <motion.button
                     onClick={handleClick}
                     animate={controls}
-                    className="relative h-36 w-36 rounded-full font-bold text-xl tracking-wide cursor-pointer
+                    className="relative h-28 w-28 sm:h-32 sm:w-32 md:h-36 md:w-36 rounded-full font-bold text-lg sm:text-xl tracking-wide cursor-pointer
                         bg-gradient-to-br from-[#c9a66b] via-[#a8855a] to-[#7d6245]
                         shadow-[0_8px_32px_rgba(139,111,71,0.4),inset_0_2px_4px_rgba(255,255,255,0.3),inset_0_-4px_8px_rgba(0,0,0,0.2)]
                         border-2 border-[#d4b896]/50
@@ -143,10 +143,10 @@ export default function GiveClickButton() {
                     
                     {/* Text */}
                     <span className="relative z-10 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] flex flex-col items-center gap-0.5">
-                        <svg className="w-8 h-8 mb-1 opacity-90" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                        <svg className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 mb-0.5 sm:mb-1 opacity-90" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" />
                         </svg>
-                        <span className="text-lg font-semibold">CLICK</span>
+                        <span className="text-base sm:text-lg font-semibold">CLICK</span>
                     </span>
                     
                     {/* Bottom shadow inside button */}
@@ -161,7 +161,7 @@ export default function GiveClickButton() {
                 <motion.p
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-red-400 text-sm font-medium bg-red-950/30 px-4 py-2 rounded-full border border-red-500/20"
+                    className="text-red-400 text-xs sm:text-sm font-medium bg-red-950/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-red-500/20 text-center max-w-[280px] sm:max-w-none"
                 >
                     {error}
                 </motion.p>

@@ -75,45 +75,47 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
         filters.showOwned !== null;
 
     return (
-        <div className={cn("space-y-4", className)}>
-            <div className="flex items-center gap-3">
+        <div className={cn("space-y-3 sm:space-y-4", className)}>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                 <div className="flex-1 relative">
                     <Input
                         type="text"
                         placeholder="Search upgrades..."
                         value={filters.search}
                         onChange={(e) => updateFilters({ search: e.target.value })}
-                        className="bg-white/5 border-white/10 text-white placeholder:text-white/40"
+                        className="bg-white/5 border-white/10 text-white placeholder:text-white/40 text-sm"
                     />
                 </div>
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    className="text-white/70"
-                >
-                    {isExpanded ? "Less" : "More"} Filters
-                </Button>
-                {hasActiveFilters && (
-                    <Button variant="ghost" size="sm" onClick={resetFilters} className="text-white/70">
-                        Reset
+                <div className="flex gap-2">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="text-white/70 text-xs sm:text-sm flex-1 sm:flex-none"
+                    >
+                        {isExpanded ? "Less" : "More"} Filters
                     </Button>
-                )}
+                    {hasActiveFilters && (
+                        <Button variant="ghost" size="sm" onClick={resetFilters} className="text-white/70 text-xs sm:text-sm flex-1 sm:flex-none">
+                            Reset
+                        </Button>
+                    )}
+                </div>
             </div>
 
             {isExpanded && (
-                <div className="space-y-4 p-4 rounded-lg border border-white/10 bg-white/5">
+                <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 rounded-lg border border-white/10 bg-white/5">
                     {/* Categories */}
                     <div>
-                        <label className="text-sm font-medium text-white/80 mb-2 block">Categories</label>
-                        <div className="flex flex-wrap gap-2">
+                        <label className="text-xs sm:text-sm font-medium text-white/80 mb-1.5 sm:mb-2 block">Categories</label>
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2">
                             {CATEGORIES.map((cat) => (
                                 <Button
                                     key={cat}
                                     variant={filters.categories.includes(cat) ? "default" : "outline"}
                                     size="sm"
                                     onClick={() => toggleCategory(cat)}
-                                    className="capitalize"
+                                    className="capitalize text-xs sm:text-sm px-2 sm:px-3 h-7 sm:h-8"
                                 >
                                     {cat}
                                 </Button>
@@ -123,14 +125,14 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
 
                     {/* Rarities */}
                     <div>
-                        <label className="text-sm font-medium text-white/80 mb-2 block">Rarity</label>
-                        <div className="flex flex-wrap gap-2">
+                        <label className="text-xs sm:text-sm font-medium text-white/80 mb-1.5 sm:mb-2 block">Rarity</label>
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2">
                             {RARITIES.map((rarity) => (
                                 <Badge
                                     key={rarity}
                                     variant={filters.rarities.includes(rarity) ? "default" : "outline"}
                                     className={cn(
-                                        "cursor-pointer capitalize",
+                                        "cursor-pointer capitalize text-xs",
                                         filters.rarities.includes(rarity) && RARITY_COLORS[rarity]
                                     )}
                                     onClick={() => toggleRarity(rarity)}
@@ -143,10 +145,10 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
 
                     {/* Price Range */}
                     <div>
-                        <label className="text-sm font-medium text-white/80 mb-2 block">
+                        <label className="text-xs sm:text-sm font-medium text-white/80 mb-1.5 sm:mb-2 block">
                             Price: {filters.priceRange[0]} - {filters.priceRange[1]} clicks
                         </label>
-                        <div className="flex gap-2">
+                        <div className="grid grid-cols-2 gap-2">
                             <Input
                                 type="number"
                                 min={0}
@@ -157,7 +159,8 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
                                         priceRange: [Number(e.target.value), filters.priceRange[1]],
                                     })
                                 }
-                                className="bg-white/5 border-white/10 text-white"
+                                className="bg-white/5 border-white/10 text-white text-sm"
+                                placeholder="Min"
                             />
                             <Input
                                 type="number"
@@ -169,19 +172,21 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
                                         priceRange: [filters.priceRange[0], Number(e.target.value)],
                                     })
                                 }
-                                className="bg-white/5 border-white/10 text-white"
+                                className="bg-white/5 border-white/10 text-white text-sm"
+                                placeholder="Max"
                             />
                         </div>
                     </div>
 
                     {/* Owned Filter */}
                     <div>
-                        <label className="text-sm font-medium text-white/80 mb-2 block">Ownership</label>
-                        <div className="flex gap-2">
+                        <label className="text-xs sm:text-sm font-medium text-white/80 mb-1.5 sm:mb-2 block">Ownership</label>
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2">
                             <Button
                                 variant={filters.showOwned === null ? "default" : "outline"}
                                 size="sm"
                                 onClick={() => updateFilters({ showOwned: null })}
+                                className="text-xs sm:text-sm px-2 sm:px-3 h-7 sm:h-8"
                             >
                                 All
                             </Button>
@@ -189,6 +194,7 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
                                 variant={filters.showOwned === true ? "default" : "outline"}
                                 size="sm"
                                 onClick={() => updateFilters({ showOwned: true })}
+                                className="text-xs sm:text-sm px-2 sm:px-3 h-7 sm:h-8"
                             >
                                 Owned
                             </Button>
@@ -196,6 +202,7 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
                                 variant={filters.showOwned === false ? "default" : "outline"}
                                 size="sm"
                                 onClick={() => updateFilters({ showOwned: false })}
+                                className="text-xs sm:text-sm px-2 sm:px-3 h-7 sm:h-8"
                             >
                                 Unowned
                             </Button>
@@ -204,12 +211,12 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
 
                     {/* Sort */}
                     <div>
-                        <label className="text-sm font-medium text-white/80 mb-2 block">Sort By</label>
-                        <div className="flex gap-2">
+                        <label className="text-xs sm:text-sm font-medium text-white/80 mb-1.5 sm:mb-2 block">Sort By</label>
+                        <div className="flex flex-wrap gap-2">
                             <select
                                 value={filters.sortBy}
                                 onChange={(e) => updateFilters({ sortBy: e.target.value as FilterState["sortBy"] })}
-                                className="bg-white/5 border border-white/10 rounded-md px-3 py-1.5 text-sm text-white"
+                                className="bg-white/5 border border-white/10 rounded-md px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm text-white flex-1 sm:flex-none min-w-[100px]"
                             >
                                 <option value="price">Price</option>
                                 <option value="name">Name</option>
@@ -220,6 +227,7 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
                                 variant="outline"
                                 size="sm"
                                 onClick={() => updateFilters({ sortOrder: filters.sortOrder === "asc" ? "desc" : "asc" })}
+                                className="text-xs sm:text-sm h-7 sm:h-8 px-3"
                             >
                                 {filters.sortOrder === "asc" ? "↑" : "↓"}
                             </Button>

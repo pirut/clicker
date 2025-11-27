@@ -193,18 +193,18 @@ export default function ShopPage() {
     return (
         <div className="min-h-screen flex flex-col">
             <Header />
-            <main className="flex-1 pt-24 pb-12 px-4">
+            <main className="flex-1 pt-20 sm:pt-24 pb-8 sm:pb-12 px-3 sm:px-4">
                 <div className="max-w-7xl mx-auto">
                     {/* Header Section */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="text-center mb-12"
+                        className="text-center mb-8 sm:mb-12"
                     >
-                        <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
                             Avatar Shop
                         </h1>
-                        <p className="text-white/60 text-lg max-w-2xl mx-auto">
+                        <p className="text-white/60 text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-2">
                             Spend your hard-earned clicks on cosmetic upgrades to make your cursor stand out
                         </p>
                     </motion.div>
@@ -214,25 +214,27 @@ export default function ShopPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="mb-8"
+                        className="mb-6 sm:mb-8"
                     >
-                        <div className="glass rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-                            <div className="flex items-center gap-6">
-                                <div className="text-center sm:text-left">
-                                    <p className="text-xs uppercase tracking-wider text-white/50 mb-1">Available Balance</p>
-                                    <p className="text-4xl font-bold text-white">
-                                        {availableClicks.toLocaleString()}
-                                        <span className="text-lg text-white/50 ml-2">clicks</span>
-                                    </p>
-                                </div>
-                                <div className="hidden sm:block w-px h-12 bg-white/10" />
-                                <div className="hidden sm:block text-center">
-                                    <p className="text-xs uppercase tracking-wider text-white/50 mb-1">Items Owned</p>
-                                    <p className="text-2xl font-semibold text-white">{ownedSlugs.size}</p>
+                        <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full sm:w-auto">
+                                <div className="flex items-center gap-4 sm:gap-6 w-full sm:w-auto justify-between sm:justify-start">
+                                    <div className="text-center sm:text-left">
+                                        <p className="text-[10px] sm:text-xs uppercase tracking-wider text-white/50 mb-1">Available Balance</p>
+                                        <p className="text-2xl sm:text-4xl font-bold text-white">
+                                            {availableClicks.toLocaleString()}
+                                            <span className="text-sm sm:text-lg text-white/50 ml-1 sm:ml-2">clicks</span>
+                                        </p>
+                                    </div>
+                                    <div className="w-px h-10 sm:h-12 bg-white/10" />
+                                    <div className="text-center">
+                                        <p className="text-[10px] sm:text-xs uppercase tracking-wider text-white/50 mb-1">Items Owned</p>
+                                        <p className="text-xl sm:text-2xl font-semibold text-white">{ownedSlugs.size}</p>
+                                    </div>
                                 </div>
                             </div>
-                            <Link href="/wardrobe">
-                                <Button variant="outline" className="glass-hover gap-2">
+                            <Link href="/wardrobe" className="w-full sm:w-auto">
+                                <Button variant="outline" className="glass-hover gap-2 w-full sm:w-auto">
                                     <span>👕</span>
                                     Open Wardrobe
                                 </Button>
@@ -249,16 +251,16 @@ export default function ShopPage() {
                                 exit={{ opacity: 0, y: -20, scale: 0.95 }}
                                 className="mb-6"
                             >
-                                <div className="glass rounded-xl p-4 border border-emerald-500/30 bg-emerald-500/10 flex items-center justify-between gap-4">
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-2xl">🎉</span>
+                                <div className="glass rounded-xl p-3 sm:p-4 border border-emerald-500/30 bg-emerald-500/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+                                    <div className="flex items-center gap-2 sm:gap-3">
+                                        <span className="text-xl sm:text-2xl">🎉</span>
                                         <div>
-                                            <p className="font-semibold text-emerald-300">{successMessage.message}</p>
+                                            <p className="font-semibold text-emerald-300 text-sm sm:text-base">{successMessage.message}</p>
                                         </div>
                                     </div>
-                                    <div className="flex gap-2">
-                                        <Link href="/wardrobe">
-                                            <Button size="sm" className="bg-emerald-600 hover:bg-emerald-500">
+                                    <div className="flex gap-2 w-full sm:w-auto">
+                                        <Link href="/wardrobe" className="flex-1 sm:flex-none">
+                                            <Button size="sm" className="bg-emerald-600 hover:bg-emerald-500 w-full sm:w-auto">
                                                 Go to Wardrobe
                                             </Button>
                                         </Link>
@@ -266,6 +268,7 @@ export default function ShopPage() {
                                             size="sm"
                                             variant="ghost"
                                             onClick={() => setSuccessMessage(null)}
+                                            className="flex-1 sm:flex-none"
                                         >
                                             Dismiss
                                         </Button>
@@ -283,16 +286,16 @@ export default function ShopPage() {
                         className="mb-6"
                     >
                         <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
-                            <TabsList className="w-full flex flex-wrap gap-2 h-auto p-2 bg-white/5 rounded-xl">
+                            <TabsList className="w-full grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2 h-auto p-1.5 sm:p-2 bg-white/5 rounded-xl">
                                 {CATEGORIES.map((cat) => (
                                     <TabsTrigger
                                         key={cat}
                                         value={cat}
-                                        className="flex-1 min-w-[100px] py-3 px-4 rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all"
+                                        className="py-2 sm:py-3 px-2 sm:px-4 rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all text-xs sm:text-sm"
                                     >
-                                        <span className="mr-2">{CATEGORY_ICONS[cat]}</span>
-                                        <span className="capitalize">{cat}</span>
-                                        <Badge variant="secondary" className="ml-2 text-xs">
+                                        <span className="sm:mr-2">{CATEGORY_ICONS[cat]}</span>
+                                        <span className="capitalize hidden sm:inline">{cat}</span>
+                                        <Badge variant="secondary" className="ml-1 sm:ml-2 text-[10px] sm:text-xs">
                                             {categoryCount[cat] || 0}
                                         </Badge>
                                     </TabsTrigger>

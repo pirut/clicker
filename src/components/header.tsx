@@ -49,11 +49,11 @@ export function Header() {
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-                scrolled ? "glass py-2" : "bg-transparent py-4"
+                scrolled ? "glass py-2" : "bg-transparent py-3 sm:py-4"
             }`}
         >
-            <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
-                <Link href="/" className="text-2xl font-bold tracking-tighter text-gradient">
+            <div className="max-w-7xl mx-auto px-3 sm:px-4 flex justify-between items-center">
+                <Link href="/" className="text-xl sm:text-2xl font-bold tracking-tighter text-gradient">
                     CLICKER
                 </Link>
 
@@ -84,8 +84,13 @@ export function Header() {
                 )}
 
                 {/* Right side buttons */}
-                <div className="flex gap-3 items-center">
-                    <div className="hidden sm:flex gap-2 items-center">
+                <div className="flex gap-2 sm:gap-3 items-center">
+                    {/* Always show ModeToggle on mobile when menu is closed */}
+                    {isMobile && !isMobileMenuOpen && (
+                        <ModeToggle />
+                    )}
+                    
+                    <div className="hidden lg:flex gap-2 items-center">
                         <SignedOut>
                             <SignUpButton>
                                 <Button variant="outline" className="glass-hover border-primary/20">
@@ -113,7 +118,7 @@ export function Header() {
                             className="p-2 rounded-md hover:bg-accent/10 transition-colors"
                             aria-label="Toggle mobile menu"
                         >
-                            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                            {isMobileMenuOpen ? <X className="h-5 w-5 sm:h-6 sm:w-6" /> : <Menu className="h-5 w-5 sm:h-6 sm:w-6" />}
                         </button>
                     )}
                 </div>
@@ -128,13 +133,13 @@ export function Header() {
                         exit={{ opacity: 0, height: 0 }}
                         className="glass border-t border-white/10 overflow-hidden"
                     >
-                        <nav className="flex flex-col p-4 space-y-2">
+                        <nav className="flex flex-col p-3 sm:p-4 space-y-1 sm:space-y-2">
                             {navigationItems.map((item) => (
                                 <Link
                                     key={item.href}
                                     href={item.href}
                                     onClick={closeMobileMenu}
-                                    className="px-4 py-3 rounded-md hover:bg-primary/10 text-sm font-medium transition-colors"
+                                    className="px-3 sm:px-4 py-2.5 sm:py-3 rounded-md hover:bg-primary/10 text-sm font-medium transition-colors"
                                 >
                                     {item.label}
                                 </Link>
@@ -143,21 +148,34 @@ export function Header() {
                                 <Link
                                     href="/wardrobe"
                                     onClick={closeMobileMenu}
-                                    className="px-4 py-3 rounded-md hover:bg-primary/10 text-sm font-medium transition-colors"
+                                    className="px-3 sm:px-4 py-2.5 sm:py-3 rounded-md hover:bg-primary/10 text-sm font-medium transition-colors"
                                 >
                                     Wardrobe
                                 </Link>
                             </SignedIn>
-                            <div className="pt-4 flex gap-4 sm:hidden">
-                                <SignedOut>
-                                    <SignUpButton>
-                                        <Button className="w-full">Login</Button>
-                                    </SignUpButton>
-                                </SignedOut>
-                                <SignedIn>
-                                    <UserButton />
-                                </SignedIn>
-                                <ModeToggle />
+                            <div className="pt-3 sm:pt-4 border-t border-white/10 mt-2">
+                                <div className="flex items-center justify-between gap-3">
+                                    <div className="flex items-center gap-3">
+                                        <SignedOut>
+                                            <SignUpButton>
+                                                <Button size="sm" className="text-sm">Login</Button>
+                                            </SignUpButton>
+                                        </SignedOut>
+                                        <SignedIn>
+                                            <UserButton 
+                                                appearance={{
+                                                    elements: {
+                                                        avatarBox: "w-8 h-8 border-2 border-primary/20"
+                                                    }
+                                                }}
+                                            />
+                                        </SignedIn>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <ShareButton />
+                                        <ModeToggle />
+                                    </div>
+                                </div>
                             </div>
                         </nav>
                     </motion.div>
