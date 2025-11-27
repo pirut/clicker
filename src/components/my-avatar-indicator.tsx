@@ -1,20 +1,18 @@
 "use client";
 
-import { memo, useMemo, useState, useEffect } from "react";
+import { memo, useMemo } from "react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { db } from "@/lib/instantdb";
 import { AvatarPreview } from "./avatar-preview";
 import { motion } from "framer-motion";
 
 /**
- * Shows the current user's avatar following their cursor.
+ * Shows the current user's avatar in a fixed position on screen.
  * This lets users see what their avatar looks like to others.
  */
 export const MyAvatarIndicator = memo(function MyAvatarIndicator() {
     const { userId, isLoaded } = useAuth();
     const { user } = useUser();
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-    const [isVisible, setIsVisible] = useState(false);
 
     // Get user's click count
     const { data: clicksData } = db.useQuery({
@@ -55,53 +53,17 @@ export const MyAvatarIndicator = memo(function MyAvatarIndicator() {
     const displayName = customDisplayName || fallbackDisplayName;
     const profileImageUrl = user?.imageUrl || "";
 
-    // Track mouse position
-    useEffect(() => {
-        if (!isLoaded || !userId || !user) return;
-
-        const handleMouseMove = (e: MouseEvent) => {
-            setMousePosition({ x: e.clientX, y: e.clientY });
-            setIsVisible(true);
-        };
-
-        const handleMouseLeave = () => {
-            setIsVisible(false);
-        };
-
-        window.addEventListener("mousemove", handleMouseMove);
-        document.addEventListener("mouseleave", handleMouseLeave);
-
-        return () => {
-            window.removeEventListener("mousemove", handleMouseMove);
-            document.removeEventListener("mouseleave", handleMouseLeave);
-        };
-    }, [isLoaded, userId, user]);
-
     // Don't render if not loaded or no user
     if (!isLoaded || !userId || !user) {
         return null;
     }
 
-    // Offset from cursor to avoid covering the pointer
-    const offsetX = 20;
-    const offsetY = 20;
-
     return (
         <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{
-                opacity: isVisible ? 1 : 0,
-                scale: isVisible ? 1 : 0.8,
-            }}
-            transition={{
-                opacity: { duration: 0.2 },
-                scale: { type: "spring", stiffness: 500, damping: 30 },
-            }}
-            className="fixed z-40 pointer-events-none"
-            style={{
-                transform: `translate(${mousePosition.x + offsetX}px, ${mousePosition.y + offsetY}px)`,
-                willChange: "transform, opacity",
-            }}
+            initial={{ opacity: 0, scale: 0.8, x: 20 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: 0.5 }}
+            className="fixed top-20 right-4 z-40 pointer-events-none"
         >
             <div className="relative">
                 {/* Subtle glow background */}
