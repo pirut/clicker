@@ -222,7 +222,7 @@ export default function WardrobePage() {
                         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 sm:mb-4 bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-300 bg-clip-text text-transparent">
                             Your Wardrobe
                         </h1>
-                        <p className="text-white/60 text-sm sm:text-base md:text-lg px-2">
+                        <p className="text-muted-foreground text-sm sm:text-base md:text-lg px-2">
                             Customize your avatar with your unlocked items
                         </p>
                     </motion.div>
@@ -236,7 +236,7 @@ export default function WardrobePage() {
                             className="lg:sticky lg:top-24 lg:self-start"
                         >
                             <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 text-center">
-                                <h2 className="text-xs sm:text-sm uppercase tracking-wider text-white/50 mb-4 sm:mb-6">Preview</h2>
+                                <h2 className="text-xs sm:text-sm uppercase tracking-wider text-muted-foreground mb-4 sm:mb-6">Preview</h2>
                                 <div className="flex justify-center mb-4 sm:mb-6">
                                     <AvatarPreview
                                         size={140}
@@ -256,16 +256,16 @@ export default function WardrobePage() {
                                 {/* Stats */}
                                 <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-6">
                                     <div className="rounded-lg sm:rounded-xl bg-white/5 p-2 sm:p-3">
-                                        <p className="text-lg sm:text-xl lg:text-2xl font-bold text-white">{availableClicks}</p>
-                                        <p className="text-[8px] sm:text-[10px] uppercase tracking-wider text-white/40">Available</p>
+                                        <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground">{availableClicks}</p>
+                                        <p className="text-[8px] sm:text-[10px] uppercase tracking-wider text-muted-foreground">Available</p>
                                     </div>
-                                    <div className="rounded-lg sm:rounded-xl bg-white/5 p-2 sm:p-3">
-                                        <p className="text-lg sm:text-xl lg:text-2xl font-bold text-white">{spentClicks}</p>
-                                        <p className="text-[8px] sm:text-[10px] uppercase tracking-wider text-white/40">Spent</p>
+                                    <div className="rounded-lg sm:rounded-xl bg-muted/50 p-2 sm:p-3">
+                                        <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground">{spentClicks}</p>
+                                        <p className="text-[8px] sm:text-[10px] uppercase tracking-wider text-muted-foreground">Spent</p>
                                     </div>
-                                    <div className="rounded-lg sm:rounded-xl bg-white/5 p-2 sm:p-3">
-                                        <p className="text-lg sm:text-xl lg:text-2xl font-bold text-white">{ownedItems.length}</p>
-                                        <p className="text-[8px] sm:text-[10px] uppercase tracking-wider text-white/40">Owned</p>
+                                    <div className="rounded-lg sm:rounded-xl bg-muted/50 p-2 sm:p-3">
+                                        <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground">{ownedItems.length}</p>
+                                        <p className="text-[8px] sm:text-[10px] uppercase tracking-wider text-muted-foreground">Owned</p>
                                     </div>
                                 </div>
 
@@ -318,8 +318,8 @@ export default function WardrobePage() {
                                         className={cn(
                                             "flex-1 py-2 sm:py-3 px-2 sm:px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-1 sm:gap-2 min-w-0",
                                             selectedTab === tab.id
-                                                ? "bg-white/10 text-white"
-                                                : "text-white/50 hover:text-white/70"
+                                                ? "bg-primary/10 text-foreground dark:bg-white/10 dark:text-white"
+                                                : "text-muted-foreground hover:text-foreground dark:text-white/50 dark:hover:text-white/70"
                                         )}
                                     >
                                         <span className="text-sm sm:text-base">{tab.icon}</span>
@@ -342,8 +342,8 @@ export default function WardrobePage() {
                                     <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6">
                                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-3 sm:mb-4">
                                             <div>
-                                                <h3 className="font-semibold text-white text-base sm:text-lg">Cursor Color</h3>
-                                                <p className="text-xs sm:text-sm text-white/50">Change your cursor color</p>
+                                                <h3 className="font-semibold text-foreground text-base sm:text-lg">Cursor Color</h3>
+                                                <p className="text-xs sm:text-sm text-muted-foreground">Change your cursor color</p>
                                             </div>
                                             {!hasColorUpgrade && (
                                                 <Link href="/shop">
@@ -372,7 +372,7 @@ export default function WardrobePage() {
                                                 </Button>
                                             </div>
                                         ) : (
-                                            <p className="text-white/40 text-xs sm:text-sm">Purchase Cursor Color Lab from the shop to unlock custom colors.</p>
+                                            <p className="text-muted-foreground text-xs sm:text-sm">Purchase Cursor Color Lab from the shop to unlock custom colors.</p>
                                         )}
                                     </div>
 
@@ -380,8 +380,8 @@ export default function WardrobePage() {
                                     <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6">
                                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-3 sm:mb-4">
                                             <div>
-                                                <h3 className="font-semibold text-white text-base sm:text-lg">Display Name</h3>
-                                                <p className="text-xs sm:text-sm text-white/50">What others see above your cursor</p>
+                                                <h3 className="font-semibold text-foreground text-base sm:text-lg">Display Name</h3>
+                                                <p className="text-xs sm:text-sm text-muted-foreground">What others see above your cursor</p>
                                             </div>
                                             {!hasNameUpgrade && (
                                                 <Link href="/shop">
@@ -415,7 +415,7 @@ export default function WardrobePage() {
                                                 </Button>
                                             </div>
                                         ) : (
-                                            <p className="text-white/40 text-xs sm:text-sm">Purchase Stage Name from the shop to customize your name.</p>
+                                            <p className="text-muted-foreground text-xs sm:text-sm">Purchase Stage Name from the shop to customize your name.</p>
                                         )}
                                     </div>
                                 </motion.div>
@@ -430,8 +430,8 @@ export default function WardrobePage() {
                                     {ownedHats.length === 0 ? (
                                         <div className="glass rounded-2xl p-12 text-center">
                                             <p className="text-5xl mb-4">🎩</p>
-                                            <h3 className="text-xl font-semibold text-white mb-2">No Hats Yet</h3>
-                                            <p className="text-white/50 mb-6">Visit the shop to buy some stylish headwear!</p>
+                                            <h3 className="text-xl font-semibold text-foreground mb-2">No Hats Yet</h3>
+                                            <p className="text-muted-foreground mb-6">Visit the shop to buy some stylish headwear!</p>
                                             <Link href="/shop">
                                                 <Button>Browse Hats</Button>
                                             </Link>
@@ -450,8 +450,8 @@ export default function WardrobePage() {
                                                 )}
                                             >
                                                 <div className="text-4xl mb-2">❌</div>
-                                                <p className="font-medium text-white">None</p>
-                                                <p className="text-xs text-white/40">No hat</p>
+                                                <p className="font-medium text-foreground">None</p>
+                                                <p className="text-xs text-muted-foreground">No hat</p>
                                             </button>
 
                                             {ownedHats.map((item) => {
@@ -484,7 +484,7 @@ export default function WardrobePage() {
                                                              item.label.includes("Santa") ? "🎅" :
                                                              "🎩"}
                                                         </div>
-                                                        <p className="font-medium text-white text-sm">{item.label}</p>
+                                                        <p className="font-medium text-foreground text-sm">{item.label}</p>
                                                         <Badge className={cn("text-xs mt-1", rarityStyle.bg, rarityStyle.text)}>
                                                             {rarity}
                                                         </Badge>
@@ -508,8 +508,8 @@ export default function WardrobePage() {
                                     {ownedAccessories.length === 0 ? (
                                         <div className="glass rounded-2xl p-12 text-center">
                                             <p className="text-5xl mb-4">🎭</p>
-                                            <h3 className="text-xl font-semibold text-white mb-2">No Accessories Yet</h3>
-                                            <p className="text-white/50 mb-6">Visit the shop to buy some cool accessories!</p>
+                                            <h3 className="text-xl font-semibold text-foreground mb-2">No Accessories Yet</h3>
+                                            <p className="text-muted-foreground mb-6">Visit the shop to buy some cool accessories!</p>
                                             <Link href="/shop">
                                                 <Button>Browse Accessories</Button>
                                             </Link>
@@ -528,8 +528,8 @@ export default function WardrobePage() {
                                                 )}
                                             >
                                                 <div className="text-4xl mb-2">❌</div>
-                                                <p className="font-medium text-white">None</p>
-                                                <p className="text-xs text-white/40">No accessory</p>
+                                                <p className="font-medium text-foreground">None</p>
+                                                <p className="text-xs text-muted-foreground">No accessory</p>
                                             </button>
 
                                             {ownedAccessories.map((item) => {
@@ -560,7 +560,7 @@ export default function WardrobePage() {
                                                              item.label.includes("Alien") ? "👽" :
                                                              "🎭"}
                                                         </div>
-                                                        <p className="font-medium text-white text-sm">{item.label}</p>
+                                                        <p className="font-medium text-foreground text-sm">{item.label}</p>
                                                         <Badge className={cn("text-xs mt-1", rarityStyle.bg, rarityStyle.text)}>
                                                             {rarity}
                                                         </Badge>
@@ -584,8 +584,8 @@ export default function WardrobePage() {
                                     {ownedEffects.length === 0 ? (
                                         <div className="glass rounded-2xl p-12 text-center">
                                             <p className="text-5xl mb-4">✨</p>
-                                            <h3 className="text-xl font-semibold text-white mb-2">No Effects Yet</h3>
-                                            <p className="text-white/50 mb-6">Visit the shop to buy some magical effects!</p>
+                                            <h3 className="text-xl font-semibold text-foreground mb-2">No Effects Yet</h3>
+                                            <p className="text-muted-foreground mb-6">Visit the shop to buy some magical effects!</p>
                                             <Link href="/shop">
                                                 <Button>Browse Effects</Button>
                                             </Link>
@@ -604,8 +604,8 @@ export default function WardrobePage() {
                                                 )}
                                             >
                                                 <div className="text-4xl mb-2">❌</div>
-                                                <p className="font-medium text-white">None</p>
-                                                <p className="text-xs text-white/40">No effect</p>
+                                                <p className="font-medium text-foreground">None</p>
+                                                <p className="text-xs text-muted-foreground">No effect</p>
                                             </button>
 
                                             {ownedEffects.map((item) => {
@@ -636,7 +636,7 @@ export default function WardrobePage() {
                                                              item.label.includes("Star") ? "⭐" :
                                                              "✨"}
                                                         </div>
-                                                        <p className="font-medium text-white text-sm">{item.label}</p>
+                                                        <p className="font-medium text-foreground text-sm">{item.label}</p>
                                                         <Badge className={cn("text-xs mt-1", rarityStyle.bg, rarityStyle.text)}>
                                                             {rarity}
                                                         </Badge>
@@ -660,8 +660,8 @@ export default function WardrobePage() {
                                     className="glass rounded-2xl p-6 text-center border border-amber-500/20 bg-gradient-to-r from-amber-500/5 to-yellow-500/5"
                                 >
                                     <p className="text-4xl mb-3">✨</p>
-                                    <h3 className="text-lg font-semibold text-white mb-2">Expand Your Collection</h3>
-                                    <p className="text-white/60 text-sm mb-4">
+                                    <h3 className="text-lg font-semibold text-foreground mb-2">Expand Your Collection</h3>
+                                    <p className="text-muted-foreground text-sm mb-4">
                                         You have {availableClicks} clicks to spend. Browse the shop for more items!
                                     </p>
                                     <Link href="/shop">

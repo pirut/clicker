@@ -204,7 +204,7 @@ export default function ShopPage() {
                         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
                             Avatar Shop
                         </h1>
-                        <p className="text-white/60 text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-2">
+                        <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-2">
                             Spend your hard-earned clicks on cosmetic upgrades to make your cursor stand out
                         </p>
                     </motion.div>
@@ -220,16 +220,16 @@ export default function ShopPage() {
                             <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full sm:w-auto">
                                 <div className="flex items-center gap-4 sm:gap-6 w-full sm:w-auto justify-between sm:justify-start">
                                     <div className="text-center sm:text-left">
-                                        <p className="text-[10px] sm:text-xs uppercase tracking-wider text-white/50 mb-1">Available Balance</p>
-                                        <p className="text-2xl sm:text-4xl font-bold text-white">
-                                            {availableClicks.toLocaleString()}
-                                            <span className="text-sm sm:text-lg text-white/50 ml-1 sm:ml-2">clicks</span>
-                                        </p>
-                                    </div>
-                                    <div className="w-px h-10 sm:h-12 bg-white/10" />
-                                    <div className="text-center">
-                                        <p className="text-[10px] sm:text-xs uppercase tracking-wider text-white/50 mb-1">Items Owned</p>
-                                        <p className="text-xl sm:text-2xl font-semibold text-white">{ownedSlugs.size}</p>
+                                    <p className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground mb-1">Available Balance</p>
+                                    <p className="text-2xl sm:text-4xl font-bold text-foreground">
+                                        {availableClicks.toLocaleString()}
+                                        <span className="text-sm sm:text-lg text-muted-foreground ml-1 sm:ml-2">clicks</span>
+                                    </p>
+                                </div>
+                                <div className="w-px h-10 sm:h-12 bg-border" />
+                                <div className="text-center">
+                                    <p className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground mb-1">Items Owned</p>
+                                    <p className="text-xl sm:text-2xl font-semibold text-foreground">{ownedSlugs.size}</p>
                                     </div>
                                 </div>
                             </div>
@@ -291,7 +291,7 @@ export default function ShopPage() {
                                     <TabsTrigger
                                         key={cat}
                                         value={cat}
-                                        className="py-2 sm:py-3 px-2 sm:px-4 rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all text-xs sm:text-sm"
+                                        className="py-2 sm:py-3 px-2 sm:px-4 rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-foreground dark:data-[state=active]:bg-white/10 dark:data-[state=active]:text-white transition-all text-xs sm:text-sm"
                                     >
                                         <span className="sm:mr-2">{CATEGORY_ICONS[cat]}</span>
                                         <span className="capitalize hidden sm:inline">{cat}</span>
@@ -326,7 +326,7 @@ export default function ShopPage() {
                             className="text-center py-20"
                         >
                             <p className="text-6xl mb-4">🔍</p>
-                            <p className="text-white/60 text-lg">No items match your filters</p>
+                            <p className="text-muted-foreground text-lg">No items match your filters</p>
                             <Button
                                 variant="ghost"
                                 className="mt-4"
@@ -388,7 +388,7 @@ export default function ShopPage() {
                                                 {/* Header */}
                                                 <div className="flex items-start justify-between mb-3">
                                                     <div className="flex-1">
-                                                        <h3 className="font-bold text-white text-lg leading-tight mb-1">
+                                                        <h3 className="font-bold text-foreground text-lg leading-tight mb-1">
                                                             {item.label}
                                                         </h3>
                                                         <div className="flex items-center gap-2 flex-wrap">
@@ -402,7 +402,7 @@ export default function ShopPage() {
                                                                 {rarity}
                                                             </Badge>
                                                             {item.category && (
-                                                                <span className="text-xs text-white/40 capitalize">
+                                                                <span className="text-xs text-muted-foreground capitalize">
                                                                     {item.category}
                                                                 </span>
                                                             )}
@@ -416,15 +416,15 @@ export default function ShopPage() {
                                                 </div>
 
                                                 {/* Description */}
-                                                <p className="text-sm text-white/60 mb-4 line-clamp-2">
+                                                <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
                                                     {item.description}
                                                 </p>
 
                                                 {/* Footer */}
-                                                <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                                                <div className="flex items-center justify-between pt-3 border-t border-border">
                                                     <div className="flex items-baseline gap-1">
-                                                        <span className="text-2xl font-bold text-white">{item.price}</span>
-                                                        <span className="text-sm text-white/40">clicks</span>
+                                                        <span className="text-2xl font-bold text-foreground">{item.price}</span>
+                                                        <span className="text-sm text-muted-foreground">clicks</span>
                                                     </div>
                                                     {!isSignedIn ? (
                                                         <Button size="sm" variant="outline" disabled>
@@ -463,7 +463,7 @@ export default function ShopPage() {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.5 }}
-                                className="text-center text-white/40 text-sm mt-8"
+                                className="text-center text-muted-foreground text-sm mt-8"
                             >
                                 Showing {filteredItems.length} of {avatarItems.length} items
                             </motion.p>

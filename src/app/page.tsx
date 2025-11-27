@@ -63,7 +63,7 @@ export default function HomePage() {
                     >
                         <div className="flex flex-col items-center text-center space-y-6 sm:space-y-8 flex-1">
                             <div className="space-y-2">
-                                <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white to-white/50 drop-shadow-2xl">
+                                <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-foreground to-foreground/70 dark:from-white dark:to-white/50 drop-shadow-2xl">
                                     CLICKER
                                 </h1>
                                 <p className="text-base sm:text-lg text-muted-foreground max-w-xs mx-auto px-2">

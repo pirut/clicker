@@ -83,7 +83,7 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
                         placeholder="Search upgrades..."
                         value={filters.search}
                         onChange={(e) => updateFilters({ search: e.target.value })}
-                        className="bg-white/5 border-white/10 text-white placeholder:text-white/40 text-sm"
+                        className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground text-sm"
                     />
                 </div>
                 <div className="flex gap-2">
@@ -91,7 +91,7 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
                         variant="ghost"
                         size="sm"
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className="text-white/70 text-xs sm:text-sm flex-1 sm:flex-none"
+                        className="text-muted-foreground text-xs sm:text-sm flex-1 sm:flex-none"
                     >
                         {isExpanded ? "Less" : "More"} Filters
                     </Button>
@@ -104,10 +104,10 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
             </div>
 
             {isExpanded && (
-                <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 rounded-lg border border-white/10 bg-white/5">
+                <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 rounded-lg border border-border bg-muted/30">
                     {/* Categories */}
                     <div>
-                        <label className="text-xs sm:text-sm font-medium text-white/80 mb-1.5 sm:mb-2 block">Categories</label>
+                        <label className="text-xs sm:text-sm font-medium text-foreground mb-1.5 sm:mb-2 block">Categories</label>
                         <div className="flex flex-wrap gap-1.5 sm:gap-2">
                             {CATEGORIES.map((cat) => (
                                 <Button
@@ -125,7 +125,7 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
 
                     {/* Rarities */}
                     <div>
-                        <label className="text-xs sm:text-sm font-medium text-white/80 mb-1.5 sm:mb-2 block">Rarity</label>
+                        <label className="text-xs sm:text-sm font-medium text-foreground mb-1.5 sm:mb-2 block">Rarity</label>
                         <div className="flex flex-wrap gap-1.5 sm:gap-2">
                             {RARITIES.map((rarity) => (
                                 <Badge
@@ -145,7 +145,7 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
 
                     {/* Price Range */}
                     <div>
-                        <label className="text-xs sm:text-sm font-medium text-white/80 mb-1.5 sm:mb-2 block">
+                        <label className="text-xs sm:text-sm font-medium text-foreground mb-1.5 sm:mb-2 block">
                             Price: {filters.priceRange[0]} - {filters.priceRange[1]} clicks
                         </label>
                         <div className="grid grid-cols-2 gap-2">
@@ -159,7 +159,7 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
                                         priceRange: [Number(e.target.value), filters.priceRange[1]],
                                     })
                                 }
-                                className="bg-white/5 border-white/10 text-white text-sm"
+                                className="bg-background/50 border-border text-foreground text-sm"
                                 placeholder="Min"
                             />
                             <Input
@@ -172,7 +172,7 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
                                         priceRange: [filters.priceRange[0], Number(e.target.value)],
                                     })
                                 }
-                                className="bg-white/5 border-white/10 text-white text-sm"
+                                className="bg-background/50 border-border text-foreground text-sm"
                                 placeholder="Max"
                             />
                         </div>
@@ -180,7 +180,7 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
 
                     {/* Owned Filter */}
                     <div>
-                        <label className="text-xs sm:text-sm font-medium text-white/80 mb-1.5 sm:mb-2 block">Ownership</label>
+                        <label className="text-xs sm:text-sm font-medium text-foreground mb-1.5 sm:mb-2 block">Ownership</label>
                         <div className="flex flex-wrap gap-1.5 sm:gap-2">
                             <Button
                                 variant={filters.showOwned === null ? "default" : "outline"}
@@ -211,12 +211,12 @@ export function UpgradeFilters({ filters, onFiltersChange, maxPrice, className }
 
                     {/* Sort */}
                     <div>
-                        <label className="text-xs sm:text-sm font-medium text-white/80 mb-1.5 sm:mb-2 block">Sort By</label>
+                        <label className="text-xs sm:text-sm font-medium text-foreground mb-1.5 sm:mb-2 block">Sort By</label>
                         <div className="flex flex-wrap gap-2">
                             <select
                                 value={filters.sortBy}
                                 onChange={(e) => updateFilters({ sortBy: e.target.value as FilterState["sortBy"] })}
-                                className="bg-white/5 border border-white/10 rounded-md px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm text-white flex-1 sm:flex-none min-w-[100px]"
+                                className="bg-background/50 border border-border rounded-md px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm text-foreground flex-1 sm:flex-none min-w-[100px]"
                             >
                                 <option value="price">Price</option>
                                 <option value="name">Name</option>
