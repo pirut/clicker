@@ -443,10 +443,10 @@ export default function WardrobePage() {
                                                 onClick={() => equipItem("hat", null)}
                                                 disabled={savingField === "hat"}
                                                 className={cn(
-                                                    "rounded-xl p-4 border-2 transition-all text-center",
+                                                    "rounded-xl p-4 border transition-all text-center bg-card shadow-sm",
                                                     !currentHatSlug
-                                                        ? "border-emerald-500/50 bg-emerald-500/10"
-                                                        : "border-border dark:border-white/10 bg-muted/30 dark:bg-white/5 hover:border-border/80 dark:hover:border-white/20"
+                                                        ? "border-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/20"
+                                                        : "border-border hover:border-primary/50 hover:shadow-md"
                                                 )}
                                             >
                                                 <div className="text-4xl mb-2">❌</div>
@@ -466,10 +466,10 @@ export default function WardrobePage() {
                                                         onClick={() => equipItem("hat", hatSlug)}
                                                         disabled={savingField === "hat"}
                                                         className={cn(
-                                                            "rounded-xl p-4 border-2 transition-all text-center",
+                                                            "rounded-xl p-4 border transition-all text-center bg-card shadow-sm",
                                                             isEquipped
-                                                                ? "border-emerald-500/50 bg-emerald-500/10"
-                                                                : cn("hover:border-border/80 dark:hover:border-white/30", rarityStyle.border, "bg-muted/30 dark:bg-white/5")
+                                                                ? "border-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/20"
+                                                                : cn("border-border hover:border-primary/50 hover:shadow-md", rarityStyle.border)
                                                         )}
                                                     >
                                                         <div className="text-4xl mb-2">
@@ -521,10 +521,10 @@ export default function WardrobePage() {
                                                 onClick={() => equipItem("accessory", null)}
                                                 disabled={savingField === "accessory"}
                                                 className={cn(
-                                                    "rounded-xl p-4 border-2 transition-all text-center",
+                                                    "rounded-xl p-4 border transition-all text-center bg-card shadow-sm",
                                                     !currentAccessorySlug
-                                                        ? "border-emerald-500/50 bg-emerald-500/10"
-                                                        : "border-border dark:border-white/10 bg-muted/30 dark:bg-white/5 hover:border-border/80 dark:hover:border-white/20"
+                                                        ? "border-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/20"
+                                                        : "border-border hover:border-primary/50 hover:shadow-md"
                                                 )}
                                             >
                                                 <div className="text-4xl mb-2">❌</div>
@@ -544,10 +544,10 @@ export default function WardrobePage() {
                                                         onClick={() => equipItem("accessory", accessorySlug)}
                                                         disabled={savingField === "accessory"}
                                                         className={cn(
-                                                            "rounded-xl p-4 border-2 transition-all text-center",
+                                                            "rounded-xl p-4 border transition-all text-center bg-card shadow-sm",
                                                             isEquipped
-                                                                ? "border-emerald-500/50 bg-emerald-500/10"
-                                                                : cn("hover:border-border/80 dark:hover:border-white/30", rarityStyle.border, "bg-muted/30 dark:bg-white/5")
+                                                                ? "border-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/20"
+                                                                : cn("border-border hover:border-primary/50 hover:shadow-md", rarityStyle.border)
                                                         )}
                                                     >
                                                         <div className="text-4xl mb-2">
@@ -597,10 +597,10 @@ export default function WardrobePage() {
                                                 onClick={() => equipItem("effect", null)}
                                                 disabled={savingField === "effect"}
                                                 className={cn(
-                                                    "rounded-xl p-4 border-2 transition-all text-center",
+                                                    "rounded-xl p-4 border transition-all text-center bg-card shadow-sm",
                                                     !currentEffectSlug
-                                                        ? "border-emerald-500/50 bg-emerald-500/10"
-                                                        : "border-border dark:border-white/10 bg-muted/30 dark:bg-white/5 hover:border-border/80 dark:hover:border-white/20"
+                                                        ? "border-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/20"
+                                                        : "border-border hover:border-primary/50 hover:shadow-md"
                                                 )}
                                             >
                                                 <div className="text-4xl mb-2">❌</div>
@@ -620,10 +620,10 @@ export default function WardrobePage() {
                                                         onClick={() => equipItem("effect", effectSlug)}
                                                         disabled={savingField === "effect"}
                                                         className={cn(
-                                                            "rounded-xl p-4 border-2 transition-all text-center",
+                                                            "rounded-xl p-4 border transition-all text-center bg-card shadow-sm",
                                                             isEquipped
-                                                                ? "border-emerald-500/50 bg-emerald-500/10"
-                                                                : cn("hover:border-border/80 dark:hover:border-white/30", rarityStyle.border, "bg-muted/30 dark:bg-white/5")
+                                                                ? "border-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/20"
+                                                                : cn("border-border hover:border-primary/50 hover:shadow-md", rarityStyle.border)
                                                         )}
                                                     >
                                                         <div className="text-4xl mb-2">

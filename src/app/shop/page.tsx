@@ -368,11 +368,11 @@ export default function ShopPage() {
                                             transition={{ delay: index * 0.03 }}
                                             whileHover={{ scale: 1.02, y: -4 }}
                                             className={cn(
-                                                "group relative rounded-xl border-2 p-5 transition-all duration-300",
-                                                "bg-card/80 dark:bg-gradient-to-b dark:from-white/5 dark:to-transparent backdrop-blur-sm",
+                                                "group relative rounded-xl border p-5 transition-all duration-300",
+                                                "bg-card text-card-foreground shadow-sm",
                                                 owned
-                                                    ? "border-emerald-500/40 bg-emerald-500/10 dark:bg-emerald-500/5"
-                                                    : cn(rarityStyle.border, "hover:shadow-lg", rarityStyle.glow),
+                                                    ? "border-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/20"
+                                                    : cn("border-border hover:border-primary/50 hover:shadow-md", rarityStyle.border),
                                                 !owned && !canAfford && "opacity-50"
                                             )}
                                         >
