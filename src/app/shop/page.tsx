@@ -13,6 +13,7 @@ import { db } from "@/lib/instantdb";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { useUserClickCount } from "@/lib/use-click-stats";
 
 type AvatarItem = {
     id: string;
@@ -49,6 +50,7 @@ const CATEGORIES = ["all", "hats", "effects", "accessories", "colors", "names"] 
 
 export default function ShopPage() {
     const { user, isLoaded, isSignedIn } = useUser();
+    const { clickCount: totalClicks } = useUserClickCount(user?.id);
     const [selectedCategory, setSelectedCategory] = useState<string>("all");
     const [purchaseLoading, setPurchaseLoading] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<{ item: string; message: string } | null>(null);
@@ -63,15 +65,12 @@ export default function ShopPage() {
     });
 
     const { data, isLoading } = db.useQuery({
-        clicks: user?.id ? { $: { where: { userId: user.id } } } : {},
         avatarItems: { $: { where: { isActive: true }, order: { createdAt: "asc" } } },
         avatarPurchases: user?.id ? { $: { where: { userId: user.id } } } : {},
     });
 
     useEnsureDefaultAvatarItems(data?.avatarItems);
 
-    const clicks = (data?.clicks ?? EMPTY_LIST) as Array<unknown>;
-    const totalClicks = clicks.length;
     const avatarItems = (data?.avatarItems ?? EMPTY_LIST) as AvatarItem[];
     const avatarPurchases = (data?.avatarPurchases ?? EMPTY_LIST) as Array<{ itemSlug: string; amount?: number }>;
 
@@ -474,4 +473,3 @@ export default function ShopPage() {
         </div>
     );
 }
-

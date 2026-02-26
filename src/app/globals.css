@@ -6,8 +6,8 @@
 @theme inline {
     --color-background: var(--background);
     --color-foreground: var(--foreground);
-    --font-sans: Inter, sans-serif;
-    --font-mono: JetBrains Mono, monospace;
+    --font-sans: var(--font-brand-sans), "Avenir Next", sans-serif;
+    --font-mono: var(--font-brand-mono), ui-monospace, SFMono-Regular, monospace;
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -41,7 +41,7 @@
     --radius-md: calc(var(--radius) - 2px);
     --radius-lg: var(--radius);
     --radius-xl: calc(var(--radius) + 4px);
-    --font-serif: Open Sans, sans-serif;
+    --font-serif: "Iowan Old Style", Georgia, serif;
     --radius: 0.5rem;
     --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
     --tracking-tight: calc(var(--tracking-normal) - 0.025em);
@@ -103,9 +103,9 @@
     --sidebar-border: oklch(0.83 0.015 75);
     --sidebar-ring: oklch(0.67 0.09 55);
     --destructive-foreground: oklch(0.97 0.01 90);
-    --font-sans: Inter, sans-serif;
-    --font-serif: Open Sans, sans-serif;
-    --font-mono: JetBrains Mono, monospace;
+    --font-sans: var(--font-brand-sans), "Avenir Next", sans-serif;
+    --font-serif: "Iowan Old Style", Georgia, serif;
+    --font-mono: var(--font-brand-mono), ui-monospace, SFMono-Regular, monospace;
     --shadow-color: #2e2418;
     --shadow-opacity: 0.12;
     --shadow-blur: 4px;
@@ -169,6 +169,11 @@
     body {
         @apply bg-background text-foreground;
         letter-spacing: var(--tracking-normal);
+        text-rendering: optimizeLegibility;
+        min-height: 100vh;
+        background-image:
+            radial-gradient(circle at 10% -10%, color-mix(in oklch, var(--primary) 22%, transparent) 0%, transparent 40%),
+            radial-gradient(circle at 90% 120%, color-mix(in oklch, var(--accent) 18%, transparent) 0%, transparent 45%);
     }
 }
 
@@ -182,6 +187,10 @@
     .text-gradient {
         @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
     }
+    .font-display {
+        font-family: var(--font-serif);
+        letter-spacing: -0.02em;
+    }
 }
 
 /* Force InstantDB cursor overlay behind all other elements (high specificity) */
@@ -192,28 +201,6 @@ body [data-instantdb-cursors],
 body [data-testid*="cursors"] {
     z-index: 0 !important;
     pointer-events: none !important;
-}
-
-/* Keep native cursor visible - don't hide it for the current user */
-body,
-body * {
-    cursor: auto !important;
-}
-
-/* Allow specific interactive elements to have pointer cursor */
-button,
-a,
-[role="button"],
-input[type="submit"],
-input[type="button"],
-.cursor-pointer {
-    cursor: pointer !important;
-}
-
-input,
-textarea,
-[contenteditable="true"] {
-    cursor: text !important;
 }
 
 /* Pulse animation for effects */

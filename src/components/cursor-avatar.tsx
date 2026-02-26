@@ -185,6 +185,7 @@ export const CursorAvatar = memo(
 
                     {/* Profile image - using native img to prevent flickering */}
                     {profileImageUrl && (
+                        /* eslint-disable-next-line @next/next/no-img-element */
                         <img
                             src={profileImageUrl}
                             alt=""
@@ -268,4 +269,3 @@ export const CursorAvatar = memo(
         );
     }
 );
-

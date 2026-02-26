@@ -3,6 +3,7 @@ import { db } from "@/lib/instantdb";
 import { getStableHslColor } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserAvatar } from "./user-avatar";
+import { useTotalClickStats } from "@/lib/use-click-stats";
 
 function formatRelativeTime(timestamp: number): string {
     const now = Date.now();
@@ -29,16 +30,7 @@ export default function LatestClicks() {
         },
     });
 
-    // Query for total clicks count
-    const { data: totalClicksData } = db.useQuery({
-        clicks: {
-            $: {
-                limit: 50000,
-            },
-        },
-    });
-
-    const totalClicks = totalClicksData?.clicks?.length || 0;
+    const { totalClicks } = useTotalClickStats();
 
     if (!latestClicksData && latestClicksLoading) {
         return (

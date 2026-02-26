@@ -1,58 +1,114 @@
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
+
+import { getUserClickCountSnapshot } from "@/lib/click-stats.server";
 import { db as adminDb } from "@/lib/instantdb.server";
+import { SITE_URL, toAbsoluteUrl } from "@/lib/site";
 
 type Props = {
     params: Promise<{ userId: string }>;
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
+type DisplayProfile = {
+    id: string;
+    userId: string;
+    displayName?: string;
+    hatSlug?: string;
+    accessorySlug?: string;
+    effectSlug?: string;
+    cursorColor?: string;
+    profileImageUrl?: string;
+};
+
+function getFirstString(value: string | string[] | undefined) {
+    if (Array.isArray(value)) {
+        return value[0];
+    }
+    return value;
+}
+
+function normalizeUserId(rawUserId: string) {
+    return rawUserId.startsWith("user_") ? rawUserId : `user_${rawUserId}`;
+}
+
+function parseClickCount(value?: string) {
+    if (!value) return null;
+
+    const parsed = Number.parseInt(value, 10);
+    if (!Number.isFinite(parsed) || parsed < 0) return null;
+
+    return parsed;
+}
+
 // Generate dynamic metadata for social sharing
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const { userId: userIdParam } = await params;
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+    const [{ userId: userIdParam }, search] = await Promise.all([params, searchParams]);
+    const userId = normalizeUserId(userIdParam);
 
-    // Handle both formats: with or without "user_" prefix
-    const userId = userIdParam.startsWith("user_") ? userIdParam : `user_${userIdParam}`;
+    let clickCount = parseClickCount(getFirstString(search.clicks));
+    let displayName = getFirstString(search.name) || undefined;
+    let hatSlug = getFirstString(search.hat) || undefined;
+    let accessorySlug = getFirstString(search.accessory) || undefined;
+    let effectSlug = getFirstString(search.effect) || undefined;
+    let cursorColor = getFirstString(search.color) || undefined;
+    let profileImageUrl = getFirstString(search.avatar) || undefined;
 
-    // Fetch user data from InstantDB
-    const { displayNames, clicks } = await adminDb.query({
-        displayNames: { $: { where: { userId } } },
-        clicks: { $: { where: { userId } } },
-    });
+    // Fallback to database values when essential URL params are missing.
+    if (!displayName || clickCount === null) {
+        const [profileResult, clickCountResult] = await Promise.all([
+            adminDb.query({
+                displayNames: {
+                    $: {
+                        where: { userId },
+                        fields: [
+                            "userId",
+                            "displayName",
+                            "hatSlug",
+                            "accessorySlug",
+                            "effectSlug",
+                            "cursorColor",
+                            "profileImageUrl",
+                        ],
+                    },
+                },
+            }),
+            clickCount === null ? getUserClickCountSnapshot(userId) : Promise.resolve(null),
+        ]);
 
-    const userProfile = displayNames?.[0];
-    const clickCount = clicks?.length ?? 0;
-    const displayName = userProfile?.displayName || "A Clicker";
-    const hatSlug = userProfile?.hatSlug || "";
-    const accessorySlug = userProfile?.accessorySlug || "";
-    const effectSlug = userProfile?.effectSlug || "";
-    const cursorColor = userProfile?.cursorColor || "";
-    const profileImageUrl = userProfile?.profileImageUrl || "";
+        const userProfile = (profileResult.displayNames?.[0] ?? null) as DisplayProfile | null;
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://clicker.jrbussard.com";
-    
-    // Build OG image URL with user data
+        clickCount ??= clickCountResult?.clickCount ?? 0;
+        displayName ||= userProfile?.displayName || "A Clicker";
+        hatSlug ||= userProfile?.hatSlug || "";
+        accessorySlug ||= userProfile?.accessorySlug || "";
+        effectSlug ||= userProfile?.effectSlug || "";
+        cursorColor ||= userProfile?.cursorColor || "";
+        profileImageUrl ||= userProfile?.profileImageUrl || "";
+    }
+
     const ogParams = new URLSearchParams({
         userId,
-        clicks: clickCount.toString(),
-        name: displayName,
-        ...(hatSlug && { hat: hatSlug }),
-        ...(accessorySlug && { accessory: accessorySlug }),
-        ...(effectSlug && { effect: effectSlug }),
-        ...(cursorColor && { color: cursorColor }),
-        ...(profileImageUrl && { avatar: profileImageUrl }),
+        clicks: String(clickCount ?? 0),
+        name: displayName || "A Clicker",
+        ...(hatSlug ? { hat: hatSlug } : {}),
+        ...(accessorySlug ? { accessory: accessorySlug } : {}),
+        ...(effectSlug ? { effect: effectSlug } : {}),
+        ...(cursorColor ? { color: cursorColor } : {}),
+        ...(profileImageUrl ? { avatar: profileImageUrl } : {}),
     });
-    const ogImageUrl = `${baseUrl}/api/og?${ogParams.toString()}`;
 
-    const title = `${displayName} has ${clickCount} clicks!`;
-    const description = `Join ${displayName} on Clicker! They've clicked ${clickCount} times. Can you beat their score?`;
+    const ogImageUrl = toAbsoluteUrl(`/api/og?${ogParams.toString()}`);
+
+    const title = `${displayName || "A Clicker"} has ${(clickCount ?? 0).toLocaleString()} clicks!`;
+    const description = `Join ${displayName || "this clicker"} on Clicker. Can you beat ${(clickCount ?? 0).toLocaleString()} clicks?`;
 
     return {
         title,
         description,
         openGraph: {
             type: "website",
-            url: `${baseUrl}/share/${userId}`,
+            url: `${SITE_URL}/share/${userId}`,
             siteName: "Clicker",
             title,
             description,
@@ -61,7 +117,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
                     url: ogImageUrl,
                     width: 1200,
                     height: 630,
-                    alt: `${displayName}'s Clicker profile`,
+                    alt: `${displayName || "Clicker"}'s Clicker profile`,
                 },
             ],
         },
@@ -75,10 +131,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function SharePage({ params }: Props) {
-    // Redirect to home page - the share page is just for OG previews
     const { userId: userIdParam } = await params;
-    // Handle both formats: with or without "user_" prefix
-    const userId = userIdParam.startsWith("user_") ? userIdParam : `user_${userIdParam}`;
+    const userId = normalizeUserId(userIdParam);
     redirect(`/?ref=${userId}`);
 }
-

@@ -10,6 +10,7 @@ export default function GiveClickButton() {
     const { userId: clerkUserId } = useAuth();
     const { user } = useUser();
     const [error, setError] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const CLICK_COOLDOWN_MS = 250;
     const lastClickTimeRef = useRef(0);
     const controls = useAnimation();
@@ -25,7 +26,7 @@ export default function GiveClickButton() {
     // Find existing displayName entity (created by PresenceManager)
     const existingDisplayName = displayNameData?.displayNames?.[0];
 
-    const handleClick = useCallback(() => {
+    const handleClick = useCallback(async () => {
         if (!clerkUserId) {
             setError("You must be logged in to click.");
             return;
@@ -38,6 +39,10 @@ export default function GiveClickButton() {
 
         if (!instantUser) {
             setError("Syncing authentication... please wait.");
+            return;
+        }
+
+        if (isSubmitting) {
             return;
         }
 
@@ -56,46 +61,48 @@ export default function GiveClickButton() {
 
         // Clear any previous error
         setError(null);
+        setIsSubmitting(true);
 
         const clickId = id();
 
         // If displayName record exists, just create the click and link it
         // If not, create the displayName record with fallback name
-        if (existingDisplayName?.id) {
-            // Record exists - just create click and link, preserve existing displayName
-            db.transact(
-                db.tx.clicks[clickId]
-                    .update({
+        try {
+            if (existingDisplayName?.id) {
+                // Record exists - just create click and link, preserve existing displayName
+                await db.transact(
+                    db.tx.clicks[clickId]
+                        .update({
+                            userId: clerkUserId,
+                            createdAt: now,
+                        })
+                        .link({ author: existingDisplayName.id })
+                );
+            } else {
+                // No record yet - create displayName with fallback, then click
+                const fallbackName = user?.firstName || user?.emailAddresses[0]?.emailAddress || "Anonymous";
+                const displayNameId = id();
+                await db.transact([
+                    db.tx.displayNames[displayNameId].update({
+                        displayName: fallbackName,
                         userId: clerkUserId,
-                        createdAt: now,
-                    })
-                    .link({ author: existingDisplayName.id })
-            ).catch((err) => {
-                console.error("Failed to create click:", err);
-                setError("Failed to register click. Please try again.");
-            });
-        } else {
-            // No record yet - create displayName with fallback, then click
-            const fallbackName = user?.firstName || user?.emailAddresses[0]?.emailAddress || "Anonymous";
-            const displayNameId = id();
-            db.transact([
-                db.tx.displayNames[displayNameId].update({
-                    displayName: fallbackName,
-                    userId: clerkUserId,
-                    profileImageUrl: user?.imageUrl || "",
-                }),
-                db.tx.clicks[clickId]
-                    .update({
-                        userId: clerkUserId,
-                        createdAt: now,
-                    })
-                    .link({ author: displayNameId }),
-            ]).catch((err) => {
-                console.error("Failed to create click:", err);
-                setError("Failed to register click. Please try again.");
-            });
+                        profileImageUrl: user?.imageUrl || "",
+                    }),
+                    db.tx.clicks[clickId]
+                        .update({
+                            userId: clerkUserId,
+                            createdAt: now,
+                        })
+                        .link({ author: displayNameId }),
+                ]);
+            }
+        } catch (err) {
+            console.error("Failed to create click:", err);
+            setError("Failed to register click. Please try again.");
+        } finally {
+            setIsSubmitting(false);
         }
-    }, [clerkUserId, authLoading, instantUser, user, existingDisplayName, controls]);
+    }, [clerkUserId, authLoading, instantUser, user, existingDisplayName, controls, isSubmitting]);
 
     return (
         <div className="flex flex-col items-center gap-4 sm:gap-6">
@@ -111,13 +118,16 @@ export default function GiveClickButton() {
                 {/* Main button */}
                 <motion.button
                     onClick={handleClick}
+                    disabled={isSubmitting}
                     animate={controls}
+                    aria-label="Give one click"
                     className="relative h-28 w-28 sm:h-32 sm:w-32 md:h-36 md:w-36 rounded-full font-bold text-lg sm:text-xl tracking-wide cursor-pointer
                         bg-gradient-to-br from-[#c9a66b] via-[#a8855a] to-[#7d6245]
                         shadow-[0_8px_32px_rgba(139,111,71,0.4),inset_0_2px_4px_rgba(255,255,255,0.3),inset_0_-4px_8px_rgba(0,0,0,0.2)]
                         border-2 border-[#d4b896]/50
                         hover:shadow-[0_12px_40px_rgba(139,111,71,0.5),inset_0_2px_4px_rgba(255,255,255,0.4),inset_0_-4px_8px_rgba(0,0,0,0.25)]
                         active:shadow-[0_4px_16px_rgba(139,111,71,0.3),inset_0_4px_8px_rgba(0,0,0,0.3)]
+                        disabled:opacity-70 disabled:cursor-not-allowed
                         transition-shadow duration-200
                         overflow-hidden group"
                 >

@@ -5,6 +5,7 @@ import { useAuth, useUser } from "@clerk/nextjs";
 import { db } from "@/lib/instantdb";
 import { AvatarPreview } from "./avatar-preview";
 import { motion } from "framer-motion";
+import { useUserClickCount } from "@/lib/use-click-stats";
 
 /**
  * Shows the current user's avatar in a fixed position on screen.
@@ -13,28 +14,14 @@ import { motion } from "framer-motion";
 export const MyAvatarIndicator = memo(function MyAvatarIndicator() {
     const { userId, isLoaded } = useAuth();
     const { user } = useUser();
-
-    // Get user's click count
-    const { data: clicksData } = db.useQuery({
-        clicks: userId
-            ? {
-                  $: {
-                      where: { userId },
-                      order: { createdAt: "desc" },
-                      limit: 100000,
-                  },
-              }
-            : {},
-    });
+    const { clickCount } = useUserClickCount(userId);
 
     // Query for displayName to get avatar settings
     const { data: displayNameData } = db.useQuery({
         displayNames: userId ? { $: { where: { userId } } } : {},
     });
 
-    const clicksGiven = useMemo(() => {
-        return clicksData?.clicks?.length || 0;
-    }, [clicksData?.clicks]);
+    const clicksGiven = clickCount;
 
     const displayNameRecord = useMemo(() => {
         if (!displayNameData?.displayNames || !userId) {
@@ -106,4 +93,3 @@ export const MyAvatarIndicator = memo(function MyAvatarIndicator() {
         </motion.div>
     );
 });
-
