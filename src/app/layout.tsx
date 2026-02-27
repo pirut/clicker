@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { IBM_Plex_Mono, Manrope } from "next/font/google";
+import { Fraunces, IBM_Plex_Mono, Sora } from "next/font/google";
 import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -10,9 +10,15 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
-const manrope = Manrope({
+const sora = Sora({
     subsets: ["latin"],
     variable: "--font-brand-sans",
+    display: "swap",
+});
+
+const fraunces = Fraunces({
+    subsets: ["latin"],
+    variable: "--font-brand-display",
     display: "swap",
 });
 
@@ -109,8 +115,8 @@ export const viewport: Viewport = {
     initialScale: 1,
     maximumScale: 5,
     themeColor: [
-        { media: "(prefers-color-scheme: light)", color: "#f4e5cf" },
-        { media: "(prefers-color-scheme: dark)", color: "#241d16" },
+        { media: "(prefers-color-scheme: light)", color: "#fef2e4" },
+        { media: "(prefers-color-scheme: dark)", color: "#10121f" },
     ],
 };
 
@@ -121,7 +127,11 @@ export default function RootLayout({
 }>) {
     return (
         <ClerkProvider>
-            <html lang="en" suppressHydrationWarning className={`${manrope.variable} ${plexMono.variable}`}>
+            <html
+                lang="en"
+                suppressHydrationWarning
+                className={`${sora.variable} ${fraunces.variable} ${plexMono.variable}`}
+            >
                 <body className="min-h-screen bg-background font-sans antialiased">
                     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                         <InstantAuth />
