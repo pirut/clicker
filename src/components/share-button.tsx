@@ -10,6 +10,8 @@ import { useUser } from "@clerk/nextjs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { AvatarPreview } from "@/components/avatar-preview";
 import { motion, AnimatePresence } from "framer-motion";
+import { SITE_URL } from "@/lib/site";
+import { useUserClickCount } from "@/lib/use-click-stats";
 
 interface ShareButtonProps {
     url?: string;
@@ -25,19 +27,21 @@ export function ShareButton({ url: propUrl, text: propText, tooltip = "Invite fr
     const [isShareSupported, setIsShareSupported] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const { user, isLoaded, isSignedIn } = useUser();
+    const { clickCount: userClicks, isLoading: clickCountLoading } = useUserClickCount(user?.id);
 
-    // Fetch user's clicks and display info
+    // Fetch user's display info
     const { data, isLoading } = db.useQuery({
-        clicks: user?.id ? { $: { where: { userId: user.id } } } : {},
         displayNames: user?.id ? { $: { where: { userId: user.id } } } : {},
     });
-    
-    const userClicks = data?.clicks?.length ?? 0;
+
     const userProfile = data?.displayNames?.[0];
     const displayName = userProfile?.displayName || user?.firstName || "Clicker";
     const hatSlug = userProfile?.hatSlug;
+    const accessorySlug = userProfile?.accessorySlug;
+    const effectSlug = userProfile?.effectSlug;
     const cursorColor = userProfile?.cursorColor;
     const profileImageUrl = userProfile?.profileImageUrl || user?.imageUrl;
+    const siteHost = new URL(SITE_URL).host;
 
     React.useEffect(() => {
         setIsClient(true);
@@ -46,10 +50,18 @@ export function ShareButton({ url: propUrl, text: propText, tooltip = "Invite fr
         }
     }, []);
 
-    // Build share URL with user ID for personalized OG
-    // Remove "user_" prefix from Clerk user ID for cleaner URLs
+    // Build share URL with precomputed values to avoid expensive per-request metadata lookups.
     const userIdForUrl = user?.id?.replace(/^user_/, "") || "";
-    const shareUrl = propUrl || (userIdForUrl ? `https://clicker.jrbussard.com/share/${userIdForUrl}` : "https://clicker.jrbussard.com");
+    const ogParams = new URLSearchParams({
+        clicks: String(userClicks),
+        name: displayName,
+        ...(hatSlug ? { hat: hatSlug } : {}),
+        ...(accessorySlug ? { accessory: accessorySlug } : {}),
+        ...(effectSlug ? { effect: effectSlug } : {}),
+        ...(cursorColor ? { color: cursorColor } : {}),
+        ...(profileImageUrl ? { avatar: profileImageUrl } : {}),
+    });
+    const shareUrl = propUrl || (userIdForUrl ? `${SITE_URL}/share/${userIdForUrl}?${ogParams.toString()}` : SITE_URL);
     
     const shareText = propText || `I've clicked ${userClicks} times on Clicker! Can you beat my score? 🎯`;
 
@@ -107,7 +119,7 @@ export function ShareButton({ url: propUrl, text: propText, tooltip = "Invite fr
                         >
                             {icon || <Share2 className="h-4 w-4" />}
                             <span className="hidden sm:inline">Share</span>
-                            {!isLoading && userClicks > 0 && (
+                            {!isLoading && !clickCountLoading && userClicks > 0 && (
                                 <span className="bg-primary/20 text-primary text-xs font-bold px-2 py-0.5 rounded-full">
                                     {userClicks}
                                 </span>
@@ -175,7 +187,7 @@ export function ShareButton({ url: propUrl, text: propText, tooltip = "Invite fr
                             {/* CTA */}
                             <div className="text-center mt-2">
                                 <p className="text-sm text-white/80">Join me on Clicker!</p>
-                                <p className="text-xs text-white/50 mt-1">clicker.jrbussard.com</p>
+                                <p className="text-xs text-white/50 mt-1">{siteHost}</p>
                             </div>
                         </div>
                     </motion.div>

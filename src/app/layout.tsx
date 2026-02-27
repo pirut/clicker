@@ -1,30 +1,41 @@
-// app/layout.tsx
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
+import { Fraunces, IBM_Plex_Mono, Sora } from "next/font/google";
+import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Suspense } from "react";
-import { InstantAuth } from "@/components/instant-auth";
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
+import { InstantAuth } from "@/components/instant-auth";
+import { ThemeProvider } from "@/components/theme-provider";
+import { SITE_URL } from "@/lib/site";
+import "./globals.css";
+
+const sora = Sora({
     subsets: ["latin"],
+    variable: "--font-brand-sans",
+    display: "swap",
 });
 
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
+const fraunces = Fraunces({
     subsets: ["latin"],
+    variable: "--font-brand-display",
+    display: "swap",
+});
+
+const plexMono = IBM_Plex_Mono({
+    subsets: ["latin"],
+    weight: ["400", "500", "700"],
+    variable: "--font-brand-mono",
+    display: "swap",
 });
 
 export const metadata: Metadata = {
+    metadataBase: new URL(SITE_URL),
     title: {
         default: "Clicker",
         template: "%s | Clicker",
     },
-    description: "Compete for the top spot. Every click counts. Join the competitive clicking game and see if you can make it to the leaderboard!",
+    description: "Compete for the top spot. Every click counts.",
     keywords: ["clicker", "clicking game", "competitive", "leaderboard", "game", "click counter"],
     authors: [{ name: "Clicker Team" }],
     creator: "Clicker",
@@ -34,9 +45,6 @@ export const metadata: Metadata = {
         address: false,
         telephone: false,
     },
-    ...(process.env.NEXT_PUBLIC_SITE_URL && {
-        metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL),
-    }),
     alternates: {
         canonical: "/",
     },
@@ -46,7 +54,7 @@ export const metadata: Metadata = {
         url: "/",
         siteName: "Clicker",
         title: "Clicker - Compete for the top spot",
-        description: "Compete for the top spot. Every click counts. Join the competitive clicking game and see if you can make it to the leaderboard!",
+        description: "Compete for the top spot. Every click counts.",
         images: [
             {
                 url: "/og-image.png",
@@ -59,9 +67,8 @@ export const metadata: Metadata = {
     twitter: {
         card: "summary_large_image",
         title: "Clicker - Compete for the top spot",
-        description: "Compete for the top spot. Every click counts. Join the competitive clicking game!",
+        description: "Compete for the top spot. Every click counts.",
         images: ["/og-image.png"],
-        creator: "@clicker",
     },
     robots: {
         index: true,
@@ -101,14 +108,15 @@ export const metadata: Metadata = {
         shortcut: "/favicon.ico",
     },
     manifest: "/manifest.json",
-    viewport: {
-        width: "device-width",
-        initialScale: 1,
-        maximumScale: 5,
-    },
+};
+
+export const viewport: Viewport = {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
     themeColor: [
-        { media: "(prefers-color-scheme: light)", color: "#1a1a2e" },
-        { media: "(prefers-color-scheme: dark)", color: "#0f0f1a" },
+        { media: "(prefers-color-scheme: light)", color: "#fef2e4" },
+        { media: "(prefers-color-scheme: dark)", color: "#10121f" },
     ],
 };
 
@@ -119,11 +127,17 @@ export default function RootLayout({
 }>) {
     return (
         <ClerkProvider>
-            <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>
+            <html
+                lang="en"
+                suppressHydrationWarning
+                className={`${sora.variable} ${fraunces.variable} ${plexMono.variable}`}
+            >
                 <body className="min-h-screen bg-background font-sans antialiased">
                     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                         <InstantAuth />
-                        <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+                        <Suspense fallback={<div className="min-h-screen grid place-items-center text-muted-foreground">Loading...</div>}>
+                            {children}
+                        </Suspense>
                         <Analytics />
                         <SpeedInsights />
                     </ThemeProvider>

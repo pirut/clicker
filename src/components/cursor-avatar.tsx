@@ -1,7 +1,8 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { getStableHslColor } from "@/lib/utils";
+import { LightParticleEffect, EffectType } from "./particle-effect";
 
 type CursorAvatarProps = {
     cursorColor?: string;
@@ -39,14 +40,21 @@ const accessorySymbols: Record<string, string> = {
     "alien": "👽",
 };
 
-const effectSymbols: Record<string, string> = {
-    "sparkles": "✨",
-    "glow": "💫",
-    "rainbow": "🌈",
-    "fire": "🔥",
-    "ice": "❄️",
-    "lightning": "⚡",
-    "stars": "⭐",
+// Map effect slugs to effect types for particle system
+const EFFECT_MAP: Record<string, EffectType> = {
+    "sparkles": "sparkles",
+    "glow": "glow",
+    "glow-effect": "glow",
+    "rainbow": "rainbow",
+    "rainbow-effect": "rainbow",
+    "fire": "fire",
+    "fire-effect": "fire",
+    "ice": "ice",
+    "ice-effect": "ice",
+    "lightning": "lightning",
+    "lightning-effect": "lightning",
+    "stars": "stars",
+    "stars-effect": "stars",
 };
 
 // Lightweight cursor component optimized for real-time rendering
@@ -66,7 +74,11 @@ export const CursorAvatar = memo(
         const color = cursorColor || fallbackColor || getStableHslColor(fallbackSeed);
         const hatEmoji = hatSlug ? hatSymbols[hatSlug] || "🧢" : null;
         const accessoryEmoji = accessorySlug ? accessorySymbols[accessorySlug] || null : null;
-        const effectEmoji = effectSlug ? effectSymbols[effectSlug] || null : null;
+        
+        // Get effect type for particle system
+        const effectType = useMemo(() => {
+            return effectSlug ? EFFECT_MAP[effectSlug] : undefined;
+        }, [effectSlug]);
 
         // Tier colors for badges
         let badgeBg = "rgba(255,255,255,0.95)";
@@ -138,21 +150,9 @@ export const CursorAvatar = memo(
                         </span>
                     )}
 
-                    {/* Effect */}
-                    {effectEmoji && (
-                        <span
-                            style={{
-                                position: "absolute",
-                                top: -4,
-                                right: -4,
-                                fontSize: 16,
-                                filter: "drop-shadow(0 0 4px rgba(255,255,255,0.5))",
-                                zIndex: 13,
-                                animation: "pulse 2s ease-in-out infinite",
-                            }}
-                        >
-                            {effectEmoji}
-                        </span>
+                    {/* Particle Effect */}
+                    {effectType && (
+                        <LightParticleEffect effect={effectType} size={48} />
                     )}
 
                     {/* Glow effect */}
@@ -185,6 +185,7 @@ export const CursorAvatar = memo(
 
                     {/* Profile image - using native img to prevent flickering */}
                     {profileImageUrl && (
+                        /* eslint-disable-next-line @next/next/no-img-element */
                         <img
                             src={profileImageUrl}
                             alt=""
@@ -268,4 +269,3 @@ export const CursorAvatar = memo(
         );
     }
 );
-

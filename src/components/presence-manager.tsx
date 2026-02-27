@@ -4,6 +4,7 @@ import { useAuth, useUser } from "@clerk/nextjs";
 import { db } from "@/lib/instantdb";
 import { id } from "@instantdb/react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useUserClickCount } from "@/lib/use-click-stats";
 
 const room = db.room("chat", "main");
 
@@ -14,18 +15,7 @@ export function PresenceManager() {
     const pendingUpdateRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const lastSavedProfileImageRef = useRef<string | null>(null);
 
-    // Get user's click count - optimized query with limit for performance
-    const { data: clicksData } = db.useQuery({
-        clicks: userId
-            ? {
-                  $: {
-                      where: { userId },
-                      order: { createdAt: "desc" },
-                      limit: 100000,
-                  },
-              }
-            : {},
-    });
+    const { clickCount } = useUserClickCount(userId);
 
     // Query for existing displayName to get avatar settings
     const { data: displayNameData } = db.useQuery({
@@ -38,9 +28,7 @@ export function PresenceManager() {
     });
     const publishPresence = presenceHandle.publishPresence;
 
-    const clicksGiven = useMemo(() => {
-        return clicksData?.clicks?.length || 0;
-    }, [clicksData?.clicks]);
+    const clicksGiven = clickCount;
 
     const clearPresence = useCallback(() => {
         publishPresence({

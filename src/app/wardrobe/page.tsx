@@ -12,6 +12,7 @@ import { db } from "@/lib/instantdb";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { useUserClickCount } from "@/lib/use-click-stats";
 
 type DisplayNameUpdates = {
     displayName?: string;
@@ -44,20 +45,18 @@ const RARITY_COLORS: Record<string, { bg: string; border: string; text: string }
 
 export default function WardrobePage() {
     const { user, isLoaded, isSignedIn } = useUser();
+    const { clickCount: totalClicks } = useUserClickCount(user?.id);
     const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error" | "info"; text: string } | null>(null);
     const [savingField, setSavingField] = useState<string | null>(null);
     const [selectedTab, setSelectedTab] = useState<"appearance" | "hats" | "accessories" | "effects">("appearance");
 
     const { data } = db.useQuery({
-        clicks: user?.id ? { $: { where: { userId: user.id } } } : {},
         displayNames: user?.id ? { $: { where: { userId: user.id } } } : {},
         avatarItems: { $: { where: { isActive: true }, order: { createdAt: "asc" } } },
         avatarPurchases: user?.id ? { $: { where: { userId: user.id } } } : {},
     });
 
     const defaultDisplayName = user?.firstName || user?.emailAddresses[0]?.emailAddress || "Anonymous";
-    const clicks = (data?.clicks ?? EMPTY_LIST) as Array<unknown>;
-    const totalClicks = clicks.length;
     const displayNameRecord = data?.displayNames?.[0];
     const avatarItems = (data?.avatarItems ?? EMPTY_LIST) as AvatarItem[];
     const avatarPurchases = (data?.avatarPurchases ?? EMPTY_LIST) as Array<{ itemSlug: string; amount?: number }>;
@@ -678,4 +677,3 @@ export default function WardrobePage() {
         </div>
     );
 }
-

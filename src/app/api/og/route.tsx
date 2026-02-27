@@ -15,6 +15,10 @@ const hatEmojis: Record<string, string> = {
     "beret": "🎨",
     "santa": "🎅",
     "top-hat": "🎩",
+};
+
+// Accessory emoji mapping
+const accessoryEmojis: Record<string, string> = {
     "sunglasses": "🕶️",
     "mask": "😷",
     "halo": "😇",
@@ -22,6 +26,23 @@ const hatEmojis: Record<string, string> = {
     "devil": "😈",
     "robot": "🤖",
     "alien": "👽",
+};
+
+// Effect configurations for visual representation
+const effectConfigs: Record<string, { emoji: string; color: string; glowColor: string }> = {
+    "sparkles": { emoji: "✨", color: "#ffd700", glowColor: "rgba(255,215,0,0.4)" },
+    "glow": { emoji: "💫", color: "#ffffff", glowColor: "rgba(255,255,255,0.5)" },
+    "glow-effect": { emoji: "💫", color: "#ffffff", glowColor: "rgba(255,255,255,0.5)" },
+    "rainbow": { emoji: "🌈", color: "#ff0000", glowColor: "rgba(255,0,255,0.3)" },
+    "rainbow-effect": { emoji: "🌈", color: "#ff0000", glowColor: "rgba(255,0,255,0.3)" },
+    "fire": { emoji: "🔥", color: "#ff6b35", glowColor: "rgba(255,107,53,0.5)" },
+    "fire-effect": { emoji: "🔥", color: "#ff6b35", glowColor: "rgba(255,107,53,0.5)" },
+    "ice": { emoji: "❄️", color: "#a8dadc", glowColor: "rgba(168,218,220,0.5)" },
+    "ice-effect": { emoji: "❄️", color: "#a8dadc", glowColor: "rgba(168,218,220,0.5)" },
+    "lightning": { emoji: "⚡", color: "#00d4ff", glowColor: "rgba(0,212,255,0.5)" },
+    "lightning-effect": { emoji: "⚡", color: "#00d4ff", glowColor: "rgba(0,212,255,0.5)" },
+    "stars": { emoji: "⭐", color: "#ffd700", glowColor: "rgba(255,215,0,0.4)" },
+    "stars-effect": { emoji: "⭐", color: "#ffd700", glowColor: "rgba(255,215,0,0.4)" },
 };
 
 // Get badge style based on click count
@@ -63,6 +84,8 @@ export async function GET(req: Request) {
     const clicks = parseInt(searchParams.get("clicks") || "0", 10);
     const name = searchParams.get("name") || "A Clicker";
     const hat = searchParams.get("hat") || "";
+    const accessory = searchParams.get("accessory") || "";
+    const effect = searchParams.get("effect") || "";
     const color = searchParams.get("color") || "#667eea";
     const avatar = searchParams.get("avatar") || "";
     
@@ -99,6 +122,8 @@ export async function GET(req: Request) {
 
     const badge = getBadgeStyle(clicks);
     const hatEmoji = hat ? hatEmojis[hat] : "";
+    const accessoryEmoji = accessory ? accessoryEmojis[accessory] : "";
+    const effectConfig = effect ? effectConfigs[effect] : null;
 
     return new ImageResponse(
         (
@@ -159,6 +184,20 @@ export async function GET(req: Request) {
                             position: "relative",
                         }}
                     >
+                        {/* Effect glow behind avatar */}
+                        {effectConfig && (
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    width: 200,
+                                    height: 200,
+                                    borderRadius: "50%",
+                                    background: `radial-gradient(circle, ${effectConfig.glowColor} 0%, transparent 70%)`,
+                                    zIndex: 1,
+                                }}
+                            />
+                        )}
+                        
                         {/* Hat emoji above avatar */}
                         {hatEmoji && (
                             <div
@@ -175,6 +214,37 @@ export async function GET(req: Request) {
                             </div>
                         )}
                         
+                        {/* Accessory emoji */}
+                        {accessoryEmoji && (
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    top: accessory === "sunglasses" || accessory === "mask" ? 25 : 5,
+                                    right: accessory === "sunglasses" || accessory === "mask" ? -10 : -40,
+                                    fontSize: 50,
+                                    zIndex: 20,
+                                }}
+                            >
+                                {accessoryEmoji}
+                            </div>
+                        )}
+                        
+                        {/* Effect emoji */}
+                        {effectConfig && (
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    top: -20,
+                                    right: -30,
+                                    fontSize: 45,
+                                    zIndex: 25,
+                                    filter: `drop-shadow(0 0 10px ${effectConfig.color})`,
+                                }}
+                            >
+                                {effectConfig.emoji}
+                            </div>
+                        )}
+                        
                         {/* Cursor dot with glow */}
                         <div
                             style={{
@@ -186,6 +256,7 @@ export async function GET(req: Request) {
                                 alignItems: "center",
                                 justifyContent: "center",
                                 position: "relative",
+                                zIndex: 10,
                             }}
                         >
                             <div

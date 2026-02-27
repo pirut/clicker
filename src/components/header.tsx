@@ -1,181 +1,192 @@
 "use client";
 
-import { ModeToggle } from "./mode-toggle";
-import { Button } from "./ui/button";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "./ui/navigation-menu";
-import { SignUpButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-import { Menu, X } from "lucide-react";
-import { useState, useEffect } from "react";
-import { ShareButton } from "@/components/share-button";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { AnimatePresence, motion } from "framer-motion";
+import { Menu, Sparkles, X } from "lucide-react";
+
+import { ModeToggle } from "./mode-toggle";
+import { ShareButton } from "@/components/share-button";
+import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
+
+const navigationItems = [
+    { href: "/", label: "Home" },
+    { href: "/about", label: "About" },
+    { href: "/leaderboard", label: "Leaderboard" },
+    { href: "/shop", label: "Shop" },
+];
 
 export function Header() {
+    const pathname = usePathname();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
-        const checkScreenSize = () => {
-            setIsMobile(window.innerWidth < 1024);
-        };
-
         const handleScroll = () => {
             setScrolled(window.scrollY > 20);
         };
 
-        checkScreenSize();
-        window.addEventListener("resize", checkScreenSize);
-        window.addEventListener("scroll", handleScroll);
+        handleScroll();
+        window.addEventListener("scroll", handleScroll, { passive: true });
 
         return () => {
-            window.removeEventListener("resize", checkScreenSize);
             window.removeEventListener("scroll", handleScroll);
         };
     }, []);
 
-    const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
-    const closeMobileMenu = () => setIsMobileMenuOpen(false);
+    useEffect(() => {
+        setIsMobileMenuOpen(false);
+    }, [pathname]);
 
-    const navigationItems = [
-        { href: "/", label: "Home" },
-        { href: "/about", label: "About" },
-        { href: "/leaderboard", label: "Leaderboard" },
-        { href: "/shop", label: "Shop" },
-    ];
+    useEffect(() => {
+        if (!isMobileMenuOpen) return;
+
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [isMobileMenuOpen]);
+
+    const linkClassName = (href: string) =>
+        cn(
+            "rounded-full border px-3.5 py-1.5 text-[0.8rem] font-medium tracking-wide transition-all",
+            pathname === href
+                ? "border-primary/35 bg-primary/18 text-foreground shadow-[0_8px_20px_-12px_color-mix(in_oklch,var(--primary)_70%,transparent)]"
+                : "border-transparent text-muted-foreground hover:border-border/70 hover:bg-card/60 hover:text-foreground"
+        );
 
     return (
         <motion.header
-            initial={{ y: -100 }}
-            animate={{ y: 0 }}
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-                scrolled ? "glass py-2" : "bg-transparent py-3 sm:py-4"
-            }`}
+            initial={{ y: -70, opacity: 0.7 }}
+            animate={{ y: 0, opacity: 1 }}
+            className={cn(
+                "fixed left-0 right-0 top-0 z-50 border-b transition-all duration-300",
+                scrolled
+                    ? "border-border/70 bg-background/72 py-2 backdrop-blur-2xl shadow-[0_18px_40px_-30px_rgb(10_15_35_/_0.65)]"
+                    : "border-transparent bg-transparent py-3 sm:py-4"
+            )}
         >
-            <div className="max-w-7xl mx-auto px-3 sm:px-4 flex justify-between items-center">
-                <Link href="/" className="text-xl sm:text-2xl font-bold tracking-tighter text-gradient">
-                    CLICKER
+            <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-3 sm:px-4">
+                <Link href="/" className="group flex items-center gap-2">
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-primary/40 bg-primary/15 text-primary transition-transform duration-300 group-hover:rotate-12">
+                        <Sparkles className="h-4 w-4" />
+                    </span>
+                    <span className="font-display text-2xl leading-none tracking-tight text-gradient">CLICKER</span>
                 </Link>
 
-                {/* Desktop Navigation */}
-                {!isMobile && (
-                    <NavigationMenu>
-                        <NavigationMenuList className="gap-6">
-                            {navigationItems.map((item) => (
-                                <NavigationMenuItem key={item.href}>
-                                    <Link href={item.href} legacyBehavior passHref>
-                                        <NavigationMenuLink className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-                                            {item.label}
-                                        </NavigationMenuLink>
-                                    </Link>
-                                </NavigationMenuItem>
-                            ))}
-                            <SignedIn>
-                                <NavigationMenuItem>
-                                    <Link href="/wardrobe" legacyBehavior passHref>
-                                        <NavigationMenuLink className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-                                            Wardrobe
-                                        </NavigationMenuLink>
-                                    </Link>
-                                </NavigationMenuItem>
-                            </SignedIn>
-                        </NavigationMenuList>
-                    </NavigationMenu>
-                )}
+                <nav className="hidden items-center gap-2 lg:flex">
+                    {navigationItems.map((item) => (
+                        <Link key={item.href} href={item.href} className={linkClassName(item.href)}>
+                            {item.label}
+                        </Link>
+                    ))}
+                    <SignedIn>
+                        <Link href="/wardrobe" className={linkClassName("/wardrobe")}>
+                            Wardrobe
+                        </Link>
+                    </SignedIn>
+                </nav>
 
-                {/* Right side buttons */}
-                <div className="flex gap-2 sm:gap-3 items-center">
-                    {/* Always show ModeToggle on mobile when menu is closed */}
-                    {isMobile && !isMobileMenuOpen && (
-                        <ModeToggle />
-                    )}
-                    
-                    <div className="hidden lg:flex gap-2 items-center">
+                <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="hidden items-center gap-2 lg:flex">
                         <SignedOut>
-                            <SignUpButton>
-                                <Button variant="outline" className="glass-hover border-primary/20">
+                            <SignInButton mode="modal">
+                                <Button variant="outline" className="glass-hover border-primary/30 bg-card/70">
                                     Login
                                 </Button>
-                            </SignUpButton>
+                            </SignInButton>
                         </SignedOut>
                         <SignedIn>
-                            <UserButton 
+                            <UserButton
                                 appearance={{
                                     elements: {
-                                        avatarBox: "w-9 h-9 border-2 border-primary/20"
-                                    }
+                                        avatarBox: "w-9 h-9 border-2 border-primary/35",
+                                    },
                                 }}
                             />
                         </SignedIn>
-                        <ShareButton />
+                        <ShareButton buttonClassName="border-primary/30 bg-card/70" />
                         <ModeToggle />
                     </div>
 
-                    {/* Mobile Menu Button */}
-                    {isMobile && (
+                    <div className="flex items-center gap-2 lg:hidden">
+                        <ModeToggle />
                         <button
-                            onClick={toggleMobileMenu}
-                            className="p-2 rounded-md hover:bg-accent/10 transition-colors"
+                            onClick={() => setIsMobileMenuOpen((open) => !open)}
+                            className="rounded-full border border-border/70 bg-card/65 p-2.5 text-foreground transition hover:border-primary/40"
+                            aria-expanded={isMobileMenuOpen}
                             aria-label="Toggle mobile menu"
                         >
-                            {isMobileMenuOpen ? <X className="h-5 w-5 sm:h-6 sm:w-6" /> : <Menu className="h-5 w-5 sm:h-6 sm:w-6" />}
+                            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                         </button>
-                    )}
+                    </div>
                 </div>
             </div>
 
-            {/* Mobile Navigation Menu */}
             <AnimatePresence>
-                {isMobile && isMobileMenuOpen && (
+                {isMobileMenuOpen && (
                     <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="glass border-t border-white/10 overflow-hidden"
+                        className="mx-3 mt-2 overflow-hidden rounded-2xl border border-border/70 bg-card/90 px-3 pb-3 pt-2 backdrop-blur-2xl lg:hidden"
                     >
-                        <nav className="flex flex-col p-3 sm:p-4 space-y-1 sm:space-y-2">
+                        <nav className="flex flex-col gap-2">
                             {navigationItems.map((item) => (
                                 <Link
                                     key={item.href}
                                     href={item.href}
-                                    onClick={closeMobileMenu}
-                                    className="px-3 sm:px-4 py-2.5 sm:py-3 rounded-md hover:bg-primary/10 text-sm font-medium transition-colors"
+                                    className={cn(
+                                        "rounded-xl border px-3 py-2.5 text-sm font-medium transition",
+                                        pathname === item.href
+                                            ? "border-primary/35 bg-primary/16 text-foreground"
+                                            : "border-transparent text-muted-foreground hover:border-border/65 hover:bg-muted/40 hover:text-foreground"
+                                    )}
                                 >
                                     {item.label}
                                 </Link>
                             ))}
+
                             <SignedIn>
                                 <Link
                                     href="/wardrobe"
-                                    onClick={closeMobileMenu}
-                                    className="px-3 sm:px-4 py-2.5 sm:py-3 rounded-md hover:bg-primary/10 text-sm font-medium transition-colors"
+                                    className={cn(
+                                        "rounded-xl border px-3 py-2.5 text-sm font-medium transition",
+                                        pathname === "/wardrobe"
+                                            ? "border-primary/35 bg-primary/16 text-foreground"
+                                            : "border-transparent text-muted-foreground hover:border-border/65 hover:bg-muted/40 hover:text-foreground"
+                                    )}
                                 >
                                     Wardrobe
                                 </Link>
                             </SignedIn>
-                            <div className="pt-3 sm:pt-4 border-t border-white/10 mt-2">
-                                <div className="flex items-center justify-between gap-3">
-                                    <div className="flex items-center gap-3">
-                                        <SignedOut>
-                                            <SignUpButton>
-                                                <Button size="sm" className="text-sm">Login</Button>
-                                            </SignUpButton>
-                                        </SignedOut>
-                                        <SignedIn>
-                                            <UserButton 
-                                                appearance={{
-                                                    elements: {
-                                                        avatarBox: "w-8 h-8 border-2 border-primary/20"
-                                                    }
-                                                }}
-                                            />
-                                        </SignedIn>
-                                    </div>
+
+                            <div className="mt-2 flex items-center justify-between gap-3 border-t border-border/70 pt-3">
+                                <SignedOut>
+                                    <SignInButton mode="modal">
+                                        <Button size="sm" className="w-full">
+                                            Login
+                                        </Button>
+                                    </SignInButton>
+                                </SignedOut>
+                                <SignedIn>
                                     <div className="flex items-center gap-2">
-                                        <ShareButton />
-                                        <ModeToggle />
+                                        <UserButton
+                                            appearance={{
+                                                elements: {
+                                                    avatarBox: "w-8 h-8 border-2 border-primary/35",
+                                                },
+                                            }}
+                                        />
+                                        <ShareButton buttonClassName="h-9" />
                                     </div>
-                                </div>
+                                </SignedIn>
                             </div>
                         </nav>
                     </motion.div>
