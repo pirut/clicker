@@ -99,7 +99,7 @@ export default function HomePage() {
                                     </div>
 
                                     <p className="mt-5 text-xs text-muted-foreground sm:text-sm">
-                                        Move your pointer around to preview your avatar cursor live on this screen.
+                                        On desktop, your system cursor is replaced with your live avatar cursor.
                                     </p>
                                 </div>
                             </section>

@@ -68,7 +68,7 @@ export function Header() {
             className={cn(
                 "fixed left-0 right-0 top-0 z-50 border-b transition-all duration-300",
                 scrolled
-                    ? "border-border/70 bg-background/72 py-2 backdrop-blur-2xl shadow-[0_18px_40px_-30px_rgb(10_15_35_/_0.65)]"
+                    ? "border-border/70 bg-background/72 py-2 backdrop-blur-2xl shadow-[0_18px_40px_-30px_rgb(55_38_20_/_0.42)]"
                     : "border-transparent bg-transparent py-3 sm:py-4"
             )}
         >
