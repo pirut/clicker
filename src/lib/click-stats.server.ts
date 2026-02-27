@@ -4,7 +4,7 @@ import { unstable_cache } from "next/cache";
 
 import { db as adminDb } from "@/lib/instantdb.server";
 
-const PAGE_SIZE = 2_000;
+const PAGE_SIZE = 10_000;
 const MAX_SCANNED_ROWS = 300_000;
 const PROFILE_QUERY_CHUNK_SIZE = 100;
 
@@ -196,38 +196,6 @@ async function fetchProfilesForUserIds(userIds: string[]) {
     return profileMap;
 }
 
-const getCachedTotalClicks = unstable_cache(
-    async (): Promise<TotalClicksSnapshot> => {
-        const { total, scannedRows, truncated } = await countClicks();
-
-        return {
-            totalClicks: total,
-            generatedAt: Date.now(),
-            scannedRows,
-            truncated,
-        };
-    },
-    ["clicker-total-clicks-v2"],
-    { revalidate: 3 }
-);
-
-const getCachedUserClickCount = unstable_cache(
-    async (rawUserId: string): Promise<UserClickCountSnapshot> => {
-        const userId = normalizeClerkUserId(rawUserId);
-        const { total, scannedRows, truncated } = await countClicks({ userId });
-
-        return {
-            userId,
-            clickCount: total,
-            generatedAt: Date.now(),
-            scannedRows,
-            truncated,
-        };
-    },
-    ["clicker-user-clicks-v2"],
-    { revalidate: 3 }
-);
-
 const getCachedLeaderboard = unstable_cache(
     async (limit: number): Promise<LeaderboardSnapshot> => {
         const safeLimit = Math.max(1, Math.min(limit, 100));
@@ -268,11 +236,25 @@ const getCachedLeaderboard = unstable_cache(
 );
 
 export async function getTotalClickCountSnapshot() {
-    return getCachedTotalClicks();
+    const { total, scannedRows, truncated } = await countClicks();
+    return {
+        totalClicks: total,
+        generatedAt: Date.now(),
+        scannedRows,
+        truncated,
+    };
 }
 
 export async function getUserClickCountSnapshot(userId: string) {
-    return getCachedUserClickCount(userId);
+    const normalizedUserId = normalizeClerkUserId(userId);
+    const { total, scannedRows, truncated } = await countClicks({ userId: normalizedUserId });
+    return {
+        userId: normalizedUserId,
+        clickCount: total,
+        generatedAt: Date.now(),
+        scannedRows,
+        truncated,
+    };
 }
 
 export async function getLeaderboardSnapshot(limit = 100) {

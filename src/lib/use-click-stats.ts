@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CLICK_STATS_INVALIDATE_EVENT, type ClickStatsInvalidateDetail } from "@/lib/stats-events";
+
+import { useClickStatsContext } from "@/components/click-stats-provider";
 
 type PollState<T> = {
     data: T | null;
@@ -119,26 +120,32 @@ function usePollingJson<T>(endpoint: string | null, intervalMs: number) {
     };
 }
 
-export function useTotalClickStats(intervalMs = 4_000) {
-    const state = usePollingJson<TotalClicksSnapshot>("/api/stats/summary", intervalMs);
-    const { refresh } = state;
+function normalizeUserId(userId: string) {
+    return userId.startsWith("user_") ? userId : `user_${userId}`;
+}
 
-    useEffect(() => {
-        const handleInvalidate = () => {
-            void refresh();
-        };
+export function useTotalClickStats() {
+    const { totalClicks, isLoading, error } = useClickStatsContext();
 
-        window.addEventListener(CLICK_STATS_INVALIDATE_EVENT, handleInvalidate);
-        return () => window.removeEventListener(CLICK_STATS_INVALIDATE_EVENT, handleInvalidate);
-    }, [refresh]);
+    const data: TotalClicksSnapshot | null = isLoading
+        ? null
+        : {
+              totalClicks,
+              generatedAt: Date.now(),
+              scannedRows: totalClicks,
+              truncated: false,
+          };
 
     return {
-        ...state,
-        totalClicks: state.data?.totalClicks ?? 0,
+        data,
+        isLoading,
+        error,
+        refresh: async () => undefined,
+        totalClicks,
     };
 }
 
-export function useLeaderboardStats(intervalMs = 8_000) {
+export function useLeaderboardStats(intervalMs = 4_000) {
     const state = usePollingJson<LeaderboardSnapshot>("/api/stats/leaderboard", intervalMs);
 
     return {
@@ -149,42 +156,27 @@ export function useLeaderboardStats(intervalMs = 8_000) {
     };
 }
 
-export function useUserClickCount(userId?: string | null, intervalMs = 4_000) {
-    const endpoint = userId ? `/api/stats/user/${encodeURIComponent(userId)}` : null;
-    const state = usePollingJson<UserClickCountSnapshot>(endpoint, intervalMs);
-    const { refresh } = state;
+export function useUserClickCount(userId?: string | null) {
+    const { countsByUser, isLoading, error } = useClickStatsContext();
+    const normalizedUserId = userId ? normalizeUserId(userId) : null;
+    const clickCount = normalizedUserId ? countsByUser.get(normalizedUserId) ?? 0 : 0;
 
-    useEffect(() => {
-        if (!userId) return;
-
-        const normalizedUserId = userId.startsWith("user_") ? userId : `user_${userId}`;
-
-        const handleInvalidate = (event: Event) => {
-            const customEvent = event as CustomEvent<ClickStatsInvalidateDetail>;
-            const invalidatedUserId = customEvent.detail?.userId;
-
-            if (!invalidatedUserId) {
-                return;
-            }
-
-            const normalizedInvalidatedUserId = invalidatedUserId.startsWith("user_")
-                ? invalidatedUserId
-                : `user_${invalidatedUserId}`;
-
-            if (normalizedInvalidatedUserId !== normalizedUserId) {
-                return;
-            }
-
-            void refresh();
-        };
-
-        window.addEventListener(CLICK_STATS_INVALIDATE_EVENT, handleInvalidate as EventListener);
-        return () => window.removeEventListener(CLICK_STATS_INVALIDATE_EVENT, handleInvalidate as EventListener);
-    }, [refresh, userId]);
+    const data: UserClickCountSnapshot | null = !normalizedUserId || isLoading
+        ? null
+        : {
+              userId: normalizedUserId,
+              clickCount,
+              generatedAt: Date.now(),
+              scannedRows: clickCount,
+              truncated: false,
+          };
 
     return {
-        ...state,
-        clickCount: state.data?.clickCount ?? 0,
-        truncated: state.data?.truncated ?? false,
+        data,
+        isLoading,
+        error,
+        refresh: async () => undefined,
+        clickCount,
+        truncated: false,
     };
 }
