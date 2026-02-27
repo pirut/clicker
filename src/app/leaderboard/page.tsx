@@ -27,7 +27,7 @@ export default function LeaderboardPage() {
                         <CardHeader className="pb-3 sm:pb-4 px-4 sm:px-6">
                             <CardTitle className="text-base sm:text-lg">About the Leaderboard</CardTitle>
                             <CardDescription className="text-xs sm:text-sm">
-                                Live rankings are generated from server-side snapshots for better production performance.
+                                Live rankings stream directly from InstantDB and update in realtime.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-3 px-3 sm:px-4">

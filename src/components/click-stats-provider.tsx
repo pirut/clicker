@@ -9,9 +9,30 @@ type ClickRow = {
     userId?: string;
 };
 
+type DisplayNameRow = {
+    id: string;
+    userId: string;
+    displayName?: string;
+    cursorColor?: string;
+    hatSlug?: string;
+    accessorySlug?: string;
+    effectSlug?: string;
+    profileImageUrl?: string;
+};
+
+export type ClickProfile = {
+    displayName: string;
+    cursorColor?: string;
+    hatSlug?: string;
+    accessorySlug?: string;
+    effectSlug?: string;
+    profileImageUrl?: string;
+};
+
 type ClickStatsContextValue = {
     totalClicks: number;
     countsByUser: Map<string, number>;
+    profilesByUser: Map<string, ClickProfile>;
     isLoading: boolean;
     error: string | null;
 };
@@ -29,25 +50,46 @@ export function ClickStatsProvider({ children }: { children: React.ReactNode }) 
                 fields: ["userId"],
             },
         },
+        displayNames: {
+            $: {
+                fields: ["userId", "displayName", "cursorColor", "hatSlug", "accessorySlug", "effectSlug", "profileImageUrl"],
+            },
+        },
     });
 
     const value = useMemo<ClickStatsContextValue>(() => {
-        const rows = (data?.clicks ?? []) as ClickRow[];
+        const clickRows = (data?.clicks ?? []) as ClickRow[];
+        const displayNameRows = (data?.displayNames ?? []) as DisplayNameRow[];
         const countsByUser = new Map<string, number>();
+        const profilesByUser = new Map<string, ClickProfile>();
 
-        for (const row of rows) {
+        for (const row of clickRows) {
             if (!row.userId) continue;
             const normalized = normalizeUserId(row.userId);
             countsByUser.set(normalized, (countsByUser.get(normalized) ?? 0) + 1);
         }
 
+        for (const row of displayNameRows) {
+            if (!row.userId) continue;
+            const normalized = normalizeUserId(row.userId);
+            profilesByUser.set(normalized, {
+                displayName: row.displayName || "Anonymous",
+                cursorColor: row.cursorColor,
+                hatSlug: row.hatSlug,
+                accessorySlug: row.accessorySlug,
+                effectSlug: row.effectSlug,
+                profileImageUrl: row.profileImageUrl,
+            });
+        }
+
         return {
-            totalClicks: rows.length,
+            totalClicks: clickRows.length,
             countsByUser,
+            profilesByUser,
             isLoading,
             error: error?.message ?? null,
         };
-    }, [data?.clicks, isLoading, error]);
+    }, [data?.clicks, data?.displayNames, isLoading, error]);
 
     return <ClickStatsContext.Provider value={value}>{children}</ClickStatsContext.Provider>;
 }

@@ -1,14 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useMemo } from "react";
 
 import { useClickStatsContext } from "@/components/click-stats-provider";
-
-type PollState<T> = {
-    data: T | null;
-    isLoading: boolean;
-    error: string | null;
-};
 
 type TotalClicksSnapshot = {
     totalClicks: number;
@@ -44,82 +38,6 @@ type UserClickCountSnapshot = {
     truncated: boolean;
 };
 
-function usePollingJson<T>(endpoint: string | null, intervalMs: number) {
-    const [state, setState] = useState<PollState<T>>({
-        data: null,
-        isLoading: Boolean(endpoint),
-        error: null,
-    });
-
-    const abortRef = useRef<AbortController | null>(null);
-
-    const fetchNow = useCallback(async () => {
-        if (!endpoint) {
-            setState({ data: null, isLoading: false, error: null });
-            return;
-        }
-
-        setState((prev) => ({ ...prev, isLoading: prev.data === null }));
-
-        abortRef.current?.abort();
-        const controller = new AbortController();
-        abortRef.current = controller;
-
-        try {
-            const response = await fetch(endpoint, {
-                cache: "no-store",
-                signal: controller.signal,
-            });
-
-            if (!response.ok) {
-                throw new Error(`Request failed with ${response.status}`);
-            }
-
-            const json = (await response.json()) as T;
-
-            setState({
-                data: json,
-                isLoading: false,
-                error: null,
-            });
-        } catch (error) {
-            if (controller.signal.aborted) {
-                return;
-            }
-
-            const message = error instanceof Error ? error.message : "Unknown error";
-            setState((prev) => ({
-                data: prev.data,
-                isLoading: false,
-                error: message,
-            }));
-        }
-    }, [endpoint]);
-
-    useEffect(() => {
-        if (!endpoint) {
-            setState({ data: null, isLoading: false, error: null });
-            return;
-        }
-
-        setState({ data: null, isLoading: true, error: null });
-        void fetchNow();
-        const timer = setInterval(() => {
-            void fetchNow();
-        }, intervalMs);
-
-        return () => {
-            clearInterval(timer);
-            abortRef.current?.abort();
-        };
-    }, [endpoint, intervalMs, fetchNow]);
-
-    return {
-        ...state,
-        refresh: fetchNow,
-    };
-}
-
 function normalizeUserId(userId: string) {
     return userId.startsWith("user_") ? userId : `user_${userId}`;
 }
@@ -127,14 +45,16 @@ function normalizeUserId(userId: string) {
 export function useTotalClickStats() {
     const { totalClicks, isLoading, error } = useClickStatsContext();
 
-    const data: TotalClicksSnapshot | null = isLoading
-        ? null
-        : {
-              totalClicks,
-              generatedAt: Date.now(),
-              scannedRows: totalClicks,
-              truncated: false,
-          };
+    const data = useMemo<TotalClicksSnapshot | null>(() => {
+        if (isLoading) return null;
+
+        return {
+            totalClicks,
+            generatedAt: Date.now(),
+            scannedRows: totalClicks,
+            truncated: false,
+        };
+    }, [isLoading, totalClicks]);
 
     return {
         data,
@@ -145,14 +65,52 @@ export function useTotalClickStats() {
     };
 }
 
-export function useLeaderboardStats(intervalMs = 4_000) {
-    const state = usePollingJson<LeaderboardSnapshot>("/api/stats/leaderboard", intervalMs);
+export function useLeaderboardStats(limit = 100) {
+    const { totalClicks, countsByUser, profilesByUser, isLoading, error } = useClickStatsContext();
+
+    const entries = useMemo<LeaderboardEntry[]>(() => {
+        return Array.from(countsByUser.entries())
+            .map(([userId, count]) => {
+                const profile = profilesByUser.get(userId);
+
+                return {
+                    userId,
+                    count,
+                    displayName: profile?.displayName || "Anonymous",
+                    cursorColor: profile?.cursorColor,
+                    hatSlug: profile?.hatSlug,
+                    accessorySlug: profile?.accessorySlug,
+                    effectSlug: profile?.effectSlug,
+                    profileImageUrl: profile?.profileImageUrl,
+                };
+            })
+            .sort((a, b) => {
+                if (b.count !== a.count) return b.count - a.count;
+                return a.userId.localeCompare(b.userId);
+            })
+            .slice(0, Math.max(1, Math.min(limit, 100)));
+    }, [countsByUser, profilesByUser, limit]);
+
+    const data = useMemo<LeaderboardSnapshot | null>(() => {
+        if (isLoading) return null;
+
+        return {
+            totalClicks,
+            generatedAt: Date.now(),
+            scannedRows: totalClicks,
+            truncated: false,
+            entries,
+        };
+    }, [entries, isLoading, totalClicks]);
 
     return {
-        ...state,
-        entries: state.data?.entries ?? [],
-        totalClicks: state.data?.totalClicks ?? 0,
-        truncated: state.data?.truncated ?? false,
+        data,
+        isLoading,
+        error,
+        refresh: async () => undefined,
+        entries,
+        totalClicks,
+        truncated: false,
     };
 }
 
@@ -161,15 +119,17 @@ export function useUserClickCount(userId?: string | null) {
     const normalizedUserId = userId ? normalizeUserId(userId) : null;
     const clickCount = normalizedUserId ? countsByUser.get(normalizedUserId) ?? 0 : 0;
 
-    const data: UserClickCountSnapshot | null = !normalizedUserId || isLoading
-        ? null
-        : {
-              userId: normalizedUserId,
-              clickCount,
-              generatedAt: Date.now(),
-              scannedRows: clickCount,
-              truncated: false,
-          };
+    const data = useMemo<UserClickCountSnapshot | null>(() => {
+        if (!normalizedUserId || isLoading) return null;
+
+        return {
+            userId: normalizedUserId,
+            clickCount,
+            generatedAt: Date.now(),
+            scannedRows: clickCount,
+            truncated: false,
+        };
+    }, [normalizedUserId, isLoading, clickCount]);
 
     return {
         data,
