@@ -234,6 +234,12 @@ body [data-testid*="cursors"] {
     pointer-events: none !important;
 }
 
+html.cursor-avatar-active,
+html.cursor-avatar-active body,
+html.cursor-avatar-active body * {
+    cursor: none !important;
+}
+
 /* Pulse animation for effects */
 @keyframes pulse {
     0%, 100% {

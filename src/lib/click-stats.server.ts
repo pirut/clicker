@@ -208,7 +208,7 @@ const getCachedTotalClicks = unstable_cache(
         };
     },
     ["clicker-total-clicks-v2"],
-    { revalidate: 15 }
+    { revalidate: 3 }
 );
 
 const getCachedUserClickCount = unstable_cache(
@@ -225,7 +225,7 @@ const getCachedUserClickCount = unstable_cache(
         };
     },
     ["clicker-user-clicks-v2"],
-    { revalidate: 10 }
+    { revalidate: 3 }
 );
 
 const getCachedLeaderboard = unstable_cache(
@@ -264,7 +264,7 @@ const getCachedLeaderboard = unstable_cache(
         };
     },
     ["clicker-leaderboard-v2"],
-    { revalidate: 20 }
+    { revalidate: 8 }
 );
 
 export async function getTotalClickCountSnapshot() {

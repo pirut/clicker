@@ -5,6 +5,7 @@ import { id } from "@instantdb/react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { useState, useCallback, useRef } from "react";
 import { motion, useAnimation } from "framer-motion";
+import { dispatchClickStatsInvalidate } from "@/lib/stats-events";
 
 export default function GiveClickButton() {
     const { userId: clerkUserId } = useAuth();
@@ -71,6 +72,7 @@ export default function GiveClickButton() {
                         })
                         .link({ author: existingDisplayName.id })
                 );
+                dispatchClickStatsInvalidate(clerkUserId);
             } else {
                 const fallbackName = user?.firstName || user?.emailAddresses[0]?.emailAddress || "Anonymous";
                 const displayNameId = id();
@@ -87,6 +89,7 @@ export default function GiveClickButton() {
                         })
                         .link({ author: displayNameId }),
                 ]);
+                dispatchClickStatsInvalidate(clerkUserId);
             }
         } catch (err) {
             console.error("Failed to create click:", err);

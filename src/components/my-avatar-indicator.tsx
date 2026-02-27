@@ -54,6 +54,7 @@ export const MyAvatarIndicator = memo(function MyAvatarIndicator() {
         const previousHtmlCursor = document.documentElement.style.cursor;
         document.body.style.cursor = "none";
         document.documentElement.style.cursor = "none";
+        document.documentElement.classList.add("cursor-avatar-active");
 
         let animationFrameId = 0;
         const target = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
@@ -102,6 +103,7 @@ export const MyAvatarIndicator = memo(function MyAvatarIndicator() {
             window.removeEventListener("blur", hidePointer);
             document.body.style.cursor = previousBodyCursor;
             document.documentElement.style.cursor = previousHtmlCursor;
+            document.documentElement.classList.remove("cursor-avatar-active");
         };
     }, [isLoaded, userId, user]);
 

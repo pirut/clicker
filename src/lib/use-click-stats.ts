@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { CLICK_STATS_INVALIDATE_EVENT, type ClickStatsInvalidateDetail } from "@/lib/stats-events";
 
 type PollState<T> = {
     data: T | null;
@@ -118,8 +119,18 @@ function usePollingJson<T>(endpoint: string | null, intervalMs: number) {
     };
 }
 
-export function useTotalClickStats(intervalMs = 15_000) {
+export function useTotalClickStats(intervalMs = 4_000) {
     const state = usePollingJson<TotalClicksSnapshot>("/api/stats/summary", intervalMs);
+    const { refresh } = state;
+
+    useEffect(() => {
+        const handleInvalidate = () => {
+            void refresh();
+        };
+
+        window.addEventListener(CLICK_STATS_INVALIDATE_EVENT, handleInvalidate);
+        return () => window.removeEventListener(CLICK_STATS_INVALIDATE_EVENT, handleInvalidate);
+    }, [refresh]);
 
     return {
         ...state,
@@ -127,7 +138,7 @@ export function useTotalClickStats(intervalMs = 15_000) {
     };
 }
 
-export function useLeaderboardStats(intervalMs = 20_000) {
+export function useLeaderboardStats(intervalMs = 8_000) {
     const state = usePollingJson<LeaderboardSnapshot>("/api/stats/leaderboard", intervalMs);
 
     return {
@@ -138,9 +149,38 @@ export function useLeaderboardStats(intervalMs = 20_000) {
     };
 }
 
-export function useUserClickCount(userId?: string | null, intervalMs = 10_000) {
+export function useUserClickCount(userId?: string | null, intervalMs = 4_000) {
     const endpoint = userId ? `/api/stats/user/${encodeURIComponent(userId)}` : null;
     const state = usePollingJson<UserClickCountSnapshot>(endpoint, intervalMs);
+    const { refresh } = state;
+
+    useEffect(() => {
+        if (!userId) return;
+
+        const normalizedUserId = userId.startsWith("user_") ? userId : `user_${userId}`;
+
+        const handleInvalidate = (event: Event) => {
+            const customEvent = event as CustomEvent<ClickStatsInvalidateDetail>;
+            const invalidatedUserId = customEvent.detail?.userId;
+
+            if (!invalidatedUserId) {
+                return;
+            }
+
+            const normalizedInvalidatedUserId = invalidatedUserId.startsWith("user_")
+                ? invalidatedUserId
+                : `user_${invalidatedUserId}`;
+
+            if (normalizedInvalidatedUserId !== normalizedUserId) {
+                return;
+            }
+
+            void refresh();
+        };
+
+        window.addEventListener(CLICK_STATS_INVALIDATE_EVENT, handleInvalidate as EventListener);
+        return () => window.removeEventListener(CLICK_STATS_INVALIDATE_EVENT, handleInvalidate as EventListener);
+    }, [refresh, userId]);
 
     return {
         ...state,
