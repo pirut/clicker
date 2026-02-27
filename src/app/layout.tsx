@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { InstantAuth } from "@/components/instant-auth";
+import { MyAvatarIndicator } from "@/components/my-avatar-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
@@ -135,6 +136,7 @@ export default function RootLayout({
                 <body className="min-h-screen bg-background font-sans antialiased">
                     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                         <InstantAuth />
+                        <MyAvatarIndicator />
                         <Suspense fallback={<div className="min-h-screen grid place-items-center text-muted-foreground">Loading...</div>}>
                             {children}
                         </Suspense>

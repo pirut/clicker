@@ -13,7 +13,6 @@ import GiveClickButton from "@/components/give-click-button";
 import LatestClicks from "@/components/latest-clicks";
 import { Background } from "@/components/background";
 import { PresenceManager } from "@/components/presence-manager";
-import { MyAvatarIndicator } from "@/components/my-avatar-indicator";
 import { CursorAvatar } from "@/components/cursor-avatar";
 import { useTotalClickStats } from "@/lib/use-click-stats";
 
@@ -52,7 +51,6 @@ export default function HomePage() {
     return (
         <>
             <PresenceManager />
-            <MyAvatarIndicator />
             <Cursors room={room} className="min-h-screen w-full" userCursorColor="tomato" renderCursor={renderCursor} zIndex={50}>
                 <Background />
                 <div className="relative flex min-h-screen flex-col">
