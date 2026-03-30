@@ -36,6 +36,10 @@ export function PresenceManager() {
             status: undefined,
             profileImageUrl: undefined,
             clicksGiven: undefined,
+            cursorColor: undefined,
+            hatSlug: undefined,
+            accessorySlug: undefined,
+            effectSlug: undefined,
         });
     }, [publishPresence]);
 

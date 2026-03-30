@@ -63,6 +63,24 @@ const _schema = i.schema({
                 accessorySlug: i.string().optional(),
                 effectSlug: i.string().optional(),
             }),
+            topics: {
+                messages: i.entity({
+                    messageId: i.string(),
+                    userId: i.string(),
+                    displayName: i.string(),
+                    profileImageUrl: i.string().optional(),
+                    cursorColor: i.string().optional(),
+                    text: i.string(),
+                    sentAt: i.number(),
+                }),
+                emojiBursts: i.entity({
+                    burstId: i.string(),
+                    emoji: i.string(),
+                    userId: i.string(),
+                    displayName: i.string(),
+                    sentAt: i.number(),
+                }),
+            },
         },
     },
 });

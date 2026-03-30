@@ -1,12 +1,16 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState } from "react";
 
 export function Background() {
     const [mounted, setMounted] = useState(false);
     const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
     const gridColor = "color-mix(in oklch, var(--border) 55%, transparent)";
+    const spotlightX = useMotionValue(-180);
+    const spotlightY = useMotionValue(-180);
+    const spotlightXSpring = useSpring(spotlightX, { stiffness: 180, damping: 28, mass: 0.5 });
+    const spotlightYSpring = useSpring(spotlightY, { stiffness: 180, damping: 28, mass: 0.5 });
 
     useEffect(() => {
         setMounted(true);
@@ -17,6 +21,18 @@ export function Background() {
         mediaQuery.addEventListener("change", handleChange);
         return () => mediaQuery.removeEventListener("change", handleChange);
     }, []);
+
+    useEffect(() => {
+        if (!mounted || prefersReducedMotion) return;
+
+        const handlePointerMove = (event: PointerEvent) => {
+            spotlightX.set(event.clientX - 160);
+            spotlightY.set(event.clientY - 160);
+        };
+
+        window.addEventListener("pointermove", handlePointerMove, { passive: true });
+        return () => window.removeEventListener("pointermove", handlePointerMove);
+    }, [mounted, prefersReducedMotion, spotlightX, spotlightY]);
 
     if (!mounted) return null;
 
@@ -63,6 +79,10 @@ export function Background() {
                             ease: "easeInOut",
                         }}
                         className="absolute left-1/2 top-[22%] h-[220px] w-[58vw] -translate-x-1/2 rounded-full bg-gradient-to-r from-primary/18 via-accent/12 to-primary/18 blur-[95px]"
+                    />
+                    <motion.div
+                        style={{ x: spotlightXSpring, y: spotlightYSpring }}
+                        className="absolute h-80 w-80 rounded-full bg-[radial-gradient(circle,color-mix(in_oklch,var(--primary)_24%,transparent)_0%,color-mix(in_oklch,var(--accent)_14%,transparent)_42%,transparent_72%)] blur-[55px]"
                     />
                 </>
             )}

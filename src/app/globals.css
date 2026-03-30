@@ -412,6 +412,51 @@ html.cursor-avatar-active body * {
     }
 }
 
+@keyframes petal-drift {
+    0% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--x, 0px)), calc(-50% + var(--y, 0px))) rotate(0deg) scale(0.4);
+    }
+    20% {
+        opacity: 0.95;
+    }
+    60% {
+        opacity: 0.8;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--x, 0px) + 16px), calc(-50% + var(--y, 0px) + 24px)) rotate(120deg) scale(0.75);
+    }
+}
+
+@keyframes heart-float {
+    0% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--x, 0px)), calc(-50% + var(--y, 0px))) scale(0.4);
+    }
+    25% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--x, 0px)), calc(-50% + var(--y, 0px) - 30px)) scale(1.15);
+    }
+}
+
+@keyframes comet-streak {
+    0% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--x, 0px)), calc(-50% + var(--y, 0px))) rotate(-28deg) scaleY(0.4);
+    }
+    12% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--x, 0px) + 32px), calc(-50% + var(--y, 0px) - 22px)) rotate(-28deg) scaleY(1.1);
+    }
+}
+
 /* Aura animations */
 @keyframes aura-pulse {
     0%, 100% {
@@ -445,5 +490,16 @@ html.cursor-avatar-active body * {
     }
     to {
         transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+@keyframes comet-aura {
+    0%, 100% {
+        opacity: 0.45;
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+    50% {
+        opacity: 0.9;
+        transform: translate(-50%, -50%) scale(1.08);
     }
 }

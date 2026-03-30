@@ -28,6 +28,8 @@ const hatSymbols: Record<string, string> = {
     "beret": "🎨",
     "santa": "🎅",
     "top-hat": "🎩",
+    "graduation-cap": "🎓",
+    "flower-crown": "🌸",
 };
 
 const accessorySymbols: Record<string, string> = {
@@ -38,6 +40,9 @@ const accessorySymbols: Record<string, string> = {
     "devil": "😈",
     "robot": "🤖",
     "alien": "👽",
+    "headphones": "🎧",
+    "monocle": "🧐",
+    "microphone": "🎤",
 };
 
 // Map effect slugs to effect types for particle system
@@ -55,6 +60,12 @@ const EFFECT_MAP: Record<string, EffectType> = {
     "lightning-effect": "lightning",
     "stars": "stars",
     "stars-effect": "stars",
+    "petals": "petals",
+    "petals-effect": "petals",
+    "hearts": "hearts",
+    "hearts-effect": "hearts",
+    "comet": "comet",
+    "comet-effect": "comet",
 };
 
 // Lightweight cursor component optimized for real-time rendering
@@ -74,6 +85,9 @@ export const CursorAvatar = memo(
         const color = cursorColor || fallbackColor || getStableHslColor(fallbackSeed);
         const hatEmoji = hatSlug ? hatSymbols[hatSlug] || "🧢" : null;
         const accessoryEmoji = accessorySlug ? accessorySymbols[accessorySlug] || null : null;
+        const isFaceAccessory =
+            accessorySlug === "sunglasses" || accessorySlug === "mask" || accessorySlug === "monocle";
+        const isHeadAccessory = accessorySlug === "headphones";
         
         // Get effect type for particle system
         const effectType = useMemo(() => {
@@ -139,8 +153,8 @@ export const CursorAvatar = memo(
                         <span
                             style={{
                                 position: "absolute",
-                                top: accessorySlug === "sunglasses" || accessorySlug === "mask" ? 8 : 2,
-                                left: accessorySlug === "sunglasses" || accessorySlug === "mask" ? 8 : 30,
+                                top: isFaceAccessory ? 8 : isHeadAccessory ? 0 : 2,
+                                left: isFaceAccessory ? 8 : isHeadAccessory ? 6 : 30,
                                 fontSize: 18,
                                 filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.3))",
                                 zIndex: 11,

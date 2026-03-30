@@ -35,6 +35,8 @@ const hatSymbols: Record<string, { symbol: string; rotation: string }> = {
     "beret": { symbol: "🎨", rotation: "-9deg" },
     "santa": { symbol: "🎅", rotation: "-6deg" },
     "top-hat": { symbol: "🎩", rotation: "-11deg" },
+    "graduation-cap": { symbol: "🎓", rotation: "-4deg" },
+    "flower-crown": { symbol: "🌸", rotation: "0deg" },
 };
 
 const accessorySymbols: Record<string, { symbol: string; rotation: string }> = {
@@ -45,6 +47,9 @@ const accessorySymbols: Record<string, { symbol: string; rotation: string }> = {
     "devil": { symbol: "😈", rotation: "0deg" },
     "robot": { symbol: "🤖", rotation: "0deg" },
     "alien": { symbol: "👽", rotation: "0deg" },
+    "headphones": { symbol: "🎧", rotation: "0deg" },
+    "monocle": { symbol: "🧐", rotation: "0deg" },
+    "microphone": { symbol: "🎤", rotation: "-10deg" },
 };
 
 const effectSymbols: Record<string, { symbol: string; animation?: string }> = {
@@ -55,6 +60,9 @@ const effectSymbols: Record<string, { symbol: string; animation?: string }> = {
     "ice": { symbol: "❄️", animation: "pulse" },
     "lightning": { symbol: "⚡", animation: "flash" },
     "stars": { symbol: "⭐", animation: "twinkle" },
+    "petals": { symbol: "🌸", animation: "twinkle" },
+    "hearts": { symbol: "💖", animation: "pulse" },
+    "comet": { symbol: "☄️", animation: "flash" },
 };
 
 // Map effect slugs to effect types for particle system
@@ -72,6 +80,12 @@ const EFFECT_MAP: Record<string, EffectType> = {
     "lightning-effect": "lightning",
     "stars": "stars",
     "stars-effect": "stars",
+    "petals": "petals",
+    "petals-effect": "petals",
+    "hearts": "hearts",
+    "hearts-effect": "hearts",
+    "comet": "comet",
+    "comet-effect": "comet",
 };
 
 const HatItem = memo(function HatItem({ hatSlug, size }: { hatSlug?: string; size: number }) {
@@ -102,9 +116,11 @@ const HatItem = memo(function HatItem({ hatSlug, size }: { hatSlug?: string; siz
 const AccessoryItem = memo(function AccessoryItem({ accessorySlug, size }: { accessorySlug?: string; size: number }) {
     if (!accessorySlug) return null;
     const config = accessorySymbols[accessorySlug] || { symbol: "🎭", rotation: "0deg" };
-    const isFaceAccessory = accessorySlug === "sunglasses" || accessorySlug === "mask";
-    const topOffset = isFaceAccessory ? size * 0.15 : size * 0.05;
-    const leftOffset = isFaceAccessory ? size * 0.15 : size * 0.6;
+    const isFaceAccessory =
+        accessorySlug === "sunglasses" || accessorySlug === "mask" || accessorySlug === "monocle";
+    const isHeadAccessory = accessorySlug === "headphones";
+    const topOffset = isFaceAccessory ? size * 0.15 : isHeadAccessory ? -size * 0.02 : size * 0.05;
+    const leftOffset = isFaceAccessory ? size * 0.15 : isHeadAccessory ? size * 0.08 : size * 0.6;
 
     return (
         <div
@@ -127,7 +143,8 @@ const AccessoryItem = memo(function AccessoryItem({ accessorySlug, size }: { acc
 
 const EffectItem = memo(function EffectItem({ effectSlug, size }: { effectSlug?: string; size: number }) {
     if (!effectSlug) return null;
-    const config = effectSymbols[effectSlug] || { symbol: "✨" };
+    const normalizedEffect = EFFECT_MAP[effectSlug] || effectSlug;
+    const config = effectSymbols[normalizedEffect] || { symbol: "✨" };
 
     return (
         <div

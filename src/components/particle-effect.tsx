@@ -1,8 +1,18 @@
 "use client";
 
-import { memo, useMemo } from "react";
+import { CSSProperties, memo, useMemo } from "react";
 
-export type EffectType = "sparkles" | "glow" | "rainbow" | "fire" | "ice" | "lightning" | "stars";
+export type EffectType =
+    | "sparkles"
+    | "glow"
+    | "rainbow"
+    | "fire"
+    | "ice"
+    | "lightning"
+    | "stars"
+    | "petals"
+    | "hearts"
+    | "comet";
 
 interface ParticleEffectProps {
     effect: EffectType;
@@ -76,6 +86,30 @@ const EFFECT_CONFIGS: Record<EffectType, {
         spread: 1.6,
         duration: [2.0, 4.0],
     },
+    petals: {
+        particleCount: { low: 4, medium: 8, high: 12 },
+        colors: ["#f7cad0", "#f4acb7", "#ffcad4", "#ffd6a5", "#fff1e6"],
+        animation: "petal-drift",
+        particleSize: [0.08, 0.14],
+        spread: 1.45,
+        duration: [1.8, 3.2],
+    },
+    hearts: {
+        particleCount: { low: 4, medium: 7, high: 11 },
+        colors: ["#ff4d6d", "#ff758f", "#ff8fa3", "#ffb3c1", "#fff0f3"],
+        animation: "heart-float",
+        particleSize: [0.08, 0.14],
+        spread: 1.2,
+        duration: [1.1, 2.2],
+    },
+    comet: {
+        particleCount: { low: 3, medium: 6, high: 10 },
+        colors: ["#fff8e1", "#ffd166", "#fca311", "#fff1a8", "#ffffff"],
+        animation: "comet-streak",
+        particleSize: [0.06, 0.13],
+        spread: 1.7,
+        duration: [0.55, 1.05],
+    },
 };
 
 // Generate deterministic but varied positions for particles
@@ -140,7 +174,7 @@ const Particle = memo(function Particle({
 }) {
     // Special shapes for certain effects
     const getParticleStyle = () => {
-        const baseStyle: React.CSSProperties = {
+        const baseStyle = {
             position: "absolute",
             left: "50%",
             top: "50%",
@@ -152,7 +186,10 @@ const Particle = memo(function Particle({
             animation: `${animation} ${duration}s ease-in-out ${delay}s infinite`,
             pointerEvents: "none",
             willChange: "transform, opacity",
-        };
+        } as CSSProperties;
+
+        (baseStyle as CSSProperties & Record<`--${string}`, string>)["--x"] = `${x}px`;
+        (baseStyle as CSSProperties & Record<`--${string}`, string>)["--y"] = `${y}px`;
 
         switch (effectType) {
             case "fire":
@@ -197,6 +234,30 @@ const Particle = memo(function Particle({
                     ...baseStyle,
                     filter: `blur(${particleSize * 0.4}px)`,
                     boxShadow: `0 0 ${particleSize}px ${color}, 0 0 ${particleSize * 2}px ${color}60`,
+                };
+            case "petals":
+                return {
+                    ...baseStyle,
+                    borderRadius: "70% 30% 65% 35%",
+                    transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) rotate(22deg)`,
+                    boxShadow: `0 0 ${particleSize * 0.5}px ${color}60`,
+                };
+            case "hearts":
+                return {
+                    ...baseStyle,
+                    borderRadius: "18% 18% 80% 80%",
+                    clipPath: "polygon(50% 92%, 0 42%, 18% 12%, 50% 28%, 82% 12%, 100% 42%)",
+                    boxShadow: `0 0 ${particleSize * 0.5}px ${color}50`,
+                };
+            case "comet":
+                return {
+                    ...baseStyle,
+                    width: particleSize * 0.65,
+                    height: particleSize * 2.4,
+                    borderRadius: particleSize,
+                    transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) rotate(-28deg)`,
+                    filter: `blur(${particleSize * 0.15}px)`,
+                    boxShadow: `0 0 ${particleSize * 0.9}px ${color}, 0 0 ${particleSize * 2.1}px ${color}60`,
                 };
             default:
                 return baseStyle;
@@ -283,6 +344,31 @@ const AuraEffect = memo(function AuraEffect({
                     background: "radial-gradient(circle, rgba(255,215,0,0.25) 0%, rgba(255,248,220,0.1) 50%, transparent 70%)",
                     animation: "aura-pulse 2.5s ease-in-out infinite",
                 };
+            case "petals":
+                return {
+                    ...baseStyle,
+                    width: size * 1.5,
+                    height: size * 1.5,
+                    background: "radial-gradient(circle, rgba(255,183,197,0.26) 0%, rgba(255,214,165,0.18) 40%, transparent 72%)",
+                    animation: "aura-pulse 2.1s ease-in-out infinite",
+                };
+            case "hearts":
+                return {
+                    ...baseStyle,
+                    width: size * 1.45,
+                    height: size * 1.45,
+                    background: "radial-gradient(circle, rgba(255,77,109,0.24) 0%, rgba(255,143,163,0.15) 42%, transparent 74%)",
+                    animation: "aura-pulse 1.9s ease-in-out infinite",
+                };
+            case "comet":
+                return {
+                    ...baseStyle,
+                    width: size * 1.9,
+                    height: size * 1.3,
+                    background: "radial-gradient(circle, rgba(255,255,255,0.28) 0%, rgba(255,209,102,0.16) 38%, transparent 70%)",
+                    filter: "blur(10px)",
+                    animation: "comet-aura 1.25s ease-in-out infinite",
+                };
             default:
                 return baseStyle;
         }
@@ -344,4 +430,3 @@ export const LightParticleEffect = memo(function LightParticleEffect({
 }) {
     return <ParticleEffect effect={effect} size={size} intensity="low" />;
 });
-

@@ -101,6 +101,8 @@ const HAT_SYMBOLS: Record<string, { symbol: string; rotation: string }> = {
     "beret": { symbol: "🎨", rotation: "-9deg" },
     "santa": { symbol: "🎅", rotation: "-6deg" },
     "top-hat": { symbol: "🎩", rotation: "-11deg" },
+    "graduation-cap": { symbol: "🎓", rotation: "-4deg" },
+    "flower-crown": { symbol: "🌸", rotation: "0deg" },
 };
 
 // Accessory emoji mappings
@@ -112,6 +114,9 @@ const ACCESSORY_SYMBOLS: Record<string, { symbol: string; rotation: string }> = 
     "devil": { symbol: "😈", rotation: "0deg" },
     "robot": { symbol: "🤖", rotation: "0deg" },
     "alien": { symbol: "👽", rotation: "0deg" },
+    "headphones": { symbol: "🎧", rotation: "0deg" },
+    "monocle": { symbol: "🧐", rotation: "0deg" },
+    "microphone": { symbol: "🎤", rotation: "-10deg" },
 };
 
 // Map effect slugs to effect types
@@ -129,6 +134,12 @@ const EFFECT_MAP: Record<string, EffectType> = {
     "lightning-effect": "lightning",
     "stars": "stars",
     "stars-effect": "stars",
+    "petals": "petals",
+    "petals-effect": "petals",
+    "hearts": "hearts",
+    "hearts-effect": "hearts",
+    "comet": "comet",
+    "comet-effect": "comet",
 };
 
 // Hat component
@@ -170,14 +181,16 @@ const Accessory = memo(function Accessory({
     containerSize: number;
 }) {
     const config = ACCESSORY_SYMBOLS[accessorySlug] || { symbol: "🎭", rotation: "0deg" };
-    const isFaceAccessory = accessorySlug === "sunglasses" || accessorySlug === "mask";
-    
+    const isFaceAccessory =
+        accessorySlug === "sunglasses" || accessorySlug === "mask" || accessorySlug === "monocle";
+    const isHeadAccessory = accessorySlug === "headphones";
+
     return (
         <div
             style={{
                 position: "absolute",
-                top: isFaceAccessory ? containerSize * 0.15 : containerSize * 0.05,
-                left: isFaceAccessory ? containerSize * 0.15 : containerSize * 0.6,
+                top: isFaceAccessory ? containerSize * 0.15 : isHeadAccessory ? -containerSize * 0.02 : containerSize * 0.05,
+                left: isFaceAccessory ? containerSize * 0.15 : isHeadAccessory ? containerSize * 0.08 : containerSize * 0.6,
                 fontSize,
                 transform: `rotate(${config.rotation})`,
                 zIndex: 11,
@@ -449,4 +462,3 @@ export const UserAvatar = memo(function UserAvatar({
 export const SimpleUserAvatar = memo(function SimpleUserAvatar(props: UserAvatarProps) {
     return <UserAvatar {...props} showParticles={false} />;
 });
-

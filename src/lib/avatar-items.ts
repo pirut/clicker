@@ -239,6 +239,28 @@ export const DEFAULT_AVATAR_ITEMS: AvatarItemSeed[] = [
         sortOrder: 11,
         metadata: { hatSlug: "top-hat" },
     },
+    {
+        slug: "graduation-cap",
+        label: "Victory Cap",
+        description: "A sharp mortarboard for leaderboard graduates.",
+        type: "hat",
+        category: "hats",
+        rarity: "rare",
+        price: 95,
+        sortOrder: 12,
+        metadata: { hatSlug: "graduation-cap" },
+    },
+    {
+        slug: "flower-crown",
+        label: "Flower Crown",
+        description: "A calm crown for players who still hit every click.",
+        type: "hat",
+        category: "hats",
+        rarity: "rare",
+        price: 105,
+        sortOrder: 13,
+        metadata: { hatSlug: "flower-crown" },
+    },
     // Accessories
     {
         slug: "sunglasses",
@@ -316,6 +338,39 @@ export const DEFAULT_AVATAR_ITEMS: AvatarItemSeed[] = [
         price: 450,
         sortOrder: 7,
         metadata: { hatSlug: "alien" },
+    },
+    {
+        slug: "headphones",
+        label: "Arena Headset",
+        description: "Plug into the room and hear the click storm build.",
+        type: "accessory",
+        category: "accessories",
+        rarity: "rare",
+        price: 90,
+        sortOrder: 8,
+        metadata: { accessorySlug: "headphones" },
+    },
+    {
+        slug: "monocle",
+        label: "Monocle",
+        description: "Inspect every click with suspicious precision.",
+        type: "accessory",
+        category: "accessories",
+        rarity: "rare",
+        price: 80,
+        sortOrder: 9,
+        metadata: { accessorySlug: "monocle" },
+    },
+    {
+        slug: "microphone",
+        label: "Hot Mic",
+        description: "Broadcast your victory lap while you keep clicking.",
+        type: "accessory",
+        category: "accessories",
+        rarity: "epic",
+        price: 165,
+        sortOrder: 10,
+        metadata: { accessorySlug: "microphone" },
     },
     // Effects
     {
@@ -395,6 +450,39 @@ export const DEFAULT_AVATAR_ITEMS: AvatarItemSeed[] = [
         sortOrder: 7,
         metadata: { effect: "stars" },
     },
+    {
+        slug: "petals-effect",
+        label: "Petal Drift",
+        description: "Soft petals spin around your cursor in warm spirals.",
+        type: "effect",
+        category: "effects",
+        rarity: "epic",
+        price: 175,
+        sortOrder: 8,
+        metadata: { effect: "petals" },
+    },
+    {
+        slug: "hearts-effect",
+        label: "Heart Pulse",
+        description: "Tiny heartbeats bloom out from every movement.",
+        type: "effect",
+        category: "effects",
+        rarity: "epic",
+        price: 170,
+        sortOrder: 9,
+        metadata: { effect: "hearts" },
+    },
+    {
+        slug: "comet-effect",
+        label: "Comet Tail",
+        description: "A bright, snappy tail makes every move feel faster.",
+        type: "effect",
+        category: "effects",
+        rarity: "legendary",
+        price: 320,
+        sortOrder: 10,
+        metadata: { effect: "comet" },
+    },
 ];
 
 export function useEnsureDefaultAvatarItems(items: Array<{ slug: string }> | undefined) {
@@ -421,4 +509,3 @@ export function useEnsureDefaultAvatarItems(items: Array<{ slug: string }> | und
         });
     }, [items]);
 }
-

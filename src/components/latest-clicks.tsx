@@ -1,7 +1,7 @@
 "use client";
 
 import { db } from "@/lib/instantdb";
-import { getStableHslColor } from "@/lib/utils";
+import { cn, getStableHslColor } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { UserAvatar } from "./user-avatar";
 import { useTotalClickStats } from "@/lib/use-click-stats";
@@ -20,7 +20,7 @@ function formatRelativeTime(timestamp: number): string {
     return new Date(timestamp).toLocaleDateString();
 }
 
-export default function LatestClicks() {
+export default function LatestClicks({ className }: { className?: string }) {
     const { data: latestClicksData, isLoading: latestClicksLoading } = db.useQuery({
         clicks: {
             $: {
@@ -35,7 +35,7 @@ export default function LatestClicks() {
 
     if (!latestClicksData && latestClicksLoading) {
         return (
-            <div className="mx-auto w-full max-w-md">
+            <div className={cn("w-full", className)}>
                 <div className="glass overflow-hidden rounded-3xl border border-border/75">
                     <div className="border-b border-border/70 px-5 py-4">
                         <div className="h-6 w-36 animate-pulse rounded-full bg-muted/70" />
@@ -59,7 +59,7 @@ export default function LatestClicks() {
     const clicks = latestClicksData?.clicks || [];
 
     return (
-        <div className="mx-auto w-full max-w-md">
+        <div className={cn("w-full", className)}>
             <div className="glass overflow-hidden rounded-3xl border border-border/75">
                 <div className="relative border-b border-border/70 bg-gradient-to-r from-primary/15 via-accent/8 to-transparent px-4 py-4 sm:px-5">
                     <div className="absolute right-4 top-4 h-16 w-16 rounded-full bg-primary/15 blur-2xl" />

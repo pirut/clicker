@@ -11,7 +11,9 @@ import { Footer } from "@/components/footer";
 import { db } from "@/lib/instantdb";
 import GiveClickButton from "@/components/give-click-button";
 import LatestClicks from "@/components/latest-clicks";
+import { ArenaPulse } from "@/components/arena-pulse";
 import { Background } from "@/components/background";
+import { LiveChatPanel } from "@/components/live-chat-panel";
 import { PresenceManager } from "@/components/presence-manager";
 import { CursorAvatar } from "@/components/cursor-avatar";
 import { useTotalClickStats } from "@/lib/use-click-stats";
@@ -76,7 +78,7 @@ export default function HomePage() {
                                         CLICKER
                                     </h1>
                                     <p className="mt-4 max-w-xl text-sm text-muted-foreground sm:text-base lg:text-lg">
-                                        Every click ripples through the leaderboard in real time. Build your look, race your friends, and own the top slot.
+                                        Every click ripples through the leaderboard in real time. Chat with the room, build your cursor loadout, and push the arena into overdrive.
                                     </p>
 
                                     <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -87,8 +89,8 @@ export default function HomePage() {
                                             </p>
                                         </div>
                                         <div className="rounded-2xl border border-border/75 bg-card/65 p-3.5 sm:p-4">
-                                            <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Live Cursor</p>
-                                            <p className="mt-1 text-sm font-semibold sm:text-base">Tracking enabled on desktop</p>
+                                            <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Live Lounge</p>
+                                            <p className="mt-1 text-sm font-semibold sm:text-base">Realtime chat, typing, and reactions</p>
                                         </div>
                                     </div>
 
@@ -97,13 +99,18 @@ export default function HomePage() {
                                     </div>
 
                                     <p className="mt-5 text-xs text-muted-foreground sm:text-sm">
-                                        On desktop, your system cursor is replaced with your live avatar cursor.
+                                        On desktop, your cursor lighting, click burst, and live avatar tracking all respond in real time.
                                     </p>
                                 </div>
                             </section>
 
                             <section className="space-y-4">
-                                <LatestClicks />
+                                <div className="grid gap-4 xl:grid-cols-2">
+                                    <LatestClicks />
+                                    <ArenaPulse />
+                                </div>
+
+                                <LiveChatPanel />
 
                                 <div className="glass rounded-3xl border border-border/80 p-4 sm:p-5">
                                     <p className="mb-3 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Quick Routes</p>
@@ -125,6 +132,16 @@ export default function HomePage() {
                                             <span className="inline-flex items-center gap-2 text-sm font-medium sm:text-base">
                                                 <Shirt className="h-4 w-4 text-primary" />
                                                 Shop & Wardrobe
+                                            </span>
+                                            <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                                        </Link>
+                                        <Link
+                                            href="/wardrobe"
+                                            className="glass-hover flex items-center justify-between rounded-2xl border border-border/70 bg-card/55 px-3.5 py-3"
+                                        >
+                                            <span className="inline-flex items-center gap-2 text-sm font-medium sm:text-base">
+                                                <Zap className="h-4 w-4 text-primary" />
+                                                Wardrobe
                                             </span>
                                             <ArrowRight className="h-4 w-4 text-muted-foreground" />
                                         </Link>

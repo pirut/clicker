@@ -15,6 +15,8 @@ const hatEmojis: Record<string, string> = {
     "beret": "🎨",
     "santa": "🎅",
     "top-hat": "🎩",
+    "graduation-cap": "🎓",
+    "flower-crown": "🌸",
 };
 
 // Accessory emoji mapping
@@ -26,6 +28,9 @@ const accessoryEmojis: Record<string, string> = {
     "devil": "😈",
     "robot": "🤖",
     "alien": "👽",
+    "headphones": "🎧",
+    "monocle": "🧐",
+    "microphone": "🎤",
 };
 
 // Effect configurations for visual representation
@@ -43,6 +48,12 @@ const effectConfigs: Record<string, { emoji: string; color: string; glowColor: s
     "lightning-effect": { emoji: "⚡", color: "#00d4ff", glowColor: "rgba(0,212,255,0.5)" },
     "stars": { emoji: "⭐", color: "#ffd700", glowColor: "rgba(255,215,0,0.4)" },
     "stars-effect": { emoji: "⭐", color: "#ffd700", glowColor: "rgba(255,215,0,0.4)" },
+    "petals": { emoji: "🌸", color: "#f4acb7", glowColor: "rgba(244,172,183,0.45)" },
+    "petals-effect": { emoji: "🌸", color: "#f4acb7", glowColor: "rgba(244,172,183,0.45)" },
+    "hearts": { emoji: "💖", color: "#ff4d6d", glowColor: "rgba(255,77,109,0.45)" },
+    "hearts-effect": { emoji: "💖", color: "#ff4d6d", glowColor: "rgba(255,77,109,0.45)" },
+    "comet": { emoji: "☄️", color: "#ffd166", glowColor: "rgba(255,209,102,0.45)" },
+    "comet-effect": { emoji: "☄️", color: "#ffd166", glowColor: "rgba(255,209,102,0.45)" },
 };
 
 // Get badge style based on click count
@@ -124,6 +135,8 @@ export async function GET(req: Request) {
     const hatEmoji = hat ? hatEmojis[hat] : "";
     const accessoryEmoji = accessory ? accessoryEmojis[accessory] : "";
     const effectConfig = effect ? effectConfigs[effect] : null;
+    const isFaceAccessory = accessory === "sunglasses" || accessory === "mask" || accessory === "monocle";
+    const isHeadAccessory = accessory === "headphones";
 
     return new ImageResponse(
         (
@@ -219,8 +232,8 @@ export async function GET(req: Request) {
                             <div
                                 style={{
                                     position: "absolute",
-                                    top: accessory === "sunglasses" || accessory === "mask" ? 25 : 5,
-                                    right: accessory === "sunglasses" || accessory === "mask" ? -10 : -40,
+                                    top: isFaceAccessory ? 25 : isHeadAccessory ? 8 : 5,
+                                    right: isFaceAccessory ? -10 : isHeadAccessory ? -18 : -40,
                                     fontSize: 50,
                                     zIndex: 20,
                                 }}
