@@ -78,10 +78,7 @@ export function LiveChatPanel({ className }: LiveChatPanelProps) {
             if (current.some((existing) => existing.messageId === message.messageId)) {
                 return current;
             }
-
-            return [...current, message]
-                .sort((a, b) => a.sentAt - b.sentAt)
-                .slice(-40);
+            return [...current, message].sort((a, b) => a.sentAt - b.sentAt).slice(-40);
         });
     }, []);
 
@@ -90,10 +87,8 @@ export function LiveChatPanel({ className }: LiveChatPanelProps) {
             if (current.some((existing) => existing.burstId === burst.burstId)) {
                 return current;
             }
-
             return [...current, burst].slice(-6);
         });
-
         window.setTimeout(() => {
             setBursts((current) => current.filter((entry) => entry.burstId !== burst.burstId));
         }, 1800);
@@ -123,11 +118,7 @@ export function LiveChatPanel({ className }: LiveChatPanelProps) {
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-
-        if (!canChat || !userId) {
-            return;
-        }
-
+        if (!canChat || !userId) return;
         const text = draft.trim();
         if (!text) return;
 
@@ -149,7 +140,6 @@ export function LiveChatPanel({ className }: LiveChatPanelProps) {
 
     const sendReaction = (emoji: string) => {
         if (!canChat || !userId) return;
-
         const burst: EmojiBurst = {
             burstId: crypto.randomUUID(),
             emoji,
@@ -157,30 +147,31 @@ export function LiveChatPanel({ className }: LiveChatPanelProps) {
             displayName,
             sentAt: Date.now(),
         };
-
         appendBurst(burst);
         publishEmojiBurst(burst);
     };
 
     return (
-        <section className={cn("glass overflow-hidden rounded-3xl border border-border/75", className)}>
-            <div className="border-b border-border/70 px-4 py-4 sm:px-5">
+        <section className={cn("kraft-label overflow-hidden", className)}>
+            {/* Header */}
+            <div className="border-b border-border/40 px-4 py-3.5 sm:px-5">
                 <div className="flex items-start justify-between gap-3">
                     <div>
-                        <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Live Chat</p>
-                        <h2 className="mt-1 text-base font-semibold tracking-tight sm:text-lg">Talk while the room is moving</h2>
+                        <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Live Chat</p>
+                        <h2 className="mt-0.5 text-sm font-semibold tracking-tight sm:text-base">Talk while the room is moving</h2>
                     </div>
-                    <div className="rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
+                    <div className="rounded-full border border-primary/20 bg-primary/8 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-primary">
                         {onlineNow} live
                     </div>
                 </div>
             </div>
 
-            <div className="border-b border-border/65 px-4 py-3 sm:px-5">
-                <div className="flex flex-wrap items-center gap-2">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/65 px-3 py-1.5 text-xs text-muted-foreground">
-                        <Zap className="h-3.5 w-3.5 text-primary" />
-                        Quick reactions
+            {/* Reactions */}
+            <div className="border-b border-border/40 px-4 py-2.5 sm:px-5">
+                <div className="flex flex-wrap items-center gap-1.5">
+                    <div className="inline-flex items-center gap-1.5 rounded-full border border-border/40 bg-secondary/40 px-2.5 py-1 text-[11px] text-muted-foreground">
+                        <Zap className="h-3 w-3" />
+                        React
                     </div>
                     {QUICK_REACTIONS.map((emoji) => (
                         <button
@@ -188,7 +179,7 @@ export function LiveChatPanel({ className }: LiveChatPanelProps) {
                             type="button"
                             onClick={() => sendReaction(emoji)}
                             disabled={!canChat}
-                            className="rounded-full border border-border/70 bg-card/70 px-3 py-1.5 text-sm transition-colors hover:border-primary/30 hover:bg-primary/8 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="rounded-full border border-border/40 bg-secondary/40 px-2.5 py-1 text-sm transition-colors hover:bg-card hover:shadow-xs disabled:cursor-not-allowed disabled:opacity-50"
                             aria-label={`Send ${emoji} reaction`}
                         >
                             {emoji}
@@ -197,7 +188,8 @@ export function LiveChatPanel({ className }: LiveChatPanelProps) {
                 </div>
             </div>
 
-            <div className="relative h-[22rem] overflow-hidden">
+            {/* Messages */}
+            <div className="relative h-[20rem] overflow-hidden">
                 <div className="absolute inset-0 pointer-events-none">
                     <AnimatePresence>
                         {bursts.map((burst, index) => (
@@ -207,7 +199,7 @@ export function LiveChatPanel({ className }: LiveChatPanelProps) {
                                 animate={{ opacity: 1, y: -42 - index * 10, scale: 1.1 }}
                                 exit={{ opacity: 0, y: -72, scale: 0.85 }}
                                 transition={{ duration: 1.1, ease: "easeOut" }}
-                                className="absolute right-6 top-8 text-2xl drop-shadow-[0_6px_18px_rgba(0,0,0,0.18)]"
+                                className="absolute right-5 top-8 text-2xl"
                             >
                                 <span role="img" aria-label={`${burst.displayName} reaction`}>
                                     {burst.emoji}
@@ -217,28 +209,27 @@ export function LiveChatPanel({ className }: LiveChatPanelProps) {
                     </AnimatePresence>
                 </div>
 
-                <div className="h-full overflow-y-auto px-4 py-4 sm:px-5">
+                <div className="h-full overflow-y-auto px-4 py-3 sm:px-5">
                     {messages.length === 0 ? (
                         <div className="flex h-full flex-col items-center justify-center text-center">
-                            <div className="grid h-14 w-14 place-items-center rounded-full border border-border/70 bg-card/75 text-primary">
-                                <MessageCircle className="h-6 w-6" />
+                            <div className="grid h-12 w-12 place-items-center rounded-full border border-border/40 bg-secondary/50 text-primary">
+                                <MessageCircle className="h-5 w-5" />
                             </div>
-                            <p className="mt-4 text-sm font-medium">The lounge is quiet.</p>
-                            <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-                                Send the first message and it will appear instantly for everyone currently in the room.
+                            <p className="mt-3 text-sm font-medium">The lounge is quiet.</p>
+                            <p className="mt-1 max-w-sm text-xs text-muted-foreground">
+                                Send the first message and it appears instantly for everyone.
                             </p>
                         </div>
                     ) : (
-                        <div className="space-y-3">
+                        <div className="space-y-2.5">
                             {messages.map((message) => {
                                 const isSelf = message.userId === userId;
-
                                 return (
                                     <div
                                         key={message.messageId}
-                                        className={cn("flex items-end gap-2.5", isSelf && "justify-end")}
+                                        className={cn("flex items-end gap-2", isSelf && "justify-end")}
                                     >
-                                        {!isSelf ? (
+                                        {!isSelf && (
                                             <UserAvatar
                                                 size="sm"
                                                 cursorColor={message.cursorColor}
@@ -247,26 +238,26 @@ export function LiveChatPanel({ className }: LiveChatPanelProps) {
                                                 showClicksBadge={false}
                                                 showParticles={false}
                                             />
-                                        ) : null}
+                                        )}
 
                                         <div className={cn("max-w-[78%]", isSelf && "text-right")}>
-                                            <div className={cn("mb-1 flex items-center gap-2 text-xs text-muted-foreground", isSelf && "justify-end")}>
-                                                <span className="truncate font-medium text-foreground/85">{message.displayName}</span>
+                                            <div className={cn("mb-0.5 flex items-center gap-1.5 text-[11px] text-muted-foreground", isSelf && "justify-end")}>
+                                                <span className="truncate font-medium text-foreground/80">{message.displayName}</span>
                                                 <span>{formatClock(message.sentAt)}</span>
                                             </div>
                                             <div
                                                 className={cn(
-                                                    "rounded-2xl border px-3.5 py-2.5 text-sm leading-relaxed shadow-sm",
+                                                    "rounded-2xl border px-3 py-2 text-sm leading-relaxed",
                                                     isSelf
-                                                        ? "border-primary/35 bg-primary/10 text-foreground"
-                                                        : "border-border/70 bg-card/75 text-foreground"
+                                                        ? "border-primary/25 bg-primary/8"
+                                                        : "border-border/40 bg-secondary/50"
                                                 )}
                                             >
                                                 {message.text}
                                             </div>
                                         </div>
 
-                                        {isSelf ? (
+                                        {isSelf && (
                                             <UserAvatar
                                                 size="sm"
                                                 cursorColor={cursorColor}
@@ -275,20 +266,20 @@ export function LiveChatPanel({ className }: LiveChatPanelProps) {
                                                 showClicksBadge={false}
                                                 showParticles={false}
                                             />
-                                        ) : null}
+                                        )}
                                     </div>
                                 );
                             })}
 
-                            {typingNames.length > 0 ? (
-                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                    <span className="inline-flex h-2 w-2 rounded-full bg-primary animate-pulse" />
+                            {typingNames.length > 0 && (
+                                <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                                    <span className="inline-flex h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                                     <span>
                                         {typingNames.join(", ")}
                                         {typingNames.length === 1 ? " is" : " are"} typing...
                                     </span>
                                 </div>
-                            ) : null}
+                            )}
 
                             <div ref={scrollAnchorRef} />
                         </div>
@@ -296,7 +287,8 @@ export function LiveChatPanel({ className }: LiveChatPanelProps) {
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="border-t border-border/70 p-4 sm:p-5">
+            {/* Input */}
+            <form onSubmit={handleSubmit} className="border-t border-border/40 p-3.5 sm:p-4">
                 <div className="flex gap-2">
                     <Input
                         {...typing.inputProps}
@@ -308,27 +300,27 @@ export function LiveChatPanel({ className }: LiveChatPanelProps) {
                         }}
                         placeholder={
                             canChat
-                                ? "Call your shot, hype the room, or coordinate a click run..."
-                                : "Sign in and sync to join the live chat"
+                                ? "Say something to the room..."
+                                : "Sign in to join the chat"
                         }
                         disabled={!canChat}
                         maxLength={180}
-                        className="h-11 rounded-2xl bg-background/70"
+                        className="h-10 rounded-xl bg-input"
                     />
                     <Button
                         type="submit"
                         disabled={!canChat || draft.trim().length === 0}
-                        className="h-11 rounded-2xl px-4"
+                        className="h-10 rounded-xl px-3.5"
                     >
                         <SendHorizontal className="h-4 w-4" />
                     </Button>
                 </div>
 
-                {!canChat ? (
-                    <p className="mt-2 text-xs text-muted-foreground">
-                        {isLoaded ? "Chat unlocks once your account is signed in and synced to InstantDB." : "Connecting your session..."}
+                {!canChat && (
+                    <p className="mt-1.5 text-[11px] text-muted-foreground">
+                        {isLoaded ? "Chat unlocks once signed in and synced." : "Connecting..."}
                     </p>
-                ) : null}
+                )}
             </form>
         </section>
     );

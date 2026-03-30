@@ -15,9 +15,9 @@ import { cn } from "@/lib/utils";
 
 const navigationItems = [
     { href: "/", label: "Home" },
-    { href: "/about", label: "About" },
     { href: "/leaderboard", label: "Leaderboard" },
     { href: "/shop", label: "Shop" },
+    { href: "/about", label: "About" },
 ];
 
 export function Header() {
@@ -26,16 +26,10 @@ export function Header() {
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
-        };
-
+        const handleScroll = () => setScrolled(window.scrollY > 20);
         handleScroll();
         window.addEventListener("scroll", handleScroll, { passive: true });
-
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
+        return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
     useEffect(() => {
@@ -44,50 +38,47 @@ export function Header() {
 
     useEffect(() => {
         if (!isMobileMenuOpen) return;
-
-        const previousOverflow = document.body.style.overflow;
+        const prev = document.body.style.overflow;
         document.body.style.overflow = "hidden";
-
-        return () => {
-            document.body.style.overflow = previousOverflow;
-        };
+        return () => { document.body.style.overflow = prev; };
     }, [isMobileMenuOpen]);
 
-    const linkClassName = (href: string) =>
+    const linkClass = (href: string) =>
         cn(
-            "rounded-full border px-3.5 py-1.5 text-[0.8rem] font-medium tracking-wide transition-all",
+            "rounded-full px-3.5 py-1.5 text-[0.8rem] font-medium tracking-wide transition-all",
             pathname === href
-                ? "border-primary/35 bg-primary/18 text-foreground shadow-[0_8px_20px_-12px_color-mix(in_oklch,var(--primary)_70%,transparent)]"
-                : "border-transparent text-muted-foreground hover:border-border/70 hover:bg-card/60 hover:text-foreground"
+                ? "bg-card text-foreground shadow-sm border border-border/50"
+                : "text-foreground/70 hover:text-foreground hover:bg-card/50"
         );
 
     return (
         <motion.header
-            initial={{ y: -70, opacity: 0.7 }}
+            initial={{ y: -60, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.4 }}
             className={cn(
-                "fixed left-0 right-0 top-0 z-50 border-b transition-all duration-300",
+                "fixed left-0 right-0 top-0 z-50 transition-all duration-300",
                 scrolled
-                    ? "border-border/70 bg-background/72 py-2 backdrop-blur-2xl shadow-[0_18px_40px_-30px_rgb(55_38_20_/_0.42)]"
-                    : "border-transparent bg-transparent py-3 sm:py-4"
+                    ? "border-b border-border/50 bg-background/90 backdrop-blur-sm py-2 shadow-xs"
+                    : "bg-transparent py-3 sm:py-4"
             )}
         >
             <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-3 sm:px-4">
                 <Link href="/" className="group flex items-center gap-2">
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-primary/40 bg-primary/15 text-primary transition-transform duration-300 group-hover:rotate-12">
-                        <Sparkles className="h-4 w-4" />
+                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-primary/15 text-primary transition-transform group-hover:rotate-12">
+                        <Sparkles className="h-3.5 w-3.5" />
                     </span>
-                    <span className="font-display text-2xl leading-none tracking-tight text-gradient">CLICKER</span>
+                    <span className="font-display text-xl font-semibold leading-none tracking-tight text-gradient">CLICKER</span>
                 </Link>
 
-                <nav className="hidden items-center gap-2 lg:flex">
+                <nav className="hidden items-center gap-1.5 lg:flex">
                     {navigationItems.map((item) => (
-                        <Link key={item.href} href={item.href} className={linkClassName(item.href)}>
+                        <Link key={item.href} href={item.href} className={linkClass(item.href)}>
                             {item.label}
                         </Link>
                     ))}
                     <SignedIn>
-                        <Link href="/wardrobe" className={linkClassName("/wardrobe")}>
+                        <Link href="/wardrobe" className={linkClass("/wardrobe")}>
                             Wardrobe
                         </Link>
                     </SignedIn>
@@ -97,31 +88,29 @@ export function Header() {
                     <div className="hidden items-center gap-2 lg:flex">
                         <SignedOut>
                             <SignInButton mode="modal">
-                                <Button variant="outline" className="glass-hover border-primary/30 bg-card/70">
-                                    Login
+                                <Button variant="outline" size="sm" className="bg-card">
+                                    Sign in
                                 </Button>
                             </SignInButton>
                         </SignedOut>
                         <SignedIn>
                             <UserButton
                                 appearance={{
-                                    elements: {
-                                        avatarBox: "w-9 h-9 border-2 border-primary/35",
-                                    },
+                                    elements: { avatarBox: "w-8 h-8 border-2 border-border/50" },
                                 }}
                             />
                         </SignedIn>
-                        <ShareButton buttonClassName="border-primary/30 bg-card/70" />
+                        <ShareButton />
                         <ModeToggle />
                     </div>
 
                     <div className="flex items-center gap-2 lg:hidden">
                         <ModeToggle />
                         <button
-                            onClick={() => setIsMobileMenuOpen((open) => !open)}
-                            className="rounded-full border border-border/70 bg-card/65 p-2.5 text-foreground transition hover:border-primary/40"
+                            onClick={() => setIsMobileMenuOpen((o) => !o)}
+                            className="rounded-full border border-border/50 bg-card p-2.5 text-foreground transition hover:shadow-sm"
                             aria-expanded={isMobileMenuOpen}
-                            aria-label="Toggle mobile menu"
+                            aria-label="Toggle menu"
                         >
                             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                         </button>
@@ -135,57 +124,52 @@ export function Header() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="mx-3 mt-2 overflow-hidden rounded-2xl border border-border/70 bg-card/90 px-3 pb-3 pt-2 backdrop-blur-2xl lg:hidden"
+                        className="mx-3 mt-2 overflow-hidden rounded-2xl border border-border/50 bg-card p-3 shadow-md lg:hidden"
                     >
-                        <nav className="flex flex-col gap-2">
+                        <nav className="flex flex-col gap-1">
                             {navigationItems.map((item) => (
                                 <Link
                                     key={item.href}
                                     href={item.href}
                                     className={cn(
-                                        "rounded-xl border px-3 py-2.5 text-sm font-medium transition",
+                                        "rounded-xl px-3 py-2.5 text-sm font-medium transition",
                                         pathname === item.href
-                                            ? "border-primary/35 bg-primary/16 text-foreground"
-                                            : "border-transparent text-muted-foreground hover:border-border/65 hover:bg-muted/40 hover:text-foreground"
+                                            ? "bg-primary/10 text-foreground"
+                                            : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
                                     )}
                                 >
                                     {item.label}
                                 </Link>
                             ))}
-
                             <SignedIn>
                                 <Link
                                     href="/wardrobe"
                                     className={cn(
-                                        "rounded-xl border px-3 py-2.5 text-sm font-medium transition",
+                                        "rounded-xl px-3 py-2.5 text-sm font-medium transition",
                                         pathname === "/wardrobe"
-                                            ? "border-primary/35 bg-primary/16 text-foreground"
-                                            : "border-transparent text-muted-foreground hover:border-border/65 hover:bg-muted/40 hover:text-foreground"
+                                            ? "bg-primary/10 text-foreground"
+                                            : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
                                     )}
                                 >
                                     Wardrobe
                                 </Link>
                             </SignedIn>
 
-                            <div className="mt-2 flex items-center justify-between gap-3 border-t border-border/70 pt-3">
+                            <div className="mt-2 flex items-center gap-2 border-t border-border/50 pt-3">
                                 <SignedOut>
                                     <SignInButton mode="modal">
                                         <Button size="sm" className="w-full">
-                                            Login
+                                            Sign in
                                         </Button>
                                     </SignInButton>
                                 </SignedOut>
                                 <SignedIn>
-                                    <div className="flex items-center gap-2">
-                                        <UserButton
-                                            appearance={{
-                                                elements: {
-                                                    avatarBox: "w-8 h-8 border-2 border-primary/35",
-                                                },
-                                            }}
-                                        />
-                                        <ShareButton buttonClassName="h-9" />
-                                    </div>
+                                    <UserButton
+                                        appearance={{
+                                            elements: { avatarBox: "w-8 h-8 border-2 border-border/50" },
+                                        }}
+                                    />
+                                    <ShareButton />
                                 </SignedIn>
                             </div>
                         </nav>

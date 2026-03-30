@@ -37,7 +37,7 @@ export default function GiveClickButton() {
     const springTiltY = useSpring(tiltY, { stiffness: 220, damping: 20, mass: 0.45 });
     const springGlowX = useSpring(glowX, { stiffness: 260, damping: 28, mass: 0.35 });
     const springGlowY = useSpring(glowY, { stiffness: 260, damping: 28, mass: 0.35 });
-    const pointerGlow = useMotionTemplate`radial-gradient(circle at ${springGlowX}% ${springGlowY}%, rgba(255,255,255,0.5), transparent 42%)`;
+    const pointerGlow = useMotionTemplate`radial-gradient(circle at ${springGlowX}% ${springGlowY}%, rgba(255,240,220,0.35), transparent 45%)`;
 
     const { user: instantUser, isLoading: authLoading } = db.useAuth();
 
@@ -51,9 +51,8 @@ export default function GiveClickButton() {
         const rect = event.currentTarget.getBoundingClientRect();
         const relativeX = (event.clientX - rect.left) / rect.width;
         const relativeY = (event.clientY - rect.top) / rect.height;
-
-        tiltY.set((relativeX - 0.5) * 16);
-        tiltX.set((0.5 - relativeY) * 16);
+        tiltY.set((relativeX - 0.5) * 14);
+        tiltX.set((0.5 - relativeY) * 14);
         glowX.set(relativeX * 100);
         glowY.set(relativeY * 100);
     }, [glowX, glowY, tiltX, tiltY]);
@@ -67,27 +66,22 @@ export default function GiveClickButton() {
 
     const handleClick = useCallback(async (event: MouseEvent<HTMLButtonElement>) => {
         if (!clerkUserId) {
-            setError("You must be logged in to click.");
+            setError("Sign in to start clicking.");
             return;
         }
-
         if (authLoading) {
-            setError("Connecting to database...");
+            setError("Connecting...");
             return;
         }
-
         if (!instantUser) {
-            setError("Syncing authentication... please wait.");
+            setError("Syncing... please wait.");
             return;
         }
-
-        if (isSubmitting) {
-            return;
-        }
+        if (isSubmitting) return;
 
         const now = Date.now();
         if (now - lastClickTimeRef.current < CLICK_COOLDOWN_MS) {
-            setError("Whoa! Give it a beat before the next click.");
+            setError("Too fast! Wait a moment.");
             return;
         }
         lastClickTimeRef.current = now;
@@ -97,19 +91,19 @@ export default function GiveClickButton() {
         const clickY = event.clientY - rect.top;
         const burstId = `${now}-${Math.random()}`;
 
-        setBursts((current) => [...current, { id: burstId, x: clickX, y: clickY }].slice(-6));
+        setBursts((cur) => [...cur, { id: burstId, x: clickX, y: clickY }].slice(-6));
         window.setTimeout(() => {
-            setBursts((current) => current.filter((burst) => burst.id !== burstId));
-        }, 700);
+            setBursts((cur) => cur.filter((b) => b.id !== burstId));
+        }, 600);
 
         confetti({
-            particleCount: 18,
-            spread: 52,
+            particleCount: 20,
+            spread: 55,
             startVelocity: 22,
-            gravity: 1.05,
+            gravity: 1.1,
             scalar: 0.7,
-            ticks: 70,
-            colors: ["#f4c95d", "#f08a5d", "#fff2c7", "#cd7a26"],
+            ticks: 65,
+            colors: ["#f4c95d", "#e87c50", "#fff2c7", "#cd7a26", "#d4a574"],
             origin: {
                 x: event.clientX / window.innerWidth,
                 y: event.clientY / window.innerHeight,
@@ -117,9 +111,9 @@ export default function GiveClickButton() {
         });
 
         controls.start({
-            scale: [1, 0.94, 1.07, 0.98, 1],
+            scale: [1, 0.93, 1.06, 0.98, 1],
             rotate: [0, -1.5, 1, 0],
-            transition: { duration: 0.42, ease: [0.22, 1, 0.36, 1] },
+            transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
         });
 
         setError(null);
@@ -131,10 +125,7 @@ export default function GiveClickButton() {
             if (existingDisplayName?.id) {
                 await db.transact(
                     db.tx.clicks[clickId]
-                        .update({
-                            userId: clerkUserId,
-                            createdAt: now,
-                        })
+                        .update({ userId: clerkUserId, createdAt: now })
                         .link({ author: existingDisplayName.id })
                 );
             } else {
@@ -147,27 +138,21 @@ export default function GiveClickButton() {
                         profileImageUrl: user?.imageUrl || "",
                     }),
                     db.tx.clicks[clickId]
-                        .update({
-                            userId: clerkUserId,
-                            createdAt: now,
-                        })
+                        .update({ userId: clerkUserId, createdAt: now })
                         .link({ author: displayNameId }),
                 ]);
             }
         } catch (err) {
             console.error("Failed to create click:", err);
-            setError("Failed to register click. Please try again.");
+            setError("Failed to register click. Try again.");
         } finally {
             setIsSubmitting(false);
         }
     }, [clerkUserId, authLoading, instantUser, user, existingDisplayName, controls, isSubmitting]);
 
     return (
-        <div className="flex flex-col items-center gap-4 sm:gap-5">
-            <motion.div className="relative isolate" whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.985 }}>
-                <div className="absolute -inset-8 rounded-full bg-gradient-to-r from-primary/35 via-accent/25 to-primary/25 blur-3xl" />
-                <div className="absolute inset-0 rounded-full border border-primary/30 opacity-80 animate-ping" style={{ animationDuration: "2.3s" }} />
-
+        <div className="flex flex-col items-center gap-4">
+            <motion.div className="relative" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
                 <motion.button
                     onClick={handleClick}
                     onPointerMove={handlePointerMove}
@@ -180,63 +165,56 @@ export default function GiveClickButton() {
                         rotateY: springTiltY,
                         transformPerspective: 900,
                     }}
-                    className="group relative h-30 w-30 overflow-hidden rounded-full border border-primary/45 sm:h-36 sm:w-36 md:h-40 md:w-40
-                        bg-[radial-gradient(circle_at_30%_25%,rgba(255,250,240,0.5)_0%,transparent_45%),radial-gradient(circle_at_70%_75%,rgba(72,50,29,0.38)_0%,transparent_50%),linear-gradient(140deg,color-mix(in_oklch,var(--primary)_72%,black)_0%,color-mix(in_oklch,var(--primary)_58%,var(--accent))_56%,color-mix(in_oklch,var(--accent)_64%,black)_100%)]
-                        shadow-[0_18px_46px_-18px_color-mix(in_oklch,var(--primary)_70%,transparent),inset_0_2px_8px_rgba(255,245,230,0.35),inset_0_-8px_16px_rgba(58,40,22,0.5)]
-                        transition-all duration-300 hover:shadow-[0_24px_62px_-18px_color-mix(in_oklch,var(--primary)_78%,transparent),inset_0_2px_8px_rgba(255,245,230,0.4),inset_0_-10px_16px_rgba(58,40,22,0.56)]
-                        active:shadow-[0_10px_28px_-14px_color-mix(in_oklch,var(--primary)_68%,transparent),inset_0_5px_10px_rgba(58,40,22,0.56)] disabled:cursor-not-allowed disabled:opacity-75"
+                    className="group relative h-36 w-36 overflow-hidden rounded-full sm:h-40 sm:w-40 md:h-44 md:w-44
+                        bg-[radial-gradient(circle_at_38%_32%,oklch(0.55_0.08_50),var(--primary)_65%)]
+                        border-2 border-primary/60
+                        shadow-[0_6px_24px_-4px_rgba(60,35,15,0.45),inset_0_2px_6px_rgba(255,235,210,0.2),inset_0_-4px_12px_rgba(40,25,10,0.35)]
+                        hover:shadow-[0_10px_32px_-4px_rgba(60,35,15,0.55),inset_0_2px_6px_rgba(255,235,210,0.25),inset_0_-4px_12px_rgba(40,25,10,0.4)]
+                        active:shadow-[0_3px_12px_-4px_rgba(60,35,15,0.4),inset_0_4px_10px_rgba(40,25,10,0.4)]
+                        transition-shadow duration-300
+                        disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                    <span className="pointer-events-none absolute inset-[6px] rounded-full border border-white/35" />
+                    {/* Inner highlight ring */}
+                    <span className="pointer-events-none absolute inset-[5px] rounded-full border border-primary-foreground/20" />
+
+                    {/* Pointer glow */}
                     <motion.span
                         aria-hidden="true"
-                        className="pointer-events-none absolute inset-[10px] rounded-full opacity-80"
+                        className="pointer-events-none absolute inset-0 rounded-full opacity-70"
                         style={{ background: pointerGlow }}
                     />
-                    <span className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[130%] group-hover:translate-x-[130%] transition-transform duration-700" />
-                    <span className="pointer-events-none absolute inset-[14px] rounded-full border border-white/18" />
 
+                    {/* Click bursts */}
                     <AnimatePresence>
                         {bursts.map((burst) => (
                             <motion.span
                                 key={burst.id}
-                                initial={{ opacity: 0.75, scale: 0 }}
-                                animate={{ opacity: 0, scale: 6.5 }}
+                                initial={{ opacity: 0.6, scale: 0 }}
+                                animate={{ opacity: 0, scale: 5 }}
                                 exit={{ opacity: 0 }}
-                                transition={{ duration: 0.55, ease: "easeOut" }}
-                                className="pointer-events-none absolute h-4 w-4 rounded-full border border-white/80 bg-white/25"
+                                transition={{ duration: 0.5, ease: "easeOut" }}
+                                className="pointer-events-none absolute h-4 w-4 rounded-full border border-primary-foreground/50 bg-primary-foreground/20"
                                 style={{ left: burst.x - 8, top: burst.y - 8 }}
                             />
                         ))}
                     </AnimatePresence>
-                    <AnimatePresence>
-                        {bursts.map((burst) => (
-                            <motion.span
-                                key={`${burst.id}-spark`}
-                                initial={{ opacity: 0.9, scale: 0.4 }}
-                                animate={{ opacity: 0, scale: 3.4 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.42, ease: "easeOut" }}
-                                className="pointer-events-none absolute h-2.5 w-2.5 rounded-full bg-white/90 blur-[1px]"
-                                style={{ left: burst.x - 5, top: burst.y - 5 }}
-                            />
-                        ))}
-                    </AnimatePresence>
 
-                    <span className="relative z-10 flex h-full flex-col items-center justify-center gap-1 text-primary-foreground drop-shadow-[0_2px_8px_rgba(45,30,16,0.58)]">
-                        <svg className="mb-0.5 h-8 w-8 opacity-95 sm:h-9 sm:w-9 md:h-10 md:w-10" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
+                    {/* Content */}
+                    <span className="relative z-10 flex h-full flex-col items-center justify-center gap-1 text-primary-foreground drop-shadow-[0_1px_3px_rgba(30,18,8,0.5)]">
+                        <svg className="h-8 w-8 opacity-90 sm:h-9 sm:w-9" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" />
                         </svg>
-                        <span className="text-base font-semibold tracking-[0.08em] sm:text-lg md:text-xl">CLICK</span>
-                        <span className="text-[10px] uppercase tracking-[0.22em] text-primary-foreground/80 sm:text-xs">+1 point</span>
+                        <span className="text-base font-bold tracking-[0.1em] sm:text-lg">CLICK</span>
+                        <span className="text-[10px] uppercase tracking-[0.2em] opacity-70 sm:text-xs">+1 point</span>
                     </span>
                 </motion.button>
             </motion.div>
 
             {error && (
                 <motion.p
-                    initial={{ opacity: 0, y: 8 }}
+                    initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="max-w-[300px] rounded-full border border-destructive/40 bg-destructive/10 px-4 py-2 text-center text-xs font-medium text-destructive sm:text-sm"
+                    className="rounded-xl border border-destructive/30 bg-card px-4 py-2 text-center text-xs font-medium text-destructive shadow-sm"
                 >
                     {error}
                 </motion.p>

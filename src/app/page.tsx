@@ -1,10 +1,9 @@
 "use client";
 
 import { useCallback } from "react";
-import Link from "next/link";
-import { ArrowRight, Shirt, Trophy, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { Cursors } from "@instantdb/react";
+import { Zap } from "lucide-react";
 
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
@@ -57,99 +56,70 @@ export default function HomePage() {
                 <Background />
                 <div className="relative flex min-h-screen flex-col">
                     <Header />
-                    <main className="relative z-20 flex flex-1 items-center px-3 pb-8 pt-22 sm:px-4 sm:pt-28 md:px-6 md:pt-30">
-                        <motion.div
-                            initial={{ opacity: 0, y: 24 }}
+
+                    <main className="relative z-20 flex flex-1 flex-col px-3 pb-12 pt-24 sm:px-4 sm:pt-28">
+                        {/* Hero - stamped directly on kraft paper */}
+                        <motion.section
+                            initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.55, ease: "easeOut" }}
-                            className="mx-auto grid w-full max-w-6xl gap-5 lg:grid-cols-[1.08fr_0.92fr] lg:gap-6"
+                            transition={{ duration: 0.5, ease: "easeOut" }}
+                            className="mx-auto flex w-full max-w-2xl flex-col items-center pt-6 text-center sm:pt-10"
                         >
-                            <section className="glass relative overflow-hidden rounded-[2rem] border border-border/80 px-5 py-6 sm:px-7 sm:py-8 lg:px-10 lg:py-10">
-                                <div className="absolute -left-16 -top-12 h-44 w-44 rounded-full bg-primary/25 blur-3xl" />
-                                <div className="absolute -bottom-14 right-0 h-40 w-40 rounded-full bg-accent/20 blur-3xl" />
+                            <div className="inline-flex items-center gap-2 rounded-full border border-border/50 bg-card px-3.5 py-1 text-xs font-semibold uppercase tracking-[0.15em] text-primary shadow-xs">
+                                <Zap className="h-3 w-3" />
+                                Realtime Multiplayer
+                            </div>
 
-                                <div className="relative flex h-full flex-col">
-                                    <div className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-primary/35 bg-primary/12 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
-                                        <Zap className="h-3.5 w-3.5" />
-                                        Realtime Multiplayer Arena
-                                    </div>
+                            <h1 className="mt-5 font-display text-[clamp(3.5rem,10vw,7rem)] font-bold leading-[0.85] text-gradient">
+                                CLICKER
+                            </h1>
 
-                                    <h1 className="font-display text-[clamp(3rem,9vw,6.4rem)] font-semibold leading-[0.9] text-gradient">
-                                        CLICKER
-                                    </h1>
-                                    <p className="mt-4 max-w-xl text-sm text-muted-foreground sm:text-base lg:text-lg">
-                                        Every click ripples through the leaderboard in real time. Chat with the room, build your cursor loadout, and push the arena into overdrive.
+                            <p className="mt-4 max-w-md text-sm text-foreground/70 sm:text-base">
+                                Every click ripples through the leaderboard in real time. Chat, customize your cursor, and climb the ranks.
+                            </p>
+
+                            {/* Stats labels */}
+                            <div className="mt-8 flex items-center gap-4 sm:gap-6">
+                                <div className="kraft-label px-4 py-3 text-center">
+                                    <p className="font-mono text-xl font-bold sm:text-2xl">
+                                        {totalClicksLoading ? "..." : totalClicks.toLocaleString()}
                                     </p>
-
-                                    <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                                        <div className="rounded-2xl border border-border/75 bg-card/65 p-3.5 sm:p-4">
-                                            <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Total Clicks</p>
-                                            <p className="mt-1 font-mono text-xl font-bold sm:text-2xl">
-                                                {totalClicksLoading ? "..." : totalClicks.toLocaleString()}
-                                            </p>
-                                        </div>
-                                        <div className="rounded-2xl border border-border/75 bg-card/65 p-3.5 sm:p-4">
-                                            <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Live Lounge</p>
-                                            <p className="mt-1 text-sm font-semibold sm:text-base">Realtime chat, typing, and reactions</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="mt-7">
-                                        <GiveClickButton />
-                                    </div>
-
-                                    <p className="mt-5 text-xs text-muted-foreground sm:text-sm">
-                                        On desktop, your cursor lighting, click burst, and live avatar tracking all respond in real time.
-                                    </p>
+                                    <p className="mt-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">Total Clicks</p>
                                 </div>
-                            </section>
-
-                            <section className="space-y-4">
-                                <div className="grid gap-4 xl:grid-cols-2">
-                                    <LatestClicks />
-                                    <ArenaPulse />
+                                <div className="kraft-label px-4 py-3 text-center">
+                                    <p className="text-sm font-medium sm:text-base">Live chat & reactions</p>
+                                    <p className="mt-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">Multiplayer</p>
                                 </div>
+                            </div>
 
-                                <LiveChatPanel />
+                            {/* The seal */}
+                            <div className="mt-10">
+                                <GiveClickButton />
+                            </div>
+                        </motion.section>
 
-                                <div className="glass rounded-3xl border border-border/80 p-4 sm:p-5">
-                                    <p className="mb-3 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Quick Routes</p>
-                                    <div className="grid gap-2.5">
-                                        <Link
-                                            href="/leaderboard"
-                                            className="glass-hover flex items-center justify-between rounded-2xl border border-border/70 bg-card/55 px-3.5 py-3"
-                                        >
-                                            <span className="inline-flex items-center gap-2 text-sm font-medium sm:text-base">
-                                                <Trophy className="h-4 w-4 text-primary" />
-                                                Leaderboard
-                                            </span>
-                                            <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                                        </Link>
-                                        <Link
-                                            href="/shop"
-                                            className="glass-hover flex items-center justify-between rounded-2xl border border-border/70 bg-card/55 px-3.5 py-3"
-                                        >
-                                            <span className="inline-flex items-center gap-2 text-sm font-medium sm:text-base">
-                                                <Shirt className="h-4 w-4 text-primary" />
-                                                Shop & Wardrobe
-                                            </span>
-                                            <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                                        </Link>
-                                        <Link
-                                            href="/wardrobe"
-                                            className="glass-hover flex items-center justify-between rounded-2xl border border-border/70 bg-card/55 px-3.5 py-3"
-                                        >
-                                            <span className="inline-flex items-center gap-2 text-sm font-medium sm:text-base">
-                                                <Zap className="h-4 w-4 text-primary" />
-                                                Wardrobe
-                                            </span>
-                                            <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                                        </Link>
-                                    </div>
-                                </div>
-                            </section>
-                        </motion.div>
+                        {/* Activity labels */}
+                        <motion.section
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, ease: "easeOut", delay: 0.15 }}
+                            className="mx-auto mt-14 grid w-full max-w-6xl gap-5 md:grid-cols-2"
+                        >
+                            <LatestClicks />
+                            <ArenaPulse />
+                        </motion.section>
+
+                        {/* Chat label */}
+                        <motion.section
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, ease: "easeOut", delay: 0.25 }}
+                            className="mx-auto mt-5 w-full max-w-6xl"
+                        >
+                            <LiveChatPanel />
+                        </motion.section>
                     </main>
+
                     <Footer />
                 </div>
             </Cursors>

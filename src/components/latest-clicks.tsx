@@ -36,17 +36,17 @@ export default function LatestClicks({ className }: { className?: string }) {
     if (!latestClicksData && latestClicksLoading) {
         return (
             <div className={cn("w-full", className)}>
-                <div className="glass overflow-hidden rounded-3xl border border-border/75">
-                    <div className="border-b border-border/70 px-5 py-4">
-                        <div className="h-6 w-36 animate-pulse rounded-full bg-muted/70" />
+                <div className="kraft-label overflow-hidden">
+                    <div className="border-b border-border/40 px-5 py-4">
+                        <div className="h-5 w-32 animate-pulse rounded-full bg-muted/50" />
                     </div>
                     <div className="space-y-2 p-4">
                         {[...Array(5)].map((_, i) => (
-                            <div key={i} className="flex animate-pulse items-center gap-3 rounded-2xl border border-border/60 bg-muted/40 p-3">
-                                <div className="h-10 w-10 flex-shrink-0 rounded-full bg-muted/65" />
-                                <div className="flex-1 space-y-2">
-                                    <div className="h-3.5 w-28 rounded-full bg-muted/65" />
-                                    <div className="h-3 w-20 rounded-full bg-muted/45" />
+                            <div key={i} className="flex animate-pulse items-center gap-3 rounded-xl p-2.5">
+                                <div className="h-9 w-9 flex-shrink-0 rounded-full bg-muted/40" />
+                                <div className="flex-1 space-y-1.5">
+                                    <div className="h-3.5 w-24 rounded-full bg-muted/40" />
+                                    <div className="h-3 w-16 rounded-full bg-muted/30" />
                                 </div>
                             </div>
                         ))}
@@ -60,17 +60,16 @@ export default function LatestClicks({ className }: { className?: string }) {
 
     return (
         <div className={cn("w-full", className)}>
-            <div className="glass overflow-hidden rounded-3xl border border-border/75">
-                <div className="relative border-b border-border/70 bg-gradient-to-r from-primary/15 via-accent/8 to-transparent px-4 py-4 sm:px-5">
-                    <div className="absolute right-4 top-4 h-16 w-16 rounded-full bg-primary/15 blur-2xl" />
+            <div className="kraft-label overflow-hidden">
+                <div className="border-b border-border/40 px-4 py-4 sm:px-5">
                     <div className="flex items-center justify-between gap-3">
                         <div className="min-w-0">
-                            <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Live Activity</p>
-                            <h2 className="truncate text-base font-semibold tracking-tight sm:text-lg">Newest clicks in the arena</h2>
+                            <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Live Activity</p>
+                            <h2 className="truncate text-sm font-semibold tracking-tight sm:text-base">Newest clicks</h2>
                         </div>
-                        <div className="relative z-10 flex flex-col items-end rounded-2xl border border-primary/25 bg-primary/10 px-3 py-2">
-                            <span className="font-mono text-lg font-bold leading-none text-primary sm:text-2xl">{totalClicks.toLocaleString()}</span>
-                            <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Total</span>
+                        <div className="flex flex-col items-end rounded-xl border border-border/40 bg-secondary/60 px-3 py-1.5">
+                            <span className="font-mono text-base font-bold leading-none sm:text-lg">{totalClicks.toLocaleString()}</span>
+                            <span className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Total</span>
                         </div>
                     </div>
                 </div>
@@ -81,14 +80,14 @@ export default function LatestClicks({ className }: { className?: string }) {
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
-                                className="rounded-2xl border border-dashed border-border/70 bg-muted/30 py-12 text-center"
+                                className="rounded-xl border border-dashed border-border/50 py-10 text-center"
                             >
-                                <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-full bg-card/90 text-2xl">👆</div>
-                                <p className="font-medium">No clicks yet</p>
-                                <p className="mt-1 text-sm text-muted-foreground">Claim the first click and set the tone.</p>
+                                <p className="text-2xl">👆</p>
+                                <p className="mt-2 text-sm font-medium">No clicks yet</p>
+                                <p className="mt-1 text-xs text-muted-foreground">Claim the first click.</p>
                             </motion.div>
                         ) : (
-                            <div className="space-y-1">
+                            <div className="space-y-0.5">
                                 {clicks.map((click, index) => {
                                     const displayName = click.author?.displayName || "Clicker";
                                     const cursorColor = click.author?.cursorColor;
@@ -101,26 +100,18 @@ export default function LatestClicks({ className }: { className?: string }) {
                                     return (
                                         <motion.div
                                             key={click.id}
-                                            initial={{ opacity: 0, x: -20, scale: 0.98 }}
+                                            initial={{ opacity: 0, x: -16, scale: 0.98 }}
                                             animate={{ opacity: 1, x: 0, scale: 1 }}
-                                            exit={{ opacity: 0, x: 20, scale: 0.96 }}
+                                            exit={{ opacity: 0, x: 16, scale: 0.96 }}
                                             transition={{
                                                 type: "spring",
                                                 stiffness: 500,
                                                 damping: 30,
                                                 delay: index * 0.03,
                                             }}
-                                            className="group relative"
+                                            className="group"
                                         >
-                                            <div
-                                                className="flex items-center gap-3 rounded-2xl border border-transparent p-2.5 transition-all duration-200 hover:border-border/75 hover:bg-muted/30"
-                                                style={{
-                                                    background:
-                                                        index === 0
-                                                            ? `linear-gradient(90deg, ${color}14 0%, transparent 65%)`
-                                                            : undefined,
-                                                }}
-                                            >
+                                            <div className="flex items-center gap-3 rounded-xl p-2.5 transition-colors duration-150 hover:bg-secondary/40">
                                                 <div className="relative flex-shrink-0">
                                                     <UserAvatar
                                                         size="sm"
@@ -137,30 +128,25 @@ export default function LatestClicks({ className }: { className?: string }) {
 
                                                 <div className="min-w-0 flex-1">
                                                     <div className="flex items-center gap-2">
-                                                        <span
-                                                            className="truncate text-sm font-semibold"
-                                                            style={{ color: index === 0 ? color : undefined }}
-                                                        >
-                                                            {displayName}
-                                                        </span>
+                                                        <span className="truncate text-sm font-semibold">{displayName}</span>
                                                         {index === 0 && (
-                                                            <span className="rounded-full border border-primary/30 bg-primary/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.16em] text-primary">
+                                                            <span className="rounded-full border border-accent/30 bg-accent/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-accent">
                                                                 Latest
                                                             </span>
                                                         )}
                                                     </div>
-                                                    <p className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground/80">
+                                                    <p className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
                                                         <span>clicked</span>
-                                                        <span className="inline-block h-1 w-1 rounded-full bg-muted-foreground/40" />
+                                                        <span className="inline-block h-0.5 w-0.5 rounded-full bg-muted-foreground/40" />
                                                         <span className="font-mono">{formatRelativeTime(click.createdAt)}</span>
                                                     </p>
                                                 </div>
 
                                                 <div
-                                                    className="grid h-7 w-7 flex-shrink-0 place-items-center rounded-xl opacity-40 transition-opacity group-hover:opacity-80"
-                                                    style={{ background: `${color}20` }}
+                                                    className="grid h-6 w-6 flex-shrink-0 place-items-center rounded-lg opacity-30 transition-opacity group-hover:opacity-60"
+                                                    style={{ background: `${color}18` }}
                                                 >
-                                                    <svg className="h-3.5 w-3.5" fill="none" stroke={color} viewBox="0 0 24 24" strokeWidth={2}>
+                                                    <svg className="h-3 w-3" fill="none" stroke={color} viewBox="0 0 24 24" strokeWidth={2}>
                                                         <path
                                                             strokeLinecap="round"
                                                             strokeLinejoin="round"
@@ -176,8 +162,6 @@ export default function LatestClicks({ className }: { className?: string }) {
                         )}
                     </AnimatePresence>
                 </div>
-
-                <div className="h-1 bg-gradient-to-r from-primary/40 via-accent/45 to-primary/40" />
             </div>
         </div>
     );
