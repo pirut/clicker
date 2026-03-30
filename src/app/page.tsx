@@ -65,30 +65,30 @@ export default function HomePage() {
                             transition={{ duration: 0.5, ease: "easeOut" }}
                             className="mx-auto flex w-full max-w-2xl flex-col items-center pt-6 text-center sm:pt-10"
                         >
-                            <div className="inline-flex items-center gap-2 rounded-full border border-border/50 bg-card px-3.5 py-1 text-xs font-semibold uppercase tracking-[0.15em] text-primary shadow-xs">
+                            <div className="stamp-badge text-primary">
                                 <Zap className="h-3 w-3" />
                                 Realtime Multiplayer
                             </div>
 
-                            <h1 className="mt-5 font-display text-[clamp(3.5rem,10vw,7rem)] font-bold leading-[0.85] text-gradient">
+                            <h1 className="mt-6 font-display text-[clamp(3.5rem,10vw,7rem)] font-bold leading-[0.85] text-gradient">
                                 CLICKER
                             </h1>
 
-                            <p className="mt-4 max-w-md text-sm text-foreground/70 sm:text-base">
-                                Every click ripples through the leaderboard in real time. Chat, customize your cursor, and climb the ranks.
+                            <p className="mt-4 max-w-md text-sm text-foreground/70 sm:text-base" style={{ fontStyle: "italic" }}>
+                                Every click ripples through the leaderboard in real time.
                             </p>
 
                             {/* Stats labels */}
                             <div className="mt-8 flex items-center gap-4 sm:gap-6">
-                                <div className="kraft-label px-4 py-3 text-center">
+                                <div className="kraft-label px-5 py-3.5 text-center">
                                     <p className="font-mono text-xl font-bold sm:text-2xl">
                                         {totalClicksLoading ? "..." : totalClicks.toLocaleString()}
                                     </p>
-                                    <p className="mt-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">Total Clicks</p>
+                                    <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Total Clicks</p>
                                 </div>
-                                <div className="kraft-label px-4 py-3 text-center">
-                                    <p className="text-sm font-medium sm:text-base">Live chat & reactions</p>
-                                    <p className="mt-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">Multiplayer</p>
+                                <div className="kraft-label px-5 py-3.5 text-center">
+                                    <p className="text-sm font-semibold sm:text-base">Live & social</p>
+                                    <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Chat + React</p>
                                 </div>
                             </div>
 

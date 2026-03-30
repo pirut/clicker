@@ -166,16 +166,13 @@ export default function GiveClickButton() {
                         transformPerspective: 900,
                     }}
                     className="group relative h-36 w-36 overflow-hidden rounded-full sm:h-40 sm:w-40 md:h-44 md:w-44
-                        bg-[radial-gradient(circle_at_38%_32%,oklch(0.55_0.08_50),var(--primary)_65%)]
-                        border-2 border-primary/60
-                        shadow-[0_6px_24px_-4px_rgba(60,35,15,0.45),inset_0_2px_6px_rgba(255,235,210,0.2),inset_0_-4px_12px_rgba(40,25,10,0.35)]
-                        hover:shadow-[0_10px_32px_-4px_rgba(60,35,15,0.55),inset_0_2px_6px_rgba(255,235,210,0.25),inset_0_-4px_12px_rgba(40,25,10,0.4)]
-                        active:shadow-[0_3px_12px_-4px_rgba(60,35,15,0.4),inset_0_4px_10px_rgba(40,25,10,0.4)]
+                        wax-seal border-[3px] border-primary/50
                         transition-shadow duration-300
                         disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                    {/* Inner highlight ring */}
-                    <span className="pointer-events-none absolute inset-[5px] rounded-full border border-primary-foreground/20" />
+                    {/* Inner seal ring — embossed edge */}
+                    <span className="pointer-events-none absolute inset-[6px] rounded-full border-2 border-primary-foreground/15" />
+                    <span className="pointer-events-none absolute inset-[12px] rounded-full border border-primary-foreground/8" />
 
                     {/* Pointer glow */}
                     <motion.span

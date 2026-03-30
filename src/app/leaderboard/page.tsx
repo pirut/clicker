@@ -42,17 +42,17 @@ export default function LeaderboardPage() {
                         transition={{ delay: 0.05 }}
                         className="mb-5 flex flex-wrap items-center justify-center gap-3"
                     >
-                        <div className="kraft-label inline-flex items-center gap-2 px-4 py-2">
-                            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Total clicks</span>
-                            <span className="font-mono text-sm font-bold">{totalClicks.toLocaleString()}</span>
+                        <div className="stamp-badge text-primary">
+                            Total clicks
+                            <span className="font-mono text-xs">{totalClicks.toLocaleString()}</span>
                         </div>
-                        <div className="kraft-label inline-flex items-center gap-2 px-4 py-2">
-                            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Players</span>
-                            <span className="font-mono text-sm font-bold">{leaderboard.length}</span>
+                        <div className="stamp-badge text-primary">
+                            Players
+                            <span className="font-mono text-xs">{leaderboard.length}</span>
                         </div>
                         {truncated && (
-                            <div className="kraft-label inline-flex items-center gap-2 border-accent/30 px-4 py-2 text-accent">
-                                <span className="text-[10px] uppercase tracking-widest">Partial snapshot</span>
+                            <div className="stamp-badge text-accent">
+                                Partial snapshot
                             </div>
                         )}
                     </motion.div>

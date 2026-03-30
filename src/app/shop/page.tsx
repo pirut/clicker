@@ -173,7 +173,7 @@ export default function ShopPage() {
                         className="text-center mb-8"
                     >
                         <h1 className="font-display text-3xl sm:text-4xl font-bold text-gradient">Avatar Shop</h1>
-                        <p className="mt-2 text-sm text-foreground/60 max-w-lg mx-auto">
+                        <p className="mt-2 text-sm text-foreground/60 max-w-lg mx-auto italic">
                             Spend your clicks on cosmetic upgrades for your cursor
                         </p>
                     </motion.div>
@@ -188,16 +188,16 @@ export default function ShopPage() {
                         <div className="kraft-label p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div className="flex items-center gap-5 sm:gap-6">
                                 <div className="text-center sm:text-left">
-                                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-0.5">Balance</p>
-                                    <p className="text-2xl sm:text-3xl font-bold">
+                                    <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-mono mb-0.5">Balance</p>
+                                    <p className="text-2xl sm:text-3xl font-bold font-mono">
                                         {availableClicks.toLocaleString()}
-                                        <span className="text-sm text-muted-foreground ml-1.5">clicks</span>
+                                        <span className="text-sm text-muted-foreground ml-1.5 font-sans">clicks</span>
                                     </p>
                                 </div>
-                                <div className="w-px h-10 bg-border/50" />
+                                <div className="w-px h-10 border-l-2 border-dashed border-border/50" />
                                 <div className="text-center">
-                                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-0.5">Owned</p>
-                                    <p className="text-xl font-semibold">{ownedSlugs.size}</p>
+                                    <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-mono mb-0.5">Owned</p>
+                                    <p className="text-xl font-semibold font-mono">{ownedSlugs.size}</p>
                                 </div>
                             </div>
                             <Link href="/wardrobe">

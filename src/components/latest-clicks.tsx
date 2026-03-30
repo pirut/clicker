@@ -61,15 +61,15 @@ export default function LatestClicks({ className }: { className?: string }) {
     return (
         <div className={cn("w-full", className)}>
             <div className="kraft-label overflow-hidden">
-                <div className="border-b border-border/40 px-4 py-4 sm:px-5">
+                <div className="border-b-2 border-dashed border-border/50 px-4 py-4 sm:px-5">
                     <div className="flex items-center justify-between gap-3">
                         <div className="min-w-0">
-                            <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Live Activity</p>
-                            <h2 className="truncate text-sm font-semibold tracking-tight sm:text-base">Newest clicks</h2>
+                            <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-mono">Live Activity</p>
+                            <h2 className="truncate text-sm font-display font-semibold tracking-tight sm:text-base">Newest clicks</h2>
                         </div>
-                        <div className="flex flex-col items-end rounded-xl border border-border/40 bg-secondary/60 px-3 py-1.5">
-                            <span className="font-mono text-base font-bold leading-none sm:text-lg">{totalClicks.toLocaleString()}</span>
-                            <span className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Total</span>
+                        <div className="stamp-badge text-primary">
+                            <span className="font-mono text-xs">{totalClicks.toLocaleString()}</span>
+                            total
                         </div>
                     </div>
                 </div>
@@ -130,7 +130,7 @@ export default function LatestClicks({ className }: { className?: string }) {
                                                     <div className="flex items-center gap-2">
                                                         <span className="truncate text-sm font-semibold">{displayName}</span>
                                                         {index === 0 && (
-                                                            <span className="rounded-full border border-accent/30 bg-accent/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-accent">
+                                                            <span className="stamp-badge text-accent" style={{ transform: "rotate(-3deg)", fontSize: "8px" }}>
                                                                 Latest
                                                             </span>
                                                         )}

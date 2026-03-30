@@ -70,104 +70,104 @@
 
 /* ── Kraft Paper Light ─────────────────────────────── */
 :root {
-    --radius: 0.75rem;
-    --background: oklch(0.76 0.05 72);
-    --foreground: oklch(0.2 0.04 45);
-    --card: oklch(0.95 0.018 80);
-    --card-foreground: oklch(0.22 0.04 48);
-    --popover: oklch(0.96 0.015 80 / 0.97);
-    --popover-foreground: oklch(0.2 0.04 45);
-    --primary: oklch(0.42 0.075 42);
-    --primary-foreground: oklch(0.95 0.018 80);
-    --secondary: oklch(0.84 0.032 74);
-    --secondary-foreground: oklch(0.28 0.04 48);
-    --muted: oklch(0.72 0.04 70);
-    --muted-foreground: oklch(0.4 0.03 52);
-    --accent: oklch(0.52 0.13 30);
-    --accent-foreground: oklch(0.95 0.018 80);
-    --destructive: oklch(0.48 0.16 25);
-    --destructive-foreground: oklch(0.95 0.018 80);
-    --border: oklch(0.66 0.04 68);
-    --input: oklch(0.92 0.018 78);
-    --ring: oklch(0.42 0.075 42);
-    --chart-1: oklch(0.42 0.075 42);
-    --chart-2: oklch(0.52 0.13 30);
-    --chart-3: oklch(0.6 0.08 68);
-    --chart-4: oklch(0.48 0.06 42);
-    --chart-5: oklch(0.68 0.06 58);
-    --sidebar: oklch(0.73 0.045 70);
-    --sidebar-foreground: oklch(0.2 0.04 45);
-    --sidebar-primary: oklch(0.42 0.075 42);
-    --sidebar-primary-foreground: oklch(0.95 0.018 80);
-    --sidebar-accent: oklch(0.82 0.03 74);
-    --sidebar-accent-foreground: oklch(0.2 0.04 45);
-    --sidebar-border: oklch(0.66 0.04 68);
-    --sidebar-ring: oklch(0.42 0.075 42);
+    --radius: 0.625rem;
+    --background: oklch(0.66 0.072 65);
+    --foreground: oklch(0.16 0.05 38);
+    --card: oklch(0.86 0.038 72);
+    --card-foreground: oklch(0.18 0.045 40);
+    --popover: oklch(0.87 0.034 74 / 0.97);
+    --popover-foreground: oklch(0.16 0.05 38);
+    --primary: oklch(0.34 0.09 36);
+    --primary-foreground: oklch(0.92 0.025 76);
+    --secondary: oklch(0.74 0.048 70);
+    --secondary-foreground: oklch(0.22 0.045 42);
+    --muted: oklch(0.62 0.05 66);
+    --muted-foreground: oklch(0.36 0.04 48);
+    --accent: oklch(0.45 0.15 26);
+    --accent-foreground: oklch(0.92 0.025 76);
+    --destructive: oklch(0.42 0.17 20);
+    --destructive-foreground: oklch(0.92 0.025 76);
+    --border: oklch(0.54 0.055 60);
+    --input: oklch(0.82 0.03 74);
+    --ring: oklch(0.34 0.09 36);
+    --chart-1: oklch(0.38 0.08 40);
+    --chart-2: oklch(0.48 0.14 28);
+    --chart-3: oklch(0.56 0.08 65);
+    --chart-4: oklch(0.44 0.06 40);
+    --chart-5: oklch(0.62 0.06 55);
+    --sidebar: oklch(0.68 0.055 68);
+    --sidebar-foreground: oklch(0.18 0.045 42);
+    --sidebar-primary: oklch(0.38 0.08 40);
+    --sidebar-primary-foreground: oklch(0.93 0.02 78);
+    --sidebar-accent: oklch(0.76 0.04 72);
+    --sidebar-accent-foreground: oklch(0.18 0.045 42);
+    --sidebar-border: oklch(0.58 0.05 64);
+    --sidebar-ring: oklch(0.38 0.08 40);
     --font-sans: var(--font-brand-sans), "Avenir Next", sans-serif;
     --font-serif: var(--font-brand-display), "Iowan Old Style", Georgia, serif;
     --font-mono: var(--font-brand-mono), ui-monospace, SFMono-Regular, monospace;
     --shadow-color: #2f2417;
-    --shadow-opacity: 0.15;
+    --shadow-opacity: 0.18;
     --shadow-blur: 4px;
     --shadow-spread: 0px;
     --shadow-offset-x: 0px;
     --shadow-offset-y: 2px;
     --letter-spacing: 0em;
     --spacing: 0.25rem;
-    --shadow-2xs: 0 1px 2px 0 rgb(47 36 23 / 0.05);
-    --shadow-xs: 0 1px 3px 0 rgb(47 36 23 / 0.08), 0 1px 2px -1px rgb(47 36 23 / 0.06);
-    --shadow-sm: 0 4px 8px -2px rgb(47 36 23 / 0.1), 0 2px 4px -2px rgb(47 36 23 / 0.06);
-    --shadow: 0 8px 16px -4px rgb(47 36 23 / 0.12), 0 4px 6px -4px rgb(47 36 23 / 0.06);
-    --shadow-md: 0 14px 28px -6px rgb(47 36 23 / 0.14), 0 6px 10px -6px rgb(47 36 23 / 0.08);
-    --shadow-lg: 0 20px 40px -10px rgb(47 36 23 / 0.18);
-    --shadow-xl: 0 28px 56px -14px rgb(47 36 23 / 0.22);
-    --shadow-2xl: 0 40px 80px -20px rgb(47 36 23 / 0.28);
+    --shadow-2xs: 0 1px 2px 0 rgb(47 36 23 / 0.06);
+    --shadow-xs: 0 1px 3px 0 rgb(47 36 23 / 0.1), 0 1px 2px -1px rgb(47 36 23 / 0.08);
+    --shadow-sm: 0 3px 6px -1px rgb(47 36 23 / 0.12), 0 2px 4px -2px rgb(47 36 23 / 0.08);
+    --shadow: 0 8px 16px -4px rgb(47 36 23 / 0.14), 0 4px 6px -4px rgb(47 36 23 / 0.08);
+    --shadow-md: 0 14px 28px -6px rgb(47 36 23 / 0.16), 0 6px 10px -6px rgb(47 36 23 / 0.1);
+    --shadow-lg: 0 20px 40px -10px rgb(47 36 23 / 0.2);
+    --shadow-xl: 0 28px 56px -14px rgb(47 36 23 / 0.24);
+    --shadow-2xl: 0 40px 80px -20px rgb(47 36 23 / 0.3);
     --tracking-normal: 0em;
 }
 
 /* ── Dark Cardboard ────────────────────────────────── */
 .dark {
-    --background: oklch(0.2 0.02 48);
-    --foreground: oklch(0.88 0.02 75);
-    --card: oklch(0.26 0.02 50 / 0.9);
-    --card-foreground: oklch(0.88 0.02 75);
-    --popover: oklch(0.27 0.02 50 / 0.97);
-    --popover-foreground: oklch(0.88 0.02 75);
-    --primary: oklch(0.72 0.085 60);
-    --primary-foreground: oklch(0.2 0.02 48);
-    --secondary: oklch(0.28 0.015 50);
-    --secondary-foreground: oklch(0.84 0.02 75);
-    --muted: oklch(0.24 0.013 48);
-    --muted-foreground: oklch(0.6 0.025 65);
-    --accent: oklch(0.62 0.11 35);
-    --accent-foreground: oklch(0.2 0.02 48);
-    --destructive: oklch(0.55 0.15 28);
-    --destructive-foreground: oklch(0.9 0.02 80);
-    --border: oklch(0.34 0.015 50);
-    --input: oklch(0.3 0.015 50);
-    --ring: oklch(0.72 0.085 60);
-    --chart-1: oklch(0.72 0.085 60);
-    --chart-2: oklch(0.62 0.11 35);
+    --background: oklch(0.20 0.032 48);
+    --foreground: oklch(0.84 0.028 70);
+    --card: oklch(0.28 0.028 50 / 0.94);
+    --card-foreground: oklch(0.84 0.028 70);
+    --popover: oklch(0.28 0.028 50 / 0.97);
+    --popover-foreground: oklch(0.84 0.028 70);
+    --primary: oklch(0.72 0.09 56);
+    --primary-foreground: oklch(0.18 0.028 46);
+    --secondary: oklch(0.28 0.024 50);
+    --secondary-foreground: oklch(0.80 0.022 70);
+    --muted: oklch(0.24 0.02 48);
+    --muted-foreground: oklch(0.56 0.032 60);
+    --accent: oklch(0.62 0.12 32);
+    --accent-foreground: oklch(0.18 0.028 46);
+    --destructive: oklch(0.52 0.16 26);
+    --destructive-foreground: oklch(0.86 0.022 76);
+    --border: oklch(0.34 0.024 50);
+    --input: oklch(0.30 0.024 50);
+    --ring: oklch(0.72 0.09 56);
+    --chart-1: oklch(0.74 0.085 58);
+    --chart-2: oklch(0.64 0.11 34);
     --chart-3: oklch(0.65 0.07 72);
     --chart-4: oklch(0.55 0.07 44);
     --chart-5: oklch(0.7 0.06 58);
-    --sidebar: oklch(0.18 0.018 47);
-    --sidebar-foreground: oklch(0.88 0.02 75);
-    --sidebar-primary: oklch(0.72 0.085 60);
-    --sidebar-primary-foreground: oklch(0.2 0.02 48);
-    --sidebar-accent: oklch(0.28 0.015 50);
-    --sidebar-accent-foreground: oklch(0.84 0.02 75);
-    --sidebar-border: oklch(0.34 0.015 50);
-    --sidebar-ring: oklch(0.72 0.085 60);
-    --shadow-opacity: 0.35;
-    --shadow-2xs: 0 1px 2px 0 rgb(0 0 0 / 0.1);
-    --shadow-xs: 0 1px 3px 0 rgb(0 0 0 / 0.15), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    --shadow-sm: 0 4px 8px -2px rgb(0 0 0 / 0.18), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow: 0 8px 16px -4px rgb(0 0 0 / 0.22), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --shadow-md: 0 14px 28px -6px rgb(0 0 0 / 0.25), 0 6px 10px -6px rgb(0 0 0 / 0.12);
-    --shadow-lg: 0 20px 40px -10px rgb(0 0 0 / 0.3);
-    --shadow-xl: 0 28px 56px -14px rgb(0 0 0 / 0.35);
-    --shadow-2xl: 0 40px 80px -20px rgb(0 0 0 / 0.45);
+    --sidebar: oklch(0.20 0.025 50);
+    --sidebar-foreground: oklch(0.86 0.025 72);
+    --sidebar-primary: oklch(0.74 0.085 58);
+    --sidebar-primary-foreground: oklch(0.2 0.025 48);
+    --sidebar-accent: oklch(0.30 0.02 52);
+    --sidebar-accent-foreground: oklch(0.82 0.02 72);
+    --sidebar-border: oklch(0.36 0.02 52);
+    --sidebar-ring: oklch(0.74 0.085 58);
+    --shadow-opacity: 0.4;
+    --shadow-2xs: 0 1px 2px 0 rgb(0 0 0 / 0.12);
+    --shadow-xs: 0 1px 3px 0 rgb(0 0 0 / 0.18), 0 1px 2px -1px rgb(0 0 0 / 0.12);
+    --shadow-sm: 0 3px 6px -1px rgb(0 0 0 / 0.2), 0 2px 4px -2px rgb(0 0 0 / 0.14);
+    --shadow: 0 8px 16px -4px rgb(0 0 0 / 0.24), 0 4px 6px -4px rgb(0 0 0 / 0.12);
+    --shadow-md: 0 14px 28px -6px rgb(0 0 0 / 0.28), 0 6px 10px -6px rgb(0 0 0 / 0.14);
+    --shadow-lg: 0 20px 40px -10px rgb(0 0 0 / 0.32);
+    --shadow-xl: 0 28px 56px -14px rgb(0 0 0 / 0.38);
+    --shadow-2xl: 0 40px 80px -20px rgb(0 0 0 / 0.48);
 }
 
 /* ── Base ──────────────────────────────────────────── */
@@ -181,34 +181,78 @@
         text-rendering: optimizeLegibility;
         min-height: 100vh;
         isolation: isolate;
-        /* Subtle warm washes across the paper */
+        /* Color variation patches — real kraft paper has uneven dye absorption */
         background-image:
-            radial-gradient(ellipse at 15% 10%, color-mix(in oklch, var(--foreground) 4%, transparent), transparent 55%),
-            radial-gradient(ellipse at 85% 85%, color-mix(in oklch, var(--foreground) 3%, transparent), transparent 50%);
+            radial-gradient(ellipse 600px 400px at 8% 6%, color-mix(in oklch, var(--foreground) 8%, transparent), transparent 60%),
+            radial-gradient(ellipse 500px 350px at 78% 18%, color-mix(in oklch, var(--foreground) 6%, transparent), transparent 55%),
+            radial-gradient(ellipse 450px 500px at 30% 58%, color-mix(in oklch, var(--foreground) 5%, transparent), transparent 50%),
+            radial-gradient(ellipse 550px 400px at 88% 75%, color-mix(in oklch, var(--foreground) 7%, transparent), transparent 55%),
+            radial-gradient(ellipse 700px 350px at 50% 35%, color-mix(in oklch, var(--card) 8%, transparent), transparent 60%),
+            radial-gradient(ellipse 300px 250px at 62% 90%, color-mix(in oklch, var(--foreground) 4%, transparent), transparent 45%);
     }
-    /* Paper grain texture */
+    /* Paper grain — heavy fractal noise like real kraft fibers */
     body::before {
         content: "";
         position: fixed;
         inset: 0;
         pointer-events: none;
         z-index: -1;
-        opacity: 0.45;
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
-        background-size: 256px 256px;
+        opacity: 0.7;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+        background-size: 512px 512px;
+    }
+    /* Paper fibers + fold creases — visible texture */
+    body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: -1;
+        opacity: 0.12;
+        background-image:
+            /* main fiber direction */
+            repeating-linear-gradient(
+                82deg,
+                transparent,
+                transparent 60px,
+                color-mix(in oklch, var(--foreground) 14%, transparent) 60px,
+                color-mix(in oklch, var(--foreground) 14%, transparent) 61px
+            ),
+            /* cross fibers */
+            repeating-linear-gradient(
+                -12deg,
+                transparent,
+                transparent 110px,
+                color-mix(in oklch, var(--foreground) 10%, transparent) 110px,
+                color-mix(in oklch, var(--foreground) 10%, transparent) 111px
+            ),
+            /* horizontal fold crease */
+            linear-gradient(
+                to bottom,
+                transparent 48%,
+                color-mix(in oklch, var(--foreground) 6%, transparent) 49.5%,
+                color-mix(in oklch, var(--foreground) 10%, transparent) 50%,
+                color-mix(in oklch, var(--foreground) 6%, transparent) 50.5%,
+                transparent 52%
+            );
     }
 }
 
 /* ── Utilities ─────────────────────────────────────── */
 @layer utilities {
     .glass {
-        @apply bg-card border border-border/50 shadow-sm;
+        @apply bg-card border border-border/70 shadow-sm;
     }
     .glass-hover {
         @apply transition-all duration-200 hover:border-primary/30 hover:shadow-md;
     }
+    /* Stamped / letterpress text — inked into the paper */
     .text-gradient {
-        @apply bg-clip-text text-transparent bg-gradient-to-br from-primary via-accent to-primary;
+        color: var(--primary);
+        text-shadow:
+            1px 1px 0 color-mix(in oklch, var(--primary) 25%, transparent),
+            -0.5px -0.5px 0 color-mix(in oklch, var(--card) 30%, transparent),
+            0 0 8px color-mix(in oklch, var(--primary) 8%, transparent);
     }
     .font-display {
         font-family: var(--font-serif);
@@ -221,8 +265,84 @@
             linear-gradient(to bottom, color-mix(in oklch, var(--border) 55%, transparent) 1px, transparent 1px);
         background-size: 28px 28px;
     }
+    /* Parchment label stuck on kraft paper — with tape corners */
     .kraft-label {
-        @apply bg-card rounded-2xl border border-border/50 shadow-sm;
+        @apply bg-card rounded-lg border border-border/70 relative;
+        box-shadow:
+            0 3px 10px -2px rgb(47 36 23 / 0.18),
+            0 1px 3px 0 rgb(47 36 23 / 0.08),
+            inset 0 1px 0 0 rgba(255, 248, 235, 0.4),
+            inset 0 -1px 2px 0 rgba(47 36 23, 0.06);
+        background-image:
+            url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+        background-color: var(--card);
+    }
+    /* Rubber stamp badge — slightly worn ink effect */
+    .stamp-badge {
+        @apply inline-flex items-center gap-1.5 rounded-sm border-2 border-current px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.16em];
+        transform: rotate(-2deg);
+        text-shadow: 0 0 1px currentColor;
+    }
+    /* Perforated line separator — like tear-off paper */
+    .perf-line {
+        border-style: dashed;
+        border-color: color-mix(in oklch, var(--border) 90%, transparent);
+        border-dash-offset: 4px;
+    }
+    /* Tape strip — semi-transparent like masking tape */
+    .tape-strip {
+        background: linear-gradient(
+            135deg,
+            rgba(210, 195, 160, 0.45) 0%,
+            rgba(230, 218, 190, 0.55) 50%,
+            rgba(210, 195, 160, 0.45) 100%
+        );
+        border: 1px solid rgba(180, 160, 120, 0.3);
+        box-shadow: 0 1px 2px rgba(47, 36, 23, 0.08);
+    }
+    .dark .tape-strip {
+        background: linear-gradient(
+            135deg,
+            rgba(80, 70, 55, 0.5) 0%,
+            rgba(90, 80, 65, 0.6) 50%,
+            rgba(80, 70, 55, 0.5) 100%
+        );
+        border: 1px solid rgba(100, 90, 70, 0.3);
+    }
+    /* Wax seal ring — for the click button */
+    .wax-seal {
+        background: radial-gradient(
+            circle at 40% 35%,
+            oklch(0.52 0.09 48) 0%,
+            oklch(0.42 0.1 38) 35%,
+            var(--primary) 65%,
+            oklch(0.28 0.08 32) 100%
+        );
+        box-shadow:
+            0 8px 28px -4px rgba(60, 35, 15, 0.5),
+            0 3px 8px rgba(60, 35, 15, 0.3),
+            inset 0 3px 8px rgba(255, 235, 210, 0.2),
+            inset 0 -5px 16px rgba(40, 25, 10, 0.4),
+            inset 0 0 0 3px rgba(255, 240, 220, 0.08);
+    }
+    .wax-seal:hover {
+        box-shadow:
+            0 12px 36px -4px rgba(60, 35, 15, 0.6),
+            0 4px 10px rgba(60, 35, 15, 0.35),
+            inset 0 3px 8px rgba(255, 235, 210, 0.25),
+            inset 0 -5px 16px rgba(40, 25, 10, 0.45),
+            inset 0 0 0 3px rgba(255, 240, 220, 0.1);
+    }
+    .wax-seal:active {
+        box-shadow:
+            0 4px 14px -4px rgba(60, 35, 15, 0.45),
+            0 2px 4px rgba(60, 35, 15, 0.25),
+            inset 0 5px 12px rgba(40, 25, 10, 0.45),
+            inset 0 0 0 3px rgba(255, 240, 220, 0.06);
+    }
+    /* Scuffed edge — uneven border like torn paper */
+    .scuff-edge {
+        border-image: url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='r'%3E%3CfeTurbulence baseFrequency='0.4' numOctaves='2' seed='5'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 20 -10'/%3E%3C/filter%3E%3Crect width='40' height='40' filter='url(%23r)' opacity='0.15'/%3E%3C/svg%3E") 4 fill / 4px / 0;
     }
 }
 

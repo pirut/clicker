@@ -84,13 +84,13 @@ export function ArenaPulse({ className }: ArenaPulseProps) {
 
     return (
         <section className={cn("kraft-label overflow-hidden", className)}>
-            <div className="border-b border-border/40 px-4 py-4 sm:px-5">
+            <div className="border-b-2 border-dashed border-border/50 px-4 py-4 sm:px-5">
                 <div className="flex items-start justify-between gap-3">
                     <div>
-                        <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Arena Pulse</p>
-                        <h2 className="mt-1 text-sm font-semibold tracking-tight sm:text-base">Room tempo & traffic</h2>
+                        <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-mono">Arena Pulse</p>
+                        <h2 className="mt-1 text-sm font-display font-semibold tracking-tight sm:text-base">Room tempo & traffic</h2>
                     </div>
-                    <div className={cn("rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]", tempo.surface, tempo.accent)}>
+                    <div className={cn("stamp-badge", tempo.accent)}>
                         {tempo.label}
                     </div>
                 </div>

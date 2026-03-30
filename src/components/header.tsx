@@ -59,16 +59,16 @@ export function Header() {
             className={cn(
                 "fixed left-0 right-0 top-0 z-50 transition-all duration-300",
                 scrolled
-                    ? "border-b border-border/50 bg-background/90 backdrop-blur-sm py-2 shadow-xs"
+                    ? "border-b border-border/60 bg-background/95 py-2 shadow-sm"
                     : "bg-transparent py-3 sm:py-4"
             )}
         >
             <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-3 sm:px-4">
-                <Link href="/" className="group flex items-center gap-2">
-                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-primary/15 text-primary transition-transform group-hover:rotate-12">
+                <Link href="/" className="group flex items-center gap-2.5">
+                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform group-hover:rotate-12 shadow-sm">
                         <Sparkles className="h-3.5 w-3.5" />
                     </span>
-                    <span className="font-display text-xl font-semibold leading-none tracking-tight text-gradient">CLICKER</span>
+                    <span className="font-display text-xl font-bold leading-none tracking-tight text-gradient">CLICKER</span>
                 </Link>
 
                 <nav className="hidden items-center gap-1.5 lg:flex">

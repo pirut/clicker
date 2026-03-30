@@ -154,13 +154,13 @@ export function LiveChatPanel({ className }: LiveChatPanelProps) {
     return (
         <section className={cn("kraft-label overflow-hidden", className)}>
             {/* Header */}
-            <div className="border-b border-border/40 px-4 py-3.5 sm:px-5">
+            <div className="border-b-2 border-dashed border-border/50 px-4 py-3.5 sm:px-5">
                 <div className="flex items-start justify-between gap-3">
                     <div>
-                        <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Live Chat</p>
-                        <h2 className="mt-0.5 text-sm font-semibold tracking-tight sm:text-base">Talk while the room is moving</h2>
+                        <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-mono">Live Chat</p>
+                        <h2 className="mt-0.5 text-sm font-display font-semibold tracking-tight sm:text-base">Talk while the room is moving</h2>
                     </div>
-                    <div className="rounded-full border border-primary/20 bg-primary/8 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-primary">
+                    <div className="stamp-badge text-primary">
                         {onlineNow} live
                     </div>
                 </div>

@@ -25,37 +25,39 @@ export default function AboutPage() {
                 >
                     <div className="text-center mb-8">
                         <h1 className="font-display text-3xl font-bold sm:text-4xl text-gradient">About</h1>
-                        <p className="mt-2 text-sm text-foreground/60">The story behind Clicker</p>
+                        <p className="mt-2 text-sm text-foreground/60 italic">The story behind Clicker</p>
                     </div>
 
                     <div className="kraft-label p-5 sm:p-6 mb-4">
                         <h2 className="font-display text-lg font-semibold">What is Clicker?</h2>
-                        <p className="mt-2 text-sm text-foreground/70 leading-relaxed">
-                            A playful experiment to see how many clicks we can rack up together. Every click is tracked in real time, every cursor is visible, and the leaderboard updates instantly. It&apos;s competitive, social, and completely pointless — in the best way.
-                        </p>
+                        <div className="mt-3 border-t-2 border-dashed border-border/40 pt-3">
+                            <p className="text-sm text-foreground/70 leading-relaxed">
+                                A playful experiment to see how many clicks we can rack up together. Every click is tracked in real time, every cursor is visible, and the leaderboard updates instantly. It&apos;s competitive, social, and completely pointless — in the best way.
+                            </p>
+                        </div>
                     </div>
 
                     <div className="kraft-label p-5 sm:p-6 mb-4">
                         <h2 className="font-display text-lg font-semibold mb-3">Built with</h2>
-                        <div className="grid gap-2">
+                        <div className="border-t-2 border-dashed border-border/40 pt-3 grid gap-2">
                             {techStack.map((tech) => (
                                 <a
                                     key={tech.name}
                                     href={tech.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center justify-between rounded-xl border border-border/40 bg-secondary/40 px-3.5 py-2.5 text-sm transition-colors hover:bg-card hover:shadow-xs"
+                                    className="flex items-center justify-between rounded-lg border border-border/50 bg-secondary/40 px-3.5 py-2.5 text-sm transition-colors hover:bg-card hover:shadow-xs"
                                 >
-                                    <span className="font-medium">{tech.name}</span>
-                                    <span className="text-xs text-muted-foreground">{tech.description}</span>
+                                    <span className="font-display font-medium">{tech.name}</span>
+                                    <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground font-mono">{tech.description}</span>
                                 </a>
                             ))}
                         </div>
                     </div>
 
                     <div className="kraft-label p-5 sm:p-6">
-                        <p className="text-sm text-foreground/60">
-                            Created by <span className="font-medium text-foreground">JR Bussard</span>. Thanks for stopping by and clicking.
+                        <p className="text-sm text-foreground/60 font-display">
+                            Created by <span className="font-semibold text-foreground">JR Bussard</span>. Thanks for stopping by and clicking.
                         </p>
                     </div>
                 </motion.div>
